@@ -1,8 +1,18 @@
 # Fleximo
 
-**Fleximo** is an open-source, multi-tenant **mobile ordering platform for Japanese restaurants**.
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
+[![Status: MVP](https://img.shields.io/badge/status-MVP-orange)](#)
+[![PHP](https://img.shields.io/badge/PHP-%5E8.2-777BB4?logo=php&logoColor=white)](https://www.php.net/)
+[![Laravel](https://img.shields.io/badge/Laravel-12-FF2D20?logo=laravel&logoColor=white)](https://laravel.com/)
+[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+
+**Fleximo** is an open-source, multi-tenant **mobile ordering platform for Japanese restaurants and school cafeterias (学食)**.
 It lets restaurant owners accept takeout orders and payments on the web with no register queue, while end-users enjoy a single account across every restaurant on the platform.
 
+![Fleximo — mobile ordering for Japanese restaurants and campus dining](./docs/assets/hero.png)
+
+> Live reference deployment: **https://fleximo.jp**
 > Status: **MVP / early-stage OSS**. APIs and schema may still change. Production use is possible but please pin to a release tag.
 
 ---
@@ -15,6 +25,16 @@ Most SaaS mobile-order products in Japan are closed, per-store, and expensive fo
 - **Multi-tenant by design** — one deployment serves many restaurants; customers use one account everywhere.
 - **Built for the Japanese market** — fincode integration (credit card / PayPay), Japanese UI, tax-inclusive pricing, takeout-first flow.
 - **Stack restaurants already trust developers with** — Laravel + React + MySQL/MariaDB + Redis.
+
+---
+
+## Screenshots
+
+| Customer landing (https://fleximo.jp) | Business / tenant signup page |
+| --- | --- |
+| ![Customer landing](./docs/assets/hero.png) | ![For business](./docs/assets/for-business.png) |
+
+Full-page capture: [`docs/assets/landing-full.png`](./docs/assets/landing-full.png)
 
 ---
 

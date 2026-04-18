@@ -15,7 +15,9 @@
 
 ### Added
 
--
+- OSS 基本ドキュメント: `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`（Contributor Covenant v2.1 準拠）, `SECURITY.md`
+- README にバッジ・Hero 画像・スクリーンショット（`https://fleximo.jp` 実環境キャプチャ）を追加
+- `docs/assets/` ディレクトリと画像ファイル命名規則
 
 ### Changed
 
