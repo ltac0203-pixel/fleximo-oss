@@ -11,6 +11,7 @@ use App\Models\Tenant;
 use App\Models\WebhookLog;
 use App\Services\Webhook\WebhookService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -77,7 +78,7 @@ class PaymentCompletedEventTest extends TestCase
             ->withFincodeId('pay_card_success')->create();
 
         // completePaymentWithOrder は private なので、直接トランザクション+イベント発行を模倣する
-        \Illuminate\Support\Facades\DB::transaction(function () use ($payment) {
+        DB::transaction(function () use ($payment) {
             $payment->markAsCompleted();
             $payment->order->markAsPaid();
         });

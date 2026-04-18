@@ -8,6 +8,7 @@ use App\Enums\OrderStatus;
 use App\Models\Order;
 use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
 
 class OrderService
 {
@@ -58,7 +59,7 @@ class OrderService
         return $order->loadCustomerDetail();
     }
 
-    public function getRecentOrders(User $user, int $limit = 5): \Illuminate\Database\Eloquent\Collection
+    public function getRecentOrders(User $user, int $limit = 5): Collection
     {
         return Order::forCustomerAcrossTenants($user->id)
             ->with('tenant')

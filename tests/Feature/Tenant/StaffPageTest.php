@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Tenant;
 
+use App\Enums\TenantUserRole;
 use App\Enums\UserRole;
 use App\Models\Tenant;
 use App\Models\TenantUser;
@@ -35,7 +36,7 @@ class StaffPageTest extends TestCase
         TenantUser::factory()->create([
             'user_id' => $this->tenantAdmin->id,
             'tenant_id' => $this->tenant->id,
-            'role' => \App\Enums\TenantUserRole::Admin,
+            'role' => TenantUserRole::Admin,
         ]);
         $this->tenantAdmin->refresh();
     }
@@ -64,7 +65,7 @@ class StaffPageTest extends TestCase
         TenantUser::factory()->create([
             'user_id' => $newStaff->id,
             'tenant_id' => $this->tenant->id,
-            'role' => \App\Enums\TenantUserRole::Staff,
+            'role' => TenantUserRole::Staff,
         ]);
 
         $response = $this->actingAs($this->tenantAdmin)
@@ -89,7 +90,7 @@ class StaffPageTest extends TestCase
         TenantUser::factory()->create([
             'user_id' => $staff->id,
             'tenant_id' => $this->tenant->id,
-            'role' => \App\Enums\TenantUserRole::Staff,
+            'role' => TenantUserRole::Staff,
         ]);
         $staff->refresh();
 
@@ -129,7 +130,7 @@ class StaffPageTest extends TestCase
         TenantUser::factory()->create([
             'user_id' => $otherStaff->id,
             'tenant_id' => $otherTenant->id,
-            'role' => \App\Enums\TenantUserRole::Staff,
+            'role' => TenantUserRole::Staff,
         ]);
 
         $response = $this->actingAs($this->tenantAdmin)

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Resources;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 // テナント詳細情報リソース（管理者向け）
@@ -34,6 +35,6 @@ class TenantDetailResource extends TenantResource
 
     private function formatBusinessTime(string $time): string
     {
-        return \Carbon\Carbon::parse($time)->format('H:i');
+        return Carbon::parse($time)->format('H:i');
     }
 }

@@ -11,6 +11,7 @@ use App\Models\Tenant;
 use App\Models\WebhookLog;
 use App\Services\Webhook\WebhookService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -76,7 +77,7 @@ class PaymentFailedEventTest extends TestCase
         $payment = Payment::factory()->forOrder($order)->processing()
             ->withFincodeId('pay_card_fail')->create();
 
-        \Illuminate\Support\Facades\DB::transaction(function () use ($payment) {
+        DB::transaction(function () use ($payment) {
             $payment->markAsFailed();
             $payment->order->markAsPaymentFailed();
         });

@@ -71,7 +71,7 @@ class OrderNumberConcurrencyTest extends TestCase
             'order_code' => $orderCode,
         ]);
 
-        $this->expectException(\Illuminate\Database\QueryException::class);
+        $this->expectException(QueryException::class);
 
         Order::factory()->create([
             'user_id' => $user->id,

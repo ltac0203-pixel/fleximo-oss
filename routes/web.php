@@ -23,6 +23,7 @@ use App\Http\Controllers\Tenant\TenantProfileController;
 use App\Http\Controllers\Tenant\TenantStaffController;
 use App\Http\Controllers\TenantApplicationController;
 use App\Http\Controllers\WelcomeController;
+use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', WelcomeController::class)->name('home');
@@ -141,7 +142,7 @@ Route::middleware(['auth', 'auth.session', 'verified', 'active', 'role:customer'
 
 // 3DSコールバック（外部POST受信のためCSRF除外 + 署名URL必須）
 Route::middleware(['signed.3ds'])
-    ->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class])
+    ->withoutMiddleware([ValidateCsrfToken::class])
     ->group(function () {
         Route::match(['get', 'post'], '/order/checkout/callback/3ds/{payment}', [CheckoutPageController::class, 'threeDsCallback'])
             ->whereNumber('payment')

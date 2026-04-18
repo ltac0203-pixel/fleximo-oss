@@ -6,6 +6,7 @@ namespace Tests\Unit\Services\Fincode;
 
 use App\Enums\PaymentStatus;
 use App\Services\Fincode\FincodePaymentResponse;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class FincodePaymentResponseTest extends TestCase
@@ -147,7 +148,7 @@ class FincodePaymentResponseTest extends TestCase
         $this->assertEquals('https://3ds.example.com/redirect', $response->acsUrl);
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('statusMappingProvider')]
+    #[DataProvider('statusMappingProvider')]
     public function test_to_payment_status_conversion(string $fincodeStatus, PaymentStatus $expectedStatus): void
     {
         $response = FincodePaymentResponse::fromArray([

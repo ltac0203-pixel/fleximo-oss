@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature;
 
+use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -97,7 +98,7 @@ class ProfileTest extends TestCase
 
     public function test_tenant_admin_cannot_delete_their_account(): void
     {
-        $tenant = \App\Models\Tenant::factory()->create();
+        $tenant = Tenant::factory()->create();
         $user = User::factory()->tenantAdmin($tenant)->create();
 
         $response = $this

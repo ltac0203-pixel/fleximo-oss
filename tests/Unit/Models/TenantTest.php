@@ -10,6 +10,7 @@ use App\Models\TenantBusinessHour;
 use App\Models\TenantUser;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
@@ -35,7 +36,7 @@ class TenantTest extends TestCase
     {
         Tenant::factory()->create(['slug' => 'unique-slug']);
 
-        $this->expectException(\Illuminate\Database\QueryException::class);
+        $this->expectException(QueryException::class);
         Tenant::factory()->create(['slug' => 'unique-slug']);
     }
 

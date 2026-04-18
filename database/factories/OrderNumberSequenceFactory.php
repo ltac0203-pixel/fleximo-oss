@@ -6,6 +6,7 @@ namespace Database\Factories;
 
 use App\Models\OrderNumberSequence;
 use App\Models\Tenant;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /** @extends Factory<OrderNumberSequence> */
@@ -32,7 +33,7 @@ class OrderNumberSequenceFactory extends Factory
     }
 
     // 指定した営業日を設定
-    public function forBusinessDate(string|\Carbon\Carbon $date): static
+    public function forBusinessDate(string|Carbon $date): static
     {
         return $this->state(fn (array $attributes) => [
             'business_date' => $date,

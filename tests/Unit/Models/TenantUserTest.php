@@ -9,6 +9,7 @@ use App\Models\Tenant;
 use App\Models\TenantUser;
 use App\Models\User;
 use App\Services\TenantContext;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -50,7 +51,7 @@ class TenantUserTest extends TestCase
             'user_id' => $user->id,
         ]);
 
-        $this->expectException(\Illuminate\Database\QueryException::class);
+        $this->expectException(QueryException::class);
         TenantUser::factory()->create([
             'tenant_id' => $tenant->id,
             'user_id' => $user->id,

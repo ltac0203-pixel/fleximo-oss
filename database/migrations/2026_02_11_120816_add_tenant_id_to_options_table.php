@@ -28,7 +28,7 @@ return new class extends Migration
         // NOT NULL 制約を適用する前に NULL が残っていないか検証し、マイグレーション失敗を事前に防ぐ
         $nullCount = DB::table('options')->whereNull('tenant_id')->count();
         if ($nullCount > 0) {
-            throw new \RuntimeException(
+            throw new RuntimeException(
                 "Migration failed: {$nullCount} options have NULL tenant_id. ".
                 'All options must have a valid tenant_id before applying NOT NULL constraint.'
             );
@@ -41,7 +41,7 @@ return new class extends Migration
             ->count();
 
         if ($mismatchCount > 0) {
-            throw new \RuntimeException(
+            throw new RuntimeException(
                 "Migration failed: {$mismatchCount} options have tenant_id mismatch with their option_group. ".
                 'Data integrity check failed.'
             );

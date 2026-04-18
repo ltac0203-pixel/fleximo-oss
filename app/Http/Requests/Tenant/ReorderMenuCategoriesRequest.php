@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Tenant;
 
+use App\Models\MenuCategory;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ReorderMenuCategoriesRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()->can('reorder', \App\Models\MenuCategory::class);
+        return $this->user()->can('reorder', MenuCategory::class);
     }
 
     public function rules(): array

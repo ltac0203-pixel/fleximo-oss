@@ -7,6 +7,7 @@ namespace Tests\Feature\Migration;
 use App\Models\Option;
 use App\Models\OptionGroup;
 use App\Models\Tenant;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
@@ -25,7 +26,7 @@ class OptionsTenantIdMigrationTest extends TestCase
         $tenant = Tenant::factory()->create();
         $optionGroup = OptionGroup::factory()->create(['tenant_id' => $tenant->id]);
 
-        $this->expectException(\Illuminate\Database\QueryException::class);
+        $this->expectException(QueryException::class);
 
         \DB::table('options')->insert([
             'option_group_id' => $optionGroup->id,
@@ -64,7 +65,7 @@ class OptionsTenantIdMigrationTest extends TestCase
         $tenant = Tenant::factory()->create();
         $optionGroup = OptionGroup::factory()->create(['tenant_id' => $tenant->id]);
 
-        $this->expectException(\Illuminate\Database\QueryException::class);
+        $this->expectException(QueryException::class);
 
         \DB::table('options')->insert([
             'option_group_id' => $optionGroup->id,

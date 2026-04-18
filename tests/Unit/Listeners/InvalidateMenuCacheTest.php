@@ -8,6 +8,7 @@ use App\Events\TenantMenuUpdated;
 use App\Listeners\InvalidateMenuCache;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Tests\TestCase;
 
 class InvalidateMenuCacheTest extends TestCase
@@ -35,7 +36,7 @@ class InvalidateMenuCacheTest extends TestCase
             ->once()
             ->andThrow(new \RuntimeException('Redis connection refused'));
 
-        \Illuminate\Support\Facades\Log::spy();
+        Log::spy();
 
         $tenantId = 99;
         $event = new TenantMenuUpdated($tenantId, 'deleted');
@@ -43,7 +44,7 @@ class InvalidateMenuCacheTest extends TestCase
         $listener = new InvalidateMenuCache;
         $listener->handle($event);
 
-        \Illuminate\Support\Facades\Log::shouldHaveReceived('warning')
+        Log::shouldHaveReceived('warning')
             ->once()
             ->withArgs(function (string $message, array $context) use ($tenantId): bool {
                 return $message === 'メニューキャッシュの無効化に失敗しました'

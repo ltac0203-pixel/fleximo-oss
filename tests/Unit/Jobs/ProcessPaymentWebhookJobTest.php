@@ -53,7 +53,7 @@ class ProcessPaymentWebhookJobTest extends TestCase
         ]);
 
         $job = new ProcessPaymentWebhookJob($webhookLog);
-        $job->handle(new \App\Services\Webhook\WebhookService);
+        $job->handle(new WebhookService);
 
         $payment->refresh();
         $order->refresh();
@@ -80,7 +80,7 @@ class ProcessPaymentWebhookJobTest extends TestCase
         $job = new ProcessPaymentWebhookJob($webhookLog);
 
         try {
-            $job->handle(new \App\Services\Webhook\WebhookService);
+            $job->handle(new WebhookService);
         } catch (PaymentNotFoundException $e) {
 
         }
@@ -202,7 +202,7 @@ class ProcessPaymentWebhookJobTest extends TestCase
         $job = new ProcessPaymentWebhookJob($webhookLog);
 
         try {
-            $job->handle(new \App\Services\Webhook\WebhookService);
+            $job->handle(new WebhookService);
         } catch (\InvalidArgumentException $e) {
             // fail() は例外を投げるため想定どおり
         }

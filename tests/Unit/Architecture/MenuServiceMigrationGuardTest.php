@@ -12,6 +12,7 @@ use App\Services\Menu\CategoryService;
 use App\Services\Menu\MenuItemService;
 use App\Services\Menu\OptionGroupService;
 use App\Services\Menu\OptionService;
+use App\Services\MenuService;
 use ReflectionClass;
 use ReflectionNamedType;
 use Tests\TestCase;
@@ -26,7 +27,7 @@ class MenuServiceMigrationGuardTest extends TestCase
         );
 
         $this->assertFalse(
-            class_exists(\App\Services\MenuService::class),
+            class_exists(MenuService::class),
             'Legacy App\\Services\\MenuService should not be resolvable.'
         );
     }

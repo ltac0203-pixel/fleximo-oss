@@ -7,6 +7,7 @@ namespace App\Models;
 use App\Enums\OrderStatus;
 use App\Models\Scopes\TenantScope;
 use App\Models\Traits\BelongsToTenant;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -209,7 +210,7 @@ class Order extends Model
         ]);
     }
 
-    public function scopeForBusinessDate(Builder $query, string|\Carbon\Carbon $date): Builder
+    public function scopeForBusinessDate(Builder $query, string|Carbon $date): Builder
     {
         return $query->where('business_date', $date);
     }
