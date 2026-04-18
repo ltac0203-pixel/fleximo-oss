@@ -25,6 +25,8 @@ Homestead.yaml
 Thumbs.db
 .serena
 .claude
+CLAUDE.md
+AGENTS.md
 
 # Test Coverage Reports
 /coverage/
