@@ -1,0 +1,15 @@
+User-agent: *
+Disallow: /admin
+Disallow: /tenant
+Disallow: /for-business/login
+Disallow: /login
+Disallow: /register
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /verify-email
+Disallow: /order/checkout
+Disallow: /order/cart
+Disallow: /profile
+Disallow: /tenant-application/complete
+
+Sitemap: https://example.com/sitemap.xml

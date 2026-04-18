@@ -1,0 +1,29 @@
+Fleximo
+Copyright 2026 Fleximo contributors
+
+This product includes software developed as part of the Fleximo project
+(https://github.com/<your-org>/fleximo).
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+---
+
+This product bundles and depends on third-party open source software. Their
+respective licenses apply. See `composer.lock` and `package-lock.json` for
+the full dependency list, and each package's own license file for details.
+Notable dependencies include:
+
+- Laravel Framework (MIT)
+- Laravel Sanctum (MIT)
+- Inertia.js (MIT)
+- React (MIT)
+- TypeScript (Apache-2.0)
+- Tailwind CSS (MIT)
+- Vite (MIT)
+- Recharts (MIT)
+- dnd-kit (MIT)
+- Headless UI (MIT)

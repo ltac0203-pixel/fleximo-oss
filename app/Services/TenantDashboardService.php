@@ -1,0 +1,270 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Services;
+
+use App\Enums\OrderStatus;
+use App\Enums\PaymentMethod;
+use App\Enums\SalesPeriod;
+use App\Models\Order;
+use App\Models\Scopes\TenantScope;
+use App\Services\Dashboard\SalesDataFormatter;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
+
+// テナントダッシュボード用データ組み立てサービス
+// ダッシュボードAPIのパブリックインターフェースを提供
+// 統計データ取得はTenantStatsRepositoryに委譲
+class TenantDashboardService
+{
+    private const CACHE_PREFIX = 'tenant_dashboard';
+
+    private const TTL_REALTIME = 300;    // 5分 - 当日データ
+
+    private const TTL_HISTORICAL = 3600; // 1時間 - 過去データ
+
+    // 本日含む直近7日分を取得するため、6日前を開始日とする
+    private const RECENT_WEEK_OFFSET_DAYS = 6;
+
+    public function __construct(
+        private readonly TenantStatsRepository $statsRepository,
+        private readonly SalesDataFormatter $salesDataFormatter
+    ) {}
+
+    private function cacheKey(int $tenantId, string $metric, string ...$params): string
+    {
+        $suffix = implode(':', $params);
+
+        return self::CACHE_PREFIX.":{$tenantId}:{$metric}".($suffix ? ":{$suffix}" : '');
+    }
+
+    private function ttlForDate(Carbon $date): int
+    {
+        return $date->isToday() ? self::TTL_REALTIME : self::TTL_HISTORICAL;
+    }
+
+    private function ttlForDateRange(Carbon $startDate, Carbon $endDate): int
+    {
+        return Carbon::today()->between($startDate, $endDate) ? self::TTL_REALTIME : self::TTL_HISTORICAL;
+    }
+
+    // サマリーデータを取得
+    public function getSummary(int $tenantId, Carbon $date): array
+    {
+        $key = $this->cacheKey($tenantId, 'summary', $date->format('Y-m-d'));
+        $ttl = $this->ttlForDate($date);
+
+        return Cache::remember($key, $ttl, function () use ($tenantId, $date) {
+            $today = $date->copy()->startOfDay();
+            $yesterday = $today->copy()->subDay();
+            $thisMonthStart = $today->copy()->startOfMonth();
+            $lastMonthStart = $thisMonthStart->copy()->subMonth();
+
+            $todayStats = $this->statsRepository->getDayStats($tenantId, $today);
+            $yesterdayStats = $this->statsRepository->getDayStats($tenantId, $yesterday);
+            $thisMonthStats = $this->statsRepository->getMonthToDateStats($tenantId, $thisMonthStart, $today);
+            $lastMonthStats = $this->statsRepository->getMonthStats($tenantId, $lastMonthStart);
+
+            return [
+                'today' => $todayStats,
+                'yesterday' => $yesterdayStats,
+                'this_month' => $thisMonthStats,
+                'last_month' => $lastMonthStats,
+                'comparison' => [
+                    'daily_sales_percent' => $this->percentChange(
+                        $todayStats['total_sales'],
+                        $yesterdayStats['total_sales']
+                    ),
+                    'daily_orders_percent' => $this->percentChange(
+                        $todayStats['order_count'],
+                        $yesterdayStats['order_count']
+                    ),
+                    'monthly_sales_percent' => $this->percentChange(
+                        $thisMonthStats['total_sales'],
+                        $lastMonthStats['total_sales']
+                    ),
+                    'monthly_orders_percent' => $this->percentChange(
+                        $thisMonthStats['order_count'],
+                        $lastMonthStats['order_count']
+                    ),
+                ],
+            ];
+        });
+    }
+
+    // 直近1週間の売上データを取得
+    public function getRecentWeekSalesData(int $tenantId): array
+    {
+        $today = Carbon::today();
+        $key = $this->cacheKey($tenantId, 'recent_week', $today->format('Y-m-d'));
+
+        return Cache::remember($key, self::TTL_REALTIME, function () use ($tenantId, $today) {
+            $startDate = $today->copy()->subDays(self::RECENT_WEEK_OFFSET_DAYS);
+
+            return $this->getSalesData($tenantId, SalesPeriod::Daily, $startDate, $today);
+        });
+    }
+
+    // 期間別売上データを取得
+    public function getSalesData(int $tenantId, SalesPeriod $period, Carbon $startDate, Carbon $endDate): array
+    {
+        $key = $this->cacheKey($tenantId, 'sales', $period->value, $startDate->format('Y-m-d'), $endDate->format('Y-m-d'));
+        $ttl = $this->ttlForDateRange($startDate, $endDate);
+
+        return Cache::remember($key, $ttl, fn () => $this->buildSalesData($tenantId, $period, $startDate, $endDate));
+    }
+
+    private function buildSalesData(int $tenantId, SalesPeriod $period, Carbon $startDate, Carbon $endDate): array
+    {
+        $fetchStart = match ($period) {
+            SalesPeriod::Daily => $startDate,
+            SalesPeriod::Weekly => $startDate->copy()->startOfWeek(Carbon::MONDAY),
+            SalesPeriod::Monthly => $startDate->copy()->startOfMonth(),
+        };
+
+        $dailyStats = $this->statsRepository->getDailyStatsForRange($tenantId, $fetchStart, $endDate);
+
+        return $this->salesDataFormatter->format($period, $fetchStart, $endDate, $dailyStats);
+    }
+
+    // 人気商品ランキングを取得
+    public function getTopItems(int $tenantId, string $period, int $limit = 10): array
+    {
+        $key = $this->cacheKey($tenantId, 'top_items', $period, (string) $limit);
+
+        return Cache::remember($key, self::TTL_REALTIME, function () use ($tenantId, $period, $limit) {
+            $today = Carbon::today();
+            $startDate = $this->resolveTopItemsStartDate($period, $today);
+            $items = $this->statsRepository->getTopItems($tenantId, $startDate, $limit);
+
+            $result = [];
+            $rank = 1;
+            foreach ($items as $item) {
+                $result[] = [
+                    'rank' => $rank++,
+                    'menu_item_id' => $item->menu_item_id,
+                    'name' => $item->name,
+                    'quantity' => (int) $item->total_quantity,
+                    'revenue' => (int) $item->total_revenue,
+                ];
+            }
+
+            return $result;
+        });
+    }
+
+    // 人気商品集計の開始日を期間指定から解決する
+    private function resolveTopItemsStartDate(string $period, Carbon $today): Carbon
+    {
+        return match ($period) {
+            'week' => $today->copy()->subDays(7),
+            'month' => $today->copy()->subDays(30),
+            'year' => $today->copy()->subDays(365),
+            default => $today->copy()->subDays(30),
+        };
+    }
+
+    // 時間帯別分布を取得
+    public function getHourlyDistribution(int $tenantId, Carbon $date): array
+    {
+        $key = $this->cacheKey($tenantId, 'hourly', $date->format('Y-m-d'));
+        $ttl = $this->ttlForDate($date);
+
+        return Cache::remember($key, $ttl, function () use ($tenantId, $date) {
+            return $this->statsRepository->getHourlyDistribution($tenantId, $date);
+        });
+    }
+
+    // 決済方法別統計を取得
+    public function getPaymentMethodStats(int $tenantId, Carbon $startDate, Carbon $endDate): array
+    {
+        $key = $this->cacheKey($tenantId, 'payment_methods', $startDate->format('Y-m-d'), $endDate->format('Y-m-d'));
+        $ttl = $this->ttlForDateRange($startDate, $endDate);
+
+        return Cache::remember($key, $ttl, function () use ($tenantId, $startDate, $endDate) {
+            $stats = $this->statsRepository->getPaymentMethodStats($tenantId, $startDate, $endDate);
+
+            $methods = [];
+            $totalCount = 0;
+            $totalAmount = 0;
+
+            foreach (PaymentMethod::cases() as $method) {
+                $data = $stats[$method->value] ?? null;
+                $count = (int) ($data['count'] ?? 0);
+                $amount = (int) ($data['amount'] ?? 0);
+                $methods[] = [
+                    'method' => $method->value,
+                    'label' => $method->label(),
+                    'count' => $count,
+                    'amount' => $amount,
+                ];
+                $totalCount += $count;
+                $totalAmount += $amount;
+            }
+
+            return [
+                'methods' => $methods,
+                'total_count' => $totalCount,
+                'total_amount' => $totalAmount,
+            ];
+        });
+    }
+
+    // 顧客分析データを取得
+    public function getCustomerInsights(int $tenantId, Carbon $startDate, Carbon $endDate): array
+    {
+        $key = $this->cacheKey($tenantId, 'customer_insights', $startDate->format('Y-m-d'), $endDate->format('Y-m-d'));
+        $ttl = $this->ttlForDateRange($startDate, $endDate);
+
+        return Cache::remember($key, $ttl, function () use ($tenantId, $startDate, $endDate) {
+            $dateRange = [$startDate->format('Y-m-d'), $endDate->format('Y-m-d')];
+            $salesStatuses = OrderStatus::salesStatusValues();
+
+            // リピート率算出の母数として、期間内に1回以上注文したユニーク顧客数を取得する
+            $uniqueCustomers = (int) Order::withoutGlobalScope(TenantScope::class)
+                ->where('tenant_id', $tenantId)
+                ->whereBetween('business_date', $dateRange)
+                ->whereIn('status', $salesStatuses)
+                ->distinct('user_id')
+                ->count('user_id');
+
+            // 期間内の顧客のうち、期間前に注文が無い人＝新規顧客と判定する
+            $newCustomers = (int) Order::withoutGlobalScope(TenantScope::class)
+                ->where('tenant_id', $tenantId)
+                ->whereBetween('business_date', $dateRange)
+                ->whereIn('status', $salesStatuses)
+                ->whereNotExists(function ($query) use ($tenantId, $startDate, $salesStatuses) {
+                    $query->select(DB::raw(1))
+                        ->from('orders as prior')
+                        ->whereColumn('prior.user_id', 'orders.user_id')
+                        ->where('prior.tenant_id', $tenantId)
+                        ->where('prior.business_date', '<', $startDate->format('Y-m-d'))
+                        ->whereIn('prior.status', $salesStatuses);
+                })
+                ->distinct()
+                ->count('user_id');
+
+            $repeatCustomers = $uniqueCustomers - $newCustomers;
+            $repeatRate = $uniqueCustomers > 0 ? round(($repeatCustomers / $uniqueCustomers) * 100, 1) : 0;
+
+            return [
+                'unique_customers' => $uniqueCustomers,
+                'new_customers' => $newCustomers,
+                'repeat_customers' => $repeatCustomers,
+                'repeat_rate' => $repeatRate,
+            ];
+        });
+    }
+
+    // 変化率を計算する
+    private function percentChange(int $current, int $previous): ?float
+    {
+        if ($previous === 0) {
+            return $current > 0 ? 100.0 : null;
+        }
+
+        return round((($current - $previous) / $previous) * 100, 1);
+    }
+}
