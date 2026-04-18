@@ -3,16 +3,13 @@
 Fleximo は主に Inertia 経由で動作するため公開 REST API は最小限ですが、以下のエンドポイントは
 外部連携・Webhook・モバイルクライアント向けに用意されています。
 
-OpenAPI 定義のファイルはリポジトリルートに同梱されています（将来的に `docs/reference/openapi.yml` に
-移動予定）。
+## OpenAPI 定義
 
-## 現在の OpenAPI 定義
-
-- ファイル: [`openapi.yml`](../../openapi.yml)
+- ファイル: [`openapi.yml`](./openapi.yml)
 - 閲覧: [Swagger Editor](https://editor.swagger.io/) に貼り付けるか、以下でローカル起動できます。
 
 ```bash
-npx @redocly/cli preview-docs openapi.yml
+npx @redocly/cli preview-docs docs/reference/openapi.yml
 ```
 
 ## 主要エンドポイント

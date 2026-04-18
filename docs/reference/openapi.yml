@@ -1,0 +1,3564 @@
+openapi: "3.1.0"
+
+info:
+  title: Fleximo API
+  version: "1.0.0"
+  description: |
+    マルチテナント型モバイルオーダープラットフォーム **Fleximo** の REST API 仕様。
+
+    ## 認証
+
+    Laravel Sanctum SPAモード（Cookie/Session）を使用。
+
+    ### フロー
+    1. `GET /sanctum/csrf-cookie` にアクセスして `XSRF-TOKEN` Cookie を取得
+    2. ログイン（`POST /login` または `POST /for-business/login`）
+    3. 以降のリクエストには Cookie が自動付与され、`X-XSRF-TOKEN` ヘッダーに XSRF トークンを付与
+
+    ## 冪等性（Idempotency-Key）
+
+    決済関連エンドポイント（`checkout`, `payments/finalize`, `payments/3ds-callback`）には
+    `Idempotency-Key` ヘッダー（UUIDv4 形式）が必須。30分間 TTL で冪等性を保証する。
+
+    ### エラーコード
+
+    | ステータス | メッセージ | 説明 |
+    |---|---|---|
+    | 422 | `Idempotency-Key header is required.` | ヘッダー未送信 |
+    | 400 | `Idempotency-Key header is required.` | ヘッダーが空 |
+    | 400 | `Idempotency-Key must be a UUIDv4 string.` | UUIDv4 形式でない |
+    | 409 | `Idempotency key already used with a different request.` | 同一キーで異なるリクエスト |
+    | 409 | `Request with this Idempotency-Key is currently being processed.` | 処理中の重複 |
+
+    ## レスポンス形式
+
+    `JsonResource::withoutWrapping()` が設定されており、単一リソースには `data` ラッパーは付かない。
+    ページネーション付きコレクションには `data` 配列 + `meta` オブジェクトが含まれる。
+
+servers:
+  - url: https://fleximo.jp
+    description: 本番環境
+  - url: http://localhost
+    description: ローカル開発環境
+
+tags:
+  - name: public
+    description: 認証不要または全認証ユーザーが利用可能（ロール制限なし）
+  - name: tenant
+    description: テナント管理者（tenant_admin）・スタッフ（tenant_staff）向け
+  - name: customer
+    description: 顧客（customer）向け
+  - name: webhooks
+    description: 外部サービス（fincode）からの Webhook 受信
+
+security:
+  - cookieAuth: []
+
+paths:
+
+  # ============================================================
+  # Public
+  # ============================================================
+
+  /api/health:
+    get:
+      tags: [public]
+      summary: ヘルスチェック
+      description: IP ホワイトリストで保護。認証不要。
+      operationId: health.check
+      security: []
+      responses:
+        "200":
+          description: 正常
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+
+  /api/tenants:
+    get:
+      tags: [public]
+      summary: テナント一覧検索
+      description: キーワード・位置情報でテナントを検索する。認証済みユーザー（ロール不問）が利用可能。
+      operationId: tenants.index
+      parameters:
+        - name: query
+          in: query
+          schema:
+            type: string
+            maxLength: 100
+          description: 検索キーワード
+        - name: lat
+          in: query
+          schema:
+            type: number
+            minimum: -90
+            maximum: 90
+          description: 緯度
+        - name: lng
+          in: query
+          schema:
+            type: number
+            minimum: -180
+            maximum: 180
+          description: 経度
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+          description: ページサイズ
+      responses:
+        "200":
+          description: テナント一覧
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Tenant"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+
+  /api/tenants/{tenant}:
+    get:
+      tags: [public]
+      summary: テナント詳細取得
+      description: slug でテナントを取得する。アクティブなテナントのみ返す。
+      operationId: tenants.show
+      parameters:
+        - name: tenant
+          in: path
+          required: true
+          schema:
+            type: string
+          description: テナントの slug
+      responses:
+        "200":
+          description: テナント詳細
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tenant"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+
+  /api/tenants/{tenant}/menu:
+    get:
+      tags: [public]
+      summary: テナントメニュー取得
+      description: テナントのカテゴリ＋商品一覧を返す。アクティブなテナントのみ。
+      operationId: tenants.menu
+      parameters:
+        - name: tenant
+          in: path
+          required: true
+          schema:
+            type: string
+          description: テナントの slug
+      responses:
+        "200":
+          description: メニュー（カテゴリ＋商品のネスト構造）
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PublicMenuCategory"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+
+  # ============================================================
+  # Tenant
+  # ============================================================
+
+  /api/tenant/profile:
+    get:
+      tags: [tenant]
+      summary: テナントプロフィール取得
+      operationId: tenant.profile.show
+      responses:
+        "200":
+          description: テナント詳細
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TenantDetail"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+    patch:
+      tags: [tenant]
+      summary: テナントプロフィール更新
+      description: テナント管理者（tenant_admin）のみ実行可能。
+      operationId: tenant.profile.update
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  maxLength: 255
+                  description: 店舗名
+                address:
+                  type: string
+                  maxLength: 500
+                  description: 住所
+                email:
+                  type: string
+                  format: email
+                  maxLength: 255
+                phone:
+                  type: string
+                  maxLength: 50
+                business_hours:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/BusinessHourInput"
+      responses:
+        "200":
+          description: 更新後のテナント詳細
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TenantDetail"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "422":
+          $ref: "#/components/responses/422UnprocessableEntity"
+
+  /api/tenant/staff:
+    get:
+      tags: [tenant]
+      summary: スタッフ一覧取得
+      description: テナント管理者のみ実行可能（StaffPolicy@viewAny）。
+      operationId: tenant.staff.index
+      responses:
+        "200":
+          description: スタッフ一覧
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Staff"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+    post:
+      tags: [tenant]
+      summary: スタッフ作成
+      description: テナント管理者のみ実行可能（StaffPolicy@create）。
+      operationId: tenant.staff.store
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - email
+                - password
+                - password_confirmation
+              properties:
+                name:
+                  type: string
+                  maxLength: 255
+                email:
+                  type: string
+                  format: email
+                  maxLength: 255
+                password:
+                  type: string
+                  minLength: 8
+                  writeOnly: true
+                password_confirmation:
+                  type: string
+                  minLength: 8
+                  writeOnly: true
+                phone:
+                  type: string
+                  maxLength: 20
+      responses:
+        "201":
+          description: 作成したスタッフ
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Staff"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "422":
+          $ref: "#/components/responses/422UnprocessableEntity"
+
+  /api/tenant/staff/{staff}:
+    parameters:
+      - name: staff
+        in: path
+        required: true
+        schema:
+          type: integer
+        description: スタッフ ID
+    get:
+      tags: [tenant]
+      summary: スタッフ詳細取得
+      description: テナント管理者のみ実行可能（StaffPolicy@view）。
+      operationId: tenant.staff.show
+      responses:
+        "200":
+          description: スタッフ詳細
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Staff"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+    put:
+      tags: [tenant]
+      summary: スタッフ更新
+      description: テナント管理者のみ実行可能（StaffPolicy@update）。
+      operationId: tenant.staff.update
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  maxLength: 255
+                email:
+                  type: string
+                  format: email
+                  maxLength: 255
+                password:
+                  type: string
+                  minLength: 8
+                  writeOnly: true
+                password_confirmation:
+                  type: string
+                  minLength: 8
+                  writeOnly: true
+                phone:
+                  type: string
+                  maxLength: 20
+                is_active:
+                  type: boolean
+      responses:
+        "200":
+          description: 更新後のスタッフ
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Staff"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "422":
+          $ref: "#/components/responses/422UnprocessableEntity"
+    delete:
+      tags: [tenant]
+      summary: スタッフ削除
+      description: テナント管理者のみ実行可能（StaffPolicy@delete）。
+      operationId: tenant.staff.destroy
+      responses:
+        "204":
+          description: 削除済み
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+
+  /api/tenant/menu/categories:
+    get:
+      tags: [tenant]
+      summary: カテゴリ一覧取得
+      operationId: tenant.menu.categories.index
+      responses:
+        "200":
+          description: カテゴリ一覧
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MenuCategory"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+    post:
+      tags: [tenant]
+      summary: カテゴリ作成
+      description: テナント管理者のみ実行可能（MenuCategoryPolicy@create）。
+      operationId: tenant.menu.categories.store
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+                  maxLength: 100
+                sort_order:
+                  type: integer
+                  minimum: 0
+                is_active:
+                  type: boolean
+                  default: true
+      responses:
+        "201":
+          description: 作成したカテゴリ
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MenuCategory"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "422":
+          $ref: "#/components/responses/422UnprocessableEntity"
+
+  /api/tenant/menu/categories/reorder:
+    post:
+      tags: [tenant]
+      summary: カテゴリ並び替え
+      description: テナント管理者のみ実行可能（MenuCategoryPolicy@reorder）。
+      operationId: tenant.menu.categories.reorder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - ordered_ids
+              properties:
+                ordered_ids:
+                  type: array
+                  description: 新しい並び順のカテゴリ ID 配列
+                  items:
+                    type: integer
+      responses:
+        "200":
+          description: 並び替え完了
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "並び順を更新しました。"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "422":
+          $ref: "#/components/responses/422UnprocessableEntity"
+
+  /api/tenant/menu/categories/{category}:
+    parameters:
+      - name: category
+        in: path
+        required: true
+        schema:
+          type: integer
+        description: カテゴリ ID
+    get:
+      tags: [tenant]
+      summary: カテゴリ詳細取得
+      operationId: tenant.menu.categories.show
+      responses:
+        "200":
+          description: カテゴリ詳細
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MenuCategory"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+    put:
+      tags: [tenant]
+      summary: カテゴリ更新
+      description: テナント管理者のみ実行可能（MenuCategoryPolicy@update）。
+      operationId: tenant.menu.categories.update
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  maxLength: 100
+                sort_order:
+                  type: integer
+                  minimum: 0
+                is_active:
+                  type: boolean
+      responses:
+        "200":
+          description: 更新後のカテゴリ
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MenuCategory"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "422":
+          $ref: "#/components/responses/422UnprocessableEntity"
+    delete:
+      tags: [tenant]
+      summary: カテゴリ削除
+      description: テナント管理者のみ実行可能（MenuCategoryPolicy@delete）。
+      operationId: tenant.menu.categories.destroy
+      responses:
+        "204":
+          description: 削除済み
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+
+  /api/tenant/menu/items:
+    get:
+      tags: [tenant]
+      summary: 商品一覧取得
+      operationId: tenant.menu.items.index
+      responses:
+        "200":
+          description: 商品一覧
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MenuItem"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+    post:
+      tags: [tenant]
+      summary: 商品作成
+      description: テナント管理者のみ実行可能（MenuItemPolicy@create）。
+      operationId: tenant.menu.items.store
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MenuItemInput"
+      responses:
+        "201":
+          description: 作成した商品
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MenuItem"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "422":
+          $ref: "#/components/responses/422UnprocessableEntity"
+
+  /api/tenant/menu/items/{item}:
+    parameters:
+      - name: item
+        in: path
+        required: true
+        schema:
+          type: integer
+        description: 商品 ID
+    get:
+      tags: [tenant]
+      summary: 商品詳細取得
+      description: categories と optionGroups.options をロードして返す。
+      operationId: tenant.menu.items.show
+      responses:
+        "200":
+          description: 商品詳細
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MenuItem"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+    put:
+      tags: [tenant]
+      summary: 商品更新
+      description: テナント管理者のみ実行可能（MenuItemPolicy@update）。全フィールド部分更新可能。
+      operationId: tenant.menu.items.update
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MenuItemInput"
+      responses:
+        "200":
+          description: 更新後の商品
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MenuItem"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "422":
+          $ref: "#/components/responses/422UnprocessableEntity"
+    delete:
+      tags: [tenant]
+      summary: 商品削除
+      description: テナント管理者のみ実行可能（MenuItemPolicy@delete）。
+      operationId: tenant.menu.items.destroy
+      responses:
+        "204":
+          description: 削除済み
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+
+  /api/tenant/menu/items/{item}/sold-out:
+    patch:
+      tags: [tenant]
+      summary: 売り切れ状態トグル
+      description: |
+        is_sold_out を切り替える。
+        テナント管理者・スタッフ共に実行可能（MenuItemPolicy@toggleSoldOut）。
+      operationId: tenant.menu.items.sold-out
+      parameters:
+        - name: item
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: 商品 ID
+      responses:
+        "200":
+          description: 更新後の商品
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MenuItem"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+
+  /api/tenant/menu/items/{item}/option-groups:
+    post:
+      tags: [tenant]
+      summary: 商品へオプショングループを紐付け
+      description: テナント管理者のみ実行可能（MenuItemPolicy@manageOptionGroups）。
+      operationId: tenant.menu.items.option-groups.attach
+      parameters:
+        - name: item
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: 商品 ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - option_group_id
+              properties:
+                option_group_id:
+                  type: integer
+                  description: 紐付けるオプショングループ ID
+      responses:
+        "200":
+          description: 更新後の商品
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MenuItem"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "422":
+          $ref: "#/components/responses/422UnprocessableEntity"
+
+  /api/tenant/menu/items/{item}/option-groups/{optionGroup}:
+    delete:
+      tags: [tenant]
+      summary: 商品からオプショングループ紐付け解除
+      description: テナント管理者のみ実行可能（MenuItemPolicy@manageOptionGroups）。
+      operationId: tenant.menu.items.option-groups.detach
+      parameters:
+        - name: item
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: 商品 ID
+        - name: optionGroup
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: オプショングループ ID
+      responses:
+        "200":
+          description: 更新後の商品
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MenuItem"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+
+  /api/tenant/option-groups:
+    get:
+      tags: [tenant]
+      summary: オプショングループ一覧取得
+      operationId: tenant.option-groups.index
+      responses:
+        "200":
+          description: オプショングループ一覧
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/OptionGroup"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+    post:
+      tags: [tenant]
+      summary: オプショングループ作成
+      description: テナント管理者のみ実行可能（OptionGroupPolicy@create）。
+      operationId: tenant.option-groups.store
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+                  maxLength: 255
+                required:
+                  type: boolean
+                  default: false
+                  description: 必須選択か
+                min_select:
+                  type: integer
+                  minimum: 0
+                  default: 0
+                max_select:
+                  type: integer
+                  minimum: 1
+                  default: 1
+                sort_order:
+                  type: integer
+                  minimum: 0
+                is_active:
+                  type: boolean
+                  default: true
+      responses:
+        "201":
+          description: 作成したオプショングループ
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OptionGroup"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "422":
+          $ref: "#/components/responses/422UnprocessableEntity"
+
+  /api/tenant/option-groups/{optionGroup}:
+    parameters:
+      - name: optionGroup
+        in: path
+        required: true
+        schema:
+          type: integer
+        description: オプショングループ ID
+    get:
+      tags: [tenant]
+      summary: オプショングループ詳細取得
+      description: options をロードして返す。
+      operationId: tenant.option-groups.show
+      responses:
+        "200":
+          description: オプショングループ詳細
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OptionGroup"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+    put:
+      tags: [tenant]
+      summary: オプショングループ更新
+      description: テナント管理者のみ実行可能（OptionGroupPolicy@update）。全フィールド部分更新可能。
+      operationId: tenant.option-groups.update
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  maxLength: 255
+                required:
+                  type: boolean
+                min_select:
+                  type: integer
+                  minimum: 0
+                max_select:
+                  type: integer
+                  minimum: 1
+                sort_order:
+                  type: integer
+                  minimum: 0
+                is_active:
+                  type: boolean
+      responses:
+        "200":
+          description: 更新後のオプショングループ
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OptionGroup"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "422":
+          $ref: "#/components/responses/422UnprocessableEntity"
+    delete:
+      tags: [tenant]
+      summary: オプショングループ削除
+      description: テナント管理者のみ実行可能（OptionGroupPolicy@delete）。
+      operationId: tenant.option-groups.destroy
+      responses:
+        "204":
+          description: 削除済み
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+
+  /api/tenant/option-groups/{optionGroup}/options:
+    parameters:
+      - name: optionGroup
+        in: path
+        required: true
+        schema:
+          type: integer
+        description: オプショングループ ID
+    get:
+      tags: [tenant]
+      summary: オプション一覧取得
+      operationId: tenant.option-groups.options.index
+      responses:
+        "200":
+          description: オプション一覧
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Option"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+    post:
+      tags: [tenant]
+      summary: オプション作成
+      description: テナント管理者のみ実行可能（OptionPolicy@create）。
+      operationId: tenant.option-groups.options.store
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+                  maxLength: 255
+                price:
+                  type: integer
+                  minimum: -999999
+                  maximum: 999999
+                  description: 追加料金（円）
+                sort_order:
+                  type: integer
+                  minimum: 0
+                is_active:
+                  type: boolean
+      responses:
+        "201":
+          description: 作成したオプション
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Option"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "422":
+          $ref: "#/components/responses/422UnprocessableEntity"
+
+  /api/tenant/option-groups/{optionGroup}/options/{option}:
+    parameters:
+      - name: optionGroup
+        in: path
+        required: true
+        schema:
+          type: integer
+        description: オプショングループ ID
+      - name: option
+        in: path
+        required: true
+        schema:
+          type: integer
+        description: オプション ID
+    put:
+      tags: [tenant]
+      summary: オプション更新
+      description: テナント管理者のみ実行可能（OptionPolicy@update）。全フィールド部分更新可能。
+      operationId: tenant.option-groups.options.update
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  maxLength: 255
+                price:
+                  type: integer
+                  minimum: -999999
+                  maximum: 999999
+                sort_order:
+                  type: integer
+                  minimum: 0
+                is_active:
+                  type: boolean
+      responses:
+        "200":
+          description: 更新後のオプション
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Option"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "422":
+          $ref: "#/components/responses/422UnprocessableEntity"
+    delete:
+      tags: [tenant]
+      summary: オプション削除
+      description: テナント管理者のみ実行可能（OptionPolicy@delete）。
+      operationId: tenant.option-groups.options.destroy
+      responses:
+        "204":
+          description: 削除済み
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+
+  /api/tenant/kds/orders:
+    get:
+      tags: [tenant]
+      summary: KDS 注文一覧取得
+      description: |
+        KDS（キッチンディスプレイ）用の注文一覧。ステータス・営業日・更新日時でフィルタ可能。
+        `updated_since` を使った差分ポーリングをサポート。
+        レート制限: 60 リクエスト/分。
+      operationId: tenant.kds.orders.index
+      parameters:
+        - name: "statuses[]"
+          in: query
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/OrderStatus"
+          style: form
+          explode: true
+          description: フィルタするステータスの配列
+        - name: business_date
+          in: query
+          schema:
+            type: string
+            format: date
+            example: "2026-03-20"
+          description: 営業日（Y-m-d 形式）
+        - name: updated_since
+          in: query
+          schema:
+            type: string
+            format: date-time
+            example: "2026-03-20T12:00:00+09:00"
+          description: この日時以降に更新された注文のみ取得（差分ポーリング用）
+      responses:
+        "200":
+          description: KDS 注文一覧
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/KdsOrder"
+                  meta:
+                    type: object
+                    properties:
+                      server_time:
+                        type: string
+                        format: date-time
+                        example: "2026-03-20T12:00:00+09:00"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+
+  /api/tenant/kds/orders/{order}:
+    get:
+      tags: [tenant]
+      summary: KDS 注文詳細取得
+      operationId: tenant.kds.orders.show
+      parameters:
+        - name: order
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: 注文 ID
+      responses:
+        "200":
+          description: KDS 注文詳細
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KdsOrder"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+
+  /api/tenant/kds/orders/{order}/status:
+    patch:
+      tags: [tenant]
+      summary: 注文ステータス更新
+      description: |
+        KDS からの注文ステータス更新。
+        更新可能ステータス: accepted, in_progress, ready, completed, cancelled
+      operationId: tenant.kds.orders.status
+      parameters:
+        - name: order
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: 注文 ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - status
+              properties:
+                status:
+                  $ref: "#/components/schemas/KdsStatusUpdate"
+      responses:
+        "200":
+          description: 更新後の KDS 注文
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/KdsOrder"
+                  message:
+                    type: string
+                    example: "注文を「調理中」に更新しました。"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "422":
+          $ref: "#/components/responses/422UnprocessableEntity"
+
+  /api/tenant/order-pause/status:
+    get:
+      tags: [tenant]
+      summary: 注文受付一時停止状態取得
+      operationId: tenant.order-pause.status
+      responses:
+        "200":
+          description: 一時停止状態
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/OrderPauseStatus"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+
+  /api/tenant/order-pause/toggle:
+    post:
+      tags: [tenant]
+      summary: 注文受付一時停止トグル
+      description: 注文受付の一時停止/再開を切り替える。
+      operationId: tenant.order-pause.toggle
+      responses:
+        "200":
+          description: トグル後の一時停止状態
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/OrderPauseStatus"
+                  message:
+                    type: string
+                    example: "注文受付を一時停止しました。"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+
+  /api/tenant/dashboard/summary:
+    get:
+      tags: [tenant]
+      summary: ダッシュボード日次サマリー取得
+      operationId: tenant.dashboard.summary
+      parameters:
+        - name: date
+          in: query
+          schema:
+            type: string
+            format: date
+            example: "2026-03-20"
+          description: "対象日（デフォルト: 今日）"
+      responses:
+        "200":
+          description: 日次サマリー
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardSummary"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+
+  /api/tenant/dashboard/hourly:
+    get:
+      tags: [tenant]
+      summary: 時間帯別売上取得
+      operationId: tenant.dashboard.hourly
+      parameters:
+        - name: date
+          in: query
+          schema:
+            type: string
+            format: date
+            example: "2026-03-20"
+          description: "対象日（デフォルト: 今日）"
+      responses:
+        "200":
+          description: 時間帯別売上データ
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        hour:
+                          type: integer
+                          minimum: 0
+                          maximum: 23
+                          description: 時間（0〜23）
+                        sales:
+                          type: integer
+                          description: 売上金額（円）
+                        orders:
+                          type: integer
+                          description: 注文数
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+
+  /api/tenant/dashboard/sales:
+    get:
+      tags: [tenant]
+      summary: 売上推移データ取得
+      operationId: tenant.dashboard.sales
+      parameters:
+        - name: period
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [daily, weekly, monthly]
+          description: 集計期間
+        - name: start_date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+            example: "2026-03-01"
+          description: 開始日（Y-m-d 形式）
+        - name: end_date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+            example: "2026-03-20"
+          description: 終了日（Y-m-d 形式、start_date 以降）
+      responses:
+        "200":
+          description: 売上推移データ
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SalesData"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "422":
+          $ref: "#/components/responses/422UnprocessableEntity"
+
+  /api/tenant/dashboard/top-items:
+    get:
+      tags: [tenant]
+      summary: 人気商品ランキング取得
+      operationId: tenant.dashboard.top-items
+      parameters:
+        - name: period
+          in: query
+          schema:
+            type: string
+            enum: [week, month, year]
+            default: month
+          description: 集計期間
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 10
+          description: 取得件数
+      responses:
+        "200":
+          description: 人気商品ランキング
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TopItem"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+
+  /api/tenant/dashboard/payment-methods:
+    get:
+      tags: [tenant]
+      summary: 決済手段別統計取得
+      operationId: tenant.dashboard.payment-methods
+      parameters:
+        - name: start_date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+            example: "2026-03-01"
+        - name: end_date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+            example: "2026-03-20"
+      responses:
+        "200":
+          description: 決済手段別統計
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        method:
+                          $ref: "#/components/schemas/PaymentMethod"
+                        method_label:
+                          type: string
+                          example: "クレジットカード"
+                        count:
+                          type: integer
+                        sales:
+                          type: integer
+                          description: 売上金額（円）
+                        percentage:
+                          type: number
+                          format: float
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "422":
+          $ref: "#/components/responses/422UnprocessableEntity"
+
+  /api/tenant/dashboard/customer-insights:
+    get:
+      tags: [tenant]
+      summary: 顧客インサイト取得
+      operationId: tenant.dashboard.customer-insights
+      parameters:
+        - name: start_date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+            example: "2026-03-01"
+        - name: end_date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+            example: "2026-03-20"
+      responses:
+        "200":
+          description: 顧客インサイトデータ
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      total_customers:
+                        type: integer
+                      new_customers:
+                        type: integer
+                      repeat_customers:
+                        type: integer
+                      average_order_value:
+                        type: integer
+                      average_orders_per_customer:
+                        type: number
+                        format: float
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "422":
+          $ref: "#/components/responses/422UnprocessableEntity"
+
+  /api/tenant/dashboard/export/csv:
+    get:
+      tags: [tenant]
+      summary: 売上 CSV エクスポート
+      description: |
+        売上データを CSV ファイルとしてダウンロードする。
+        レート制限なし（ゲートで `dashboard.exportCsv` を確認）。
+        ファイル名: `sales_export_{tenantId}_{startDate}_{endDate}.csv`
+      operationId: tenant.dashboard.export.csv
+      parameters:
+        - name: start_date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+            example: "2026-03-01"
+          description: 開始日
+        - name: end_date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+            example: "2026-03-20"
+          description: 終了日（最大 366 日間）
+      responses:
+        "200":
+          description: CSV ファイル
+          headers:
+            Content-Disposition:
+              schema:
+                type: string
+                example: 'attachment; filename="sales_export_1_2026-03-01_2026-03-20.csv"'
+          content:
+            text/csv:
+              schema:
+                type: string
+                description: UTF-8 エンコードの CSV データ
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "422":
+          $ref: "#/components/responses/422UnprocessableEntity"
+
+  # ============================================================
+  # Customer
+  # ============================================================
+
+  /api/customer/cart:
+    get:
+      tags: [customer]
+      summary: カート一覧取得
+      description: 全テナント分のカートを取得する。
+      operationId: customer.cart.index
+      responses:
+        "200":
+          description: カート一覧
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Cart"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+
+  /api/customer/cart/items:
+    post:
+      tags: [customer]
+      summary: カートにアイテム追加
+      description: |
+        商品をカートに追加する。テナントごとに 1 カートが自動作成される。
+        追加バリデーション: テナントアクティブ・商品のテナント所属・オプション紐付け確認。
+      operationId: customer.cart.items.store
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - tenant_id
+                - menu_item_id
+                - quantity
+              properties:
+                tenant_id:
+                  type: integer
+                  description: テナント ID
+                menu_item_id:
+                  type: integer
+                  description: 商品 ID
+                quantity:
+                  type: integer
+                  minimum: 1
+                  maximum: 99
+                  description: 数量
+                option_ids:
+                  type: array
+                  items:
+                    type: integer
+                  description: オプション ID の配列
+      responses:
+        "201":
+          description: 更新後のカート
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cart"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "422":
+          $ref: "#/components/responses/422UnprocessableEntity"
+
+  /api/customer/cart/items/{cartItem}:
+    parameters:
+      - name: cartItem
+        in: path
+        required: true
+        schema:
+          type: integer
+        description: カートアイテム ID
+    patch:
+      tags: [customer]
+      summary: カートアイテム更新
+      description: 数量・オプションを更新する（CartItemPolicy@update）。
+      operationId: customer.cart.items.update
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quantity:
+                  type: integer
+                  minimum: 1
+                  maximum: 99
+                option_ids:
+                  type: array
+                  items:
+                    type: integer
+      responses:
+        "200":
+          description: 更新後のカートアイテム
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CartItem"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "422":
+          $ref: "#/components/responses/422UnprocessableEntity"
+    delete:
+      tags: [customer]
+      summary: カートアイテム削除
+      description: カート内の特定の商品を削除する（CartItemPolicy@delete）。
+      operationId: customer.cart.items.destroy
+      responses:
+        "204":
+          description: 削除済み
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+
+  /api/customer/cart/{cart}:
+    delete:
+      tags: [customer]
+      summary: カート全削除
+      description: カート内の全商品を削除する（CartPolicy@delete）。
+      operationId: customer.cart.destroy
+      parameters:
+        - name: cart
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: カート ID
+      responses:
+        "204":
+          description: 削除済み
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+
+  /api/customer/orders:
+    get:
+      tags: [customer]
+      summary: 注文一覧取得
+      description: 全テナント横断で注文履歴を取得する。
+      operationId: customer.orders.index
+      parameters:
+        - name: status
+          in: query
+          schema:
+            $ref: "#/components/schemas/OrderStatus"
+          description: ステータスでフィルタ
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+          description: ページ番号
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 20
+          description: 1 ページあたりの件数
+        - name: sort_by
+          in: query
+          schema:
+            type: string
+          description: ソートカラム
+        - name: sort_dir
+          in: query
+          schema:
+            type: string
+            enum: [asc, desc]
+          description: ソート方向
+      responses:
+        "200":
+          description: 注文一覧（ページネーション付き）
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/OrderSummary"
+                  meta:
+                    $ref: "#/components/schemas/PaginationMeta"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+
+  /api/customer/orders/{order}:
+    get:
+      tags: [customer]
+      summary: 注文詳細取得
+      operationId: customer.orders.show
+      parameters:
+        - name: order
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: 注文 ID
+      responses:
+        "200":
+          description: 注文詳細
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OrderDetail"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+
+  /api/customer/orders/{order}/status:
+    get:
+      tags: [customer]
+      summary: 注文ステータス取得（ポーリング用）
+      description: |
+        注文ステータスのみを返す軽量エンドポイント。ステータスのポーリングに使用する。
+        レート制限: 120 リクエスト/分（通常 API の 2 倍）。
+      operationId: customer.orders.status
+      parameters:
+        - name: order
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: 注文 ID
+      responses:
+        "200":
+          description: 注文ステータス
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      status:
+                        $ref: "#/components/schemas/OrderStatus"
+                      status_label:
+                        type: string
+                        example: "調理中"
+                      is_terminal:
+                        type: boolean
+                        description: 終端ステータス（completed, cancelled, refunded など）か
+                      ready_at:
+                        type: [string, "null"]
+                        format: date-time
+                      updated_at:
+                        type: string
+                        format: date-time
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+
+  /api/customer/orders/{order}/reorder:
+    post:
+      tags: [customer]
+      summary: 再注文
+      description: 過去の注文内容をカートに再投入する（OrderPolicy@reorder）。
+      operationId: customer.orders.reorder
+      parameters:
+        - name: order
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: 注文 ID
+      responses:
+        "200":
+          description: 再注文後のカート
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Cart"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+
+  /api/customer/checkout:
+    post:
+      tags: [customer]
+      summary: チェックアウト（注文作成＋決済開始）
+      description: |
+        カートから注文を作成し、決済を開始する。
+        `Idempotency-Key` ヘッダー（UUIDv4）が必須。
+        レート制限: 10 リクエスト/分（`payment` レート）。
+      operationId: customer.checkout
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - cart_id
+                - payment_method
+              properties:
+                cart_id:
+                  type: integer
+                  description: カート ID
+                payment_method:
+                  $ref: "#/components/schemas/PaymentMethod"
+                card_id:
+                  type: [integer, "null"]
+                  description: 保存済みカード ID（card 決済時に使用）
+      responses:
+        "201":
+          description: 注文作成＋決済開始完了
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      order:
+                        $ref: "#/components/schemas/OrderDetail"
+                      payment:
+                        $ref: "#/components/schemas/OrderPayment"
+                      redirect_url:
+                        type: [string, "null"]
+                        format: uri
+                        description: PayPay 等、外部決済画面へのリダイレクト URL
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "409":
+          $ref: "#/components/responses/409Conflict"
+        "422":
+          $ref: "#/components/responses/422UnprocessableEntity"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+
+  /api/customer/payments/finalize:
+    post:
+      tags: [customer]
+      summary: 決済確定
+      description: |
+        3DS 認証付きカード決済の実行、または PayPay 決済完了の確認を行う。
+        `Idempotency-Key` ヘッダー（UUIDv4）が必須。
+        レート制限: 30 リクエスト/分（`finalize` レート）。
+      operationId: customer.payments.finalize
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - payment_id
+              properties:
+                payment_id:
+                  type: integer
+                  description: 決済 ID
+                token:
+                  type: [string, "null"]
+                  description: カードトークン（カード決済時）
+                save_card:
+                  type: [boolean, "null"]
+                  description: カードを保存するか
+                save_as_default:
+                  type: [boolean, "null"]
+                  description: デフォルトカードとして保存するか
+      responses:
+        "200":
+          description: 決済結果
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - description: 3DS リダイレクトが必要
+                    type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          requires_3ds_redirect:
+                            type: boolean
+                            example: true
+                          redirect_url:
+                            type: string
+                            format: uri
+                          payment_id:
+                            type: integer
+                  - description: PayPay 決済確認中
+                    type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          payment_pending:
+                            type: boolean
+                            example: true
+                          order_id:
+                            type: integer
+                  - description: 決済完了
+                    type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          order:
+                            $ref: "#/components/schemas/OrderDetail"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "409":
+          $ref: "#/components/responses/409Conflict"
+        "422":
+          $ref: "#/components/responses/422UnprocessableEntity"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+
+  /api/customer/payments/3ds-callback:
+    post:
+      tags: [customer]
+      summary: 3DS コールバック処理
+      description: |
+        3DS 認証完了後のコールバックを処理する。
+        `Idempotency-Key` ヘッダー（UUIDv4）が必須。
+        レート制限: 10 リクエスト/分（`payment` レート）。
+      operationId: customer.payments.3ds-callback
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - payment_id
+                - param
+              properties:
+                payment_id:
+                  type: integer
+                  description: 決済 ID
+                param:
+                  type: string
+                  description: 3DS 認証パラメータ
+                event:
+                  type: [string, "null"]
+                  description: イベント種別
+      responses:
+        "200":
+          description: コールバック処理結果
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - description: 追加認証が必要
+                    type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          requires_3ds_redirect:
+                            type: boolean
+                            example: true
+                          redirect_url:
+                            type: string
+                            format: uri
+                          payment_id:
+                            type: integer
+                  - description: 認証成功・決済完了
+                    type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          order:
+                            $ref: "#/components/schemas/OrderDetail"
+        "400":
+          description: 3DS 認証失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "3DS認証に失敗しました。別のカードをお試しください。"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "409":
+          $ref: "#/components/responses/409Conflict"
+        "422":
+          $ref: "#/components/responses/422UnprocessableEntity"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+
+  /api/customer/favorites:
+    get:
+      tags: [customer]
+      summary: お気に入り店舗 ID 一覧取得
+      operationId: customer.favorites.index
+      responses:
+        "200":
+          description: お気に入りのテナント ID 一覧
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: integer
+                    example: [1, 5, 12]
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+
+  /api/customer/favorites/tenants/{tenant}:
+    post:
+      tags: [customer]
+      summary: お気に入りトグル
+      description: お気に入りの追加/解除をトグルする。
+      operationId: customer.favorites.toggle
+      parameters:
+        - name: tenant
+          in: path
+          required: true
+          schema:
+            type: string
+          description: テナントの slug
+      responses:
+        "200":
+          description: トグル後のお気に入り状態
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  is_favorited:
+                    type: boolean
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+
+  /api/customer/tenants/{tenant}/cards:
+    parameters:
+      - name: tenant
+        in: path
+        required: true
+        schema:
+          type: string
+        description: テナントの slug
+    get:
+      tags: [customer]
+      summary: カード一覧取得
+      description: テナントごとに登録されたカード一覧を取得する。
+      operationId: customer.cards.index
+      responses:
+        "200":
+          description: カード一覧
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/FincodeCard"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+    post:
+      tags: [customer]
+      summary: カード登録
+      description: fincode にカードを登録する。
+      operationId: customer.cards.store
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - token
+              properties:
+                token:
+                  type: string
+                  description: fincode 発行のカードトークン
+                is_default:
+                  type: boolean
+                  default: true
+                  description: デフォルトカードとして登録するか
+      responses:
+        "201":
+          description: 登録済みカード
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/FincodeCard"
+                  message:
+                    type: string
+                    example: "カードを登録しました。"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "422":
+          $ref: "#/components/responses/422UnprocessableEntity"
+
+  /api/customer/tenants/{tenant}/cards/{card}:
+    delete:
+      tags: [customer]
+      summary: カード削除
+      description: 登録済みのカードを削除する。
+      operationId: customer.cards.destroy
+      parameters:
+        - name: tenant
+          in: path
+          required: true
+          schema:
+            type: string
+          description: テナントの slug
+        - name: card
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: カード ID
+      responses:
+        "200":
+          description: 削除完了
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "カードを削除しました。"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          description: カード未検出
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "カードが見つかりませんでした。"
+
+  # ============================================================
+  # Webhooks
+  # ============================================================
+
+  /api/webhooks/payments/{tenantId}:
+    post:
+      tags: [webhooks]
+      summary: fincode 決済 Webhook 受信
+      description: |
+        fincode からの決済イベント通知を受信する。認証不要。
+        HMAC-SHA256 署名検証（`Fincode-Signature` ヘッダー）とタイムスタンプ検証で保護。
+        エラー原因に関わらず常に `{"status": "accepted"}` を返す（探索攻撃防止）。
+
+        **サポートイベント**:
+        - `payment.completed` - クレジットカード決済完了
+        - `payment.failed` - 決済失敗
+        - `payment.refunded` - 返金完了
+        - `payments.paypay.regis` - PayPay 決済登録
+        - `payments.paypay.exec` - PayPay 決済実行
+        - `payments.paypay.capture` - PayPay キャプチャ
+        - `payments.paypay.complete` - PayPay 決済完了
+      operationId: webhooks.payments.handle
+      security: []
+      parameters:
+        - name: tenantId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: 対象テナント ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: fincode から送信される Webhook ペイロード
+              properties:
+                event:
+                  type: string
+                  description: イベントタイプ
+                  example: "payment.completed"
+                id:
+                  type: string
+                  description: fincode 固有の決済 ID
+                order_id:
+                  type: string
+                  description: 注文に紐づく決済 ID（フォールバック用）
+                status:
+                  type: string
+                  description: 決済ステータス（PayPay 系イベントで使用）
+                created:
+                  type: string
+                  description: イベント作成日時（タイムスタンプ検証に使用）
+      responses:
+        "200":
+          description: 受付完了（常にこのレスポンスを返す）
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [accepted]
+                    example: accepted
+
+# ============================================================
+# Components
+# ============================================================
+
+components:
+
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: fleximo_session
+      description: |
+        Laravel Sanctum SPA モード認証。
+        `/sanctum/csrf-cookie` で XSRF トークンを取得後、
+        `X-XSRF-TOKEN` ヘッダーに付与する。
+
+  parameters:
+    IdempotencyKeyHeader:
+      name: Idempotency-Key
+      in: header
+      required: true
+      schema:
+        type: string
+        format: uuid
+        example: "550e8400-e29b-41d4-a716-446655440000"
+      description: |
+        冪等性キー（UUIDv4 形式）。決済エンドポイントで必須。
+        30 分間 TTL で同一キーの再リクエストに対しキャッシュ済みレスポンスを返す。
+
+  responses:
+    400BadRequest:
+      description: リクエストが不正（冪等キーが空または UUIDv4 形式エラーを含む）
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          examples:
+            emptyIdempotencyKey:
+              summary: 冪等キーが空
+              value:
+                message: "Idempotency-Key header is required."
+            invalidIdempotencyKey:
+              summary: UUIDv4 形式エラー
+              value:
+                message: "Idempotency-Key must be a UUIDv4 string."
+    401Unauthorized:
+      description: 未認証
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            message: "アカウントが無効化されています。管理者にお問い合わせください。"
+    403Forbidden:
+      description: 権限なし
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            message: "このアクションを実行する権限がありません。"
+    404NotFound:
+      description: リソース未発見
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            message: "テナントが見つかりません"
+    409Conflict:
+      description: 競合（冪等キー競合を含む）
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          examples:
+            differentRequest:
+              summary: 異なるリクエストで同一キー使用済み
+              value:
+                message: "Idempotency key already used with a different request."
+            processing:
+              summary: 処理中の重複リクエスト
+              value:
+                message: "Request with this Idempotency-Key is currently being processed."
+    422UnprocessableEntity:
+      description: バリデーションエラー（冪等キー未送信を含む）
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ValidationErrorResponse"
+          examples:
+            validation:
+              summary: 通常のバリデーションエラー
+              value:
+                message: "The given data was invalid."
+                errors:
+                  email: ["メールアドレスは必須です。"]
+            missingIdempotencyKey:
+              summary: 冪等キーヘッダー未送信
+              value:
+                message: "Idempotency-Key header is required."
+                errors: {}
+    429TooManyRequests:
+      description: レート制限超過
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            message: "Too Many Requests"
+
+  schemas:
+
+    # --------------------------------------------------------
+    # Enums
+    # --------------------------------------------------------
+
+    OrderStatus:
+      type: string
+      description: 注文ステータス
+      enum:
+        - pending_payment
+        - paid
+        - accepted
+        - in_progress
+        - ready
+        - completed
+        - cancelled
+        - payment_failed
+        - refunded
+      x-enum-descriptions:
+        pending_payment: 決済待ち
+        paid: 決済完了
+        accepted: 受付済み
+        in_progress: 調理中
+        ready: 準備完了
+        completed: 完了
+        cancelled: キャンセル
+        payment_failed: 決済失敗
+        refunded: 返金済み
+
+    PaymentStatus:
+      type: string
+      description: 決済ステータス
+      enum:
+        - pending
+        - processing
+        - completed
+        - failed
+      x-enum-descriptions:
+        pending: 決済待ち
+        processing: 処理中
+        completed: 完了
+        failed: 失敗
+
+    PaymentMethod:
+      type: string
+      description: 決済方法
+      enum:
+        - card
+        - paypay
+      x-enum-descriptions:
+        card: クレジットカード
+        paypay: PayPay
+
+    KdsStatusUpdate:
+      type: string
+      description: KDS から更新可能な注文ステータス
+      enum:
+        - accepted
+        - in_progress
+        - ready
+        - completed
+        - cancelled
+
+    # --------------------------------------------------------
+    # Common
+    # --------------------------------------------------------
+
+    ErrorResponse:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          description: エラーメッセージ
+
+    ValidationErrorResponse:
+      type: object
+      required:
+        - message
+        - errors
+      properties:
+        message:
+          type: string
+          example: "The given data was invalid."
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+          description: フィールドごとのエラーメッセージ配列
+          example:
+            email: ["メールアドレスは必須です。"]
+            password: ["パスワードは8文字以上で入力してください。"]
+
+    PaginationMeta:
+      type: object
+      required:
+        - current_page
+        - per_page
+        - total
+        - last_page
+      properties:
+        current_page:
+          type: integer
+          example: 1
+        per_page:
+          type: integer
+          example: 20
+        total:
+          type: integer
+          example: 50
+        last_page:
+          type: integer
+          example: 3
+
+    # --------------------------------------------------------
+    # Entity Schemas (dependency order)
+    # --------------------------------------------------------
+
+    Option:
+      type: object
+      description: オプション（OptionResource）
+      required:
+        - id
+        - option_group_id
+        - name
+        - price
+        - sort_order
+        - is_active
+      properties:
+        id:
+          type: integer
+        option_group_id:
+          type: integer
+        name:
+          type: string
+          example: "大盛り"
+        price:
+          type: integer
+          description: 追加料金（円）。マイナス値可（値引き）
+          example: 100
+        sort_order:
+          type: integer
+          example: 0
+        is_active:
+          type: boolean
+
+    OptionGroup:
+      type: object
+      description: オプショングループ（OptionGroupResource）
+      required:
+        - id
+        - name
+        - required
+        - min_select
+        - max_select
+        - sort_order
+        - is_active
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+          example: "サイズ選択"
+        required:
+          type: boolean
+          description: 必須選択か
+        min_select:
+          type: integer
+          description: 最小選択数
+          example: 0
+        max_select:
+          type: integer
+          description: 最大選択数
+          example: 1
+        sort_order:
+          type: integer
+          example: 0
+        is_active:
+          type: boolean
+        options:
+          type: array
+          description: オプション一覧（whenLoaded）
+          items:
+            $ref: "#/components/schemas/Option"
+
+    MenuCategory:
+      type: object
+      description: メニューカテゴリ（MenuCategoryResource）
+      required:
+        - id
+        - name
+        - sort_order
+        - is_active
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+          maxLength: 100
+          example: "ドリンク"
+        sort_order:
+          type: integer
+          example: 0
+        is_active:
+          type: boolean
+
+    NutritionInfo:
+      type: object
+      description: 栄養成分情報
+      properties:
+        energy:
+          type: number
+          minimum: 0
+          description: エネルギー（kcal）
+        protein:
+          type: number
+          minimum: 0
+          description: たんぱく質（g）
+        fat:
+          type: number
+          minimum: 0
+          description: 脂質（g）
+        carbohydrate:
+          type: number
+          minimum: 0
+          description: 炭水化物（g）
+        salt:
+          type: number
+          minimum: 0
+          description: 食塩相当量（g）
+
+    MenuItem:
+      type: object
+      description: メニュー商品（MenuItemResource）
+      required:
+        - id
+        - name
+        - price
+        - is_active
+        - is_sold_out
+        - available_days
+        - sort_order
+        - allergens
+        - allergen_advisories
+        - is_available
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+          maxLength: 100
+          example: "から揚げ定食"
+        description:
+          type: [string, "null"]
+          maxLength: 1000
+        price:
+          type: integer
+          minimum: 0
+          maximum: 999999
+          description: 価格（円）
+          example: 850
+        is_active:
+          type: boolean
+        is_sold_out:
+          type: boolean
+        available_from:
+          type: [string, "null"]
+          pattern: '^\d{2}:\d{2}$'
+          description: 提供開始時刻（HH:MM）
+          example: "11:00"
+        available_until:
+          type: [string, "null"]
+          pattern: '^\d{2}:\d{2}$'
+          description: 提供終了時刻（HH:MM）
+          example: "15:00"
+        available_days:
+          type: integer
+          minimum: 0
+          maximum: 127
+          description: 提供曜日ビットマスク（bit0=日〜bit6=土、127=全曜日）
+          example: 127
+        sort_order:
+          type: integer
+          example: 0
+        allergens:
+          type: integer
+          minimum: 0
+          maximum: 255
+          description: アレルゲンビットフラグ
+        allergen_advisories:
+          type: integer
+          minimum: 0
+          maximum: 1048575
+          description: アレルゲン推奨表示ビットフラグ
+        allergen_labels:
+          type: array
+          items:
+            type: string
+          description: アレルゲンラベル（表示用）
+        advisory_labels:
+          type: array
+          items:
+            type: string
+          description: アレルゲン推奨ラベル（表示用）
+        allergen_note:
+          type: [string, "null"]
+          maxLength: 500
+          description: アレルゲン備考
+        nutrition_info:
+          oneOf:
+            - $ref: "#/components/schemas/NutritionInfo"
+            - type: "null"
+        categories:
+          type: array
+          description: カテゴリ一覧（whenLoaded）
+          items:
+            $ref: "#/components/schemas/MenuCategory"
+        option_groups:
+          type: array
+          description: オプショングループ一覧（whenLoaded）
+          items:
+            $ref: "#/components/schemas/OptionGroup"
+        is_available:
+          type: boolean
+          description: 現在提供可能か（時間帯・曜日チェック済み）
+
+    MenuItemInput:
+      type: object
+      description: 商品作成・更新用入力スキーマ
+      properties:
+        name:
+          type: string
+          maxLength: 100
+        description:
+          type: string
+          maxLength: 1000
+        price:
+          type: integer
+          minimum: 0
+          maximum: 999999
+        category_ids:
+          type: array
+          minItems: 1
+          maxItems: 3
+          items:
+            type: integer
+          description: カテゴリ ID の配列（1〜3 個）
+        option_group_ids:
+          type: array
+          items:
+            type: integer
+          description: オプショングループ ID の配列
+        is_active:
+          type: boolean
+          default: true
+        is_sold_out:
+          type: boolean
+          default: false
+        available_from:
+          type: string
+          pattern: '^\d{2}:\d{2}$'
+          description: 提供開始時刻（HH:MM）
+        available_until:
+          type: string
+          pattern: '^\d{2}:\d{2}$'
+          description: 提供終了時刻（HH:MM）
+        available_days:
+          type: integer
+          minimum: 0
+          maximum: 127
+          default: 127
+          description: 提供曜日ビットマスク（127=全曜日）
+        sort_order:
+          type: integer
+          minimum: 0
+        allergens:
+          type: integer
+          minimum: 0
+          maximum: 255
+        allergen_advisories:
+          type: integer
+          minimum: 0
+          maximum: 1048575
+        allergen_note:
+          type: string
+          maxLength: 500
+        nutrition_info:
+          $ref: "#/components/schemas/NutritionInfo"
+
+    OrderItemOption:
+      type: object
+      description: 注文アイテムのオプション（OrderItemOptionResource）
+      required:
+        - id
+        - name
+        - price
+      properties:
+        id:
+          type: integer
+        option_id:
+          type: [integer, "null"]
+          description: オリジナルのオプション ID（削除済みの場合は null）
+        name:
+          type: string
+          description: 注文時のオプション名（スナップショット）
+        price:
+          type: integer
+          description: 注文時の追加料金（スナップショット）
+        created_at:
+          type: string
+          format: date-time
+
+    OrderItem:
+      type: object
+      description: 注文アイテム（OrderItemResource）
+      required:
+        - id
+        - name
+        - price
+        - quantity
+        - subtotal
+      properties:
+        id:
+          type: integer
+        menu_item_id:
+          type: [integer, "null"]
+          description: オリジナルの商品 ID（削除済みの場合は null）
+        name:
+          type: string
+          description: 注文時の商品名（スナップショット）
+        price:
+          type: integer
+          description: 注文時の単価（スナップショット）
+        quantity:
+          type: integer
+        options:
+          type: array
+          items:
+            $ref: "#/components/schemas/OrderItemOption"
+        subtotal:
+          type: integer
+          description: 小計
+        created_at:
+          type: string
+          format: date-time
+
+    OrderSummary:
+      type: object
+      description: 注文一覧用サマリー（OrderListResource）
+      required:
+        - id
+        - order_code
+        - status
+        - status_label
+        - total_amount
+        - created_at
+      properties:
+        id:
+          type: integer
+        order_code:
+          type: string
+          description: 注文コード（表示用）
+          example: "ORD-20260320-001"
+        tenant:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+        status:
+          $ref: "#/components/schemas/OrderStatus"
+        status_label:
+          type: string
+          description: ステータスの日本語ラベル
+          example: "調理中"
+        total_amount:
+          type: integer
+          description: 合計金額（円）
+          example: 1500
+        created_at:
+          type: string
+          format: date-time
+
+    OrderPayment:
+      type: object
+      description: 注文に紐づく決済情報
+      properties:
+        method:
+          $ref: "#/components/schemas/PaymentMethod"
+        method_label:
+          type: string
+          example: "クレジットカード"
+        status:
+          $ref: "#/components/schemas/PaymentStatus"
+        status_label:
+          type: string
+          example: "完了"
+
+    OrderDetail:
+      type: object
+      description: 注文詳細（OrderDetailResource）
+      required:
+        - id
+        - order_code
+        - business_date
+        - status
+        - status_label
+        - can_be_cancelled
+        - total_amount
+        - created_at
+      properties:
+        id:
+          type: integer
+        order_code:
+          type: string
+          example: "ORD-20260320-001"
+        business_date:
+          type: string
+          format: date
+          description: 営業日
+          example: "2026-03-20"
+        tenant:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+            slug:
+              type: string
+            address:
+              type: [string, "null"]
+        status:
+          $ref: "#/components/schemas/OrderStatus"
+        status_label:
+          type: string
+          example: "調理中"
+        can_be_cancelled:
+          type: boolean
+          description: キャンセル可能か
+        total_amount:
+          type: integer
+          example: 1500
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/OrderItem"
+        payment:
+          $ref: "#/components/schemas/OrderPayment"
+        paid_at:
+          type: [string, "null"]
+          format: date-time
+        accepted_at:
+          type: [string, "null"]
+          format: date-time
+        in_progress_at:
+          type: [string, "null"]
+          format: date-time
+        ready_at:
+          type: [string, "null"]
+          format: date-time
+        completed_at:
+          type: [string, "null"]
+          format: date-time
+        cancelled_at:
+          type: [string, "null"]
+          format: date-time
+        created_at:
+          type: string
+          format: date-time
+
+    CartItem:
+      type: object
+      description: カートアイテム（CartItemResource）
+      required:
+        - id
+        - quantity
+        - subtotal
+      properties:
+        id:
+          type: integer
+        menu_item:
+          $ref: "#/components/schemas/MenuItem"
+        quantity:
+          type: integer
+          minimum: 1
+          maximum: 99
+        options:
+          type: array
+          description: 選択されたオプション一覧（whenLoaded）
+          items:
+            $ref: "#/components/schemas/Option"
+        subtotal:
+          type: integer
+          description: 小計（円）
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    CartTenantInfo:
+      type: object
+      description: カートに含まれるテナント情報（簡略版）
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        slug:
+          type: string
+        is_open:
+          type: boolean
+        today_business_hours:
+          type: [array, "null"]
+          items:
+            type: object
+            properties:
+              open_time:
+                type: string
+                example: "11:00"
+              close_time:
+                type: string
+                example: "22:00"
+
+    Cart:
+      type: object
+      description: カート（CartResource）
+      required:
+        - id
+        - user_id
+        - tenant_id
+        - total
+        - item_count
+        - is_empty
+      properties:
+        id:
+          type: integer
+        user_id:
+          type: integer
+        tenant_id:
+          type: integer
+        items:
+          type: array
+          description: カートアイテム一覧（whenLoaded）
+          items:
+            $ref: "#/components/schemas/CartItem"
+        total:
+          type: integer
+          description: 合計金額（円）
+        item_count:
+          type: integer
+          description: アイテム総数
+        is_empty:
+          type: boolean
+          description: カートが空か
+        tenant:
+          description: テナント情報（whenLoaded）
+          oneOf:
+            - $ref: "#/components/schemas/CartTenantInfo"
+            - type: "null"
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    KdsOrderItem:
+      type: object
+      description: KDS 注文アイテム（KdsOrderItemResource）
+      required:
+        - id
+        - name
+        - quantity
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        quantity:
+          type: integer
+        options:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              price:
+                type: integer
+
+    KdsOrder:
+      type: object
+      description: KDS 注文（KdsOrderResource）
+      required:
+        - id
+        - order_code
+        - status
+        - status_label
+        - item_count
+        - elapsed_seconds
+        - elapsed_display
+        - is_warning
+        - created_at
+        - updated_at
+      properties:
+        id:
+          type: integer
+        order_code:
+          type: string
+          example: "ORD-20260320-001"
+        status:
+          $ref: "#/components/schemas/OrderStatus"
+        status_label:
+          type: string
+          example: "調理中"
+        customer_name:
+          type: [string, "null"]
+          description: 顧客名（whenLoaded）
+        items:
+          type: array
+          description: 注文アイテム一覧（whenLoaded）
+          items:
+            $ref: "#/components/schemas/KdsOrderItem"
+        item_count:
+          type: integer
+          description: アイテム総数
+        elapsed_seconds:
+          type: integer
+          description: 現在ステータス開始からの経過秒数
+          example: 330
+        elapsed_display:
+          type: string
+          description: 経過時間の表示文字列
+          example: "5分30秒"
+        is_warning:
+          type: boolean
+          description: 警告フラグ（15 分以上経過で true）
+        paid_at:
+          type: [string, "null"]
+          format: date-time
+        accepted_at:
+          type: [string, "null"]
+          format: date-time
+        in_progress_at:
+          type: [string, "null"]
+          format: date-time
+        ready_at:
+          type: [string, "null"]
+          format: date-time
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    BusinessHour:
+      type: object
+      description: 営業時間（レスポンス用）
+      properties:
+        weekday:
+          type: integer
+          minimum: 0
+          maximum: 6
+          description: 曜日（0=日曜〜6=土曜）
+        open_time:
+          type: string
+          pattern: '^\d{2}:\d{2}$'
+          example: "11:00"
+        close_time:
+          type: string
+          pattern: '^\d{2}:\d{2}$'
+          example: "22:00"
+        sort_order:
+          type: integer
+
+    BusinessHourInput:
+      type: object
+      description: 営業時間（入力用）
+      required:
+        - weekday
+        - open_time
+        - close_time
+      properties:
+        weekday:
+          type: integer
+          minimum: 0
+          maximum: 6
+          description: 曜日（0=日曜〜6=土曜）
+        open_time:
+          type: string
+          pattern: '^\d{2}:\d{2}$'
+          example: "11:00"
+        close_time:
+          type: string
+          pattern: '^\d{2}:\d{2}$'
+          example: "22:00"
+
+    Tenant:
+      type: object
+      description: テナント基本情報（TenantResource）
+      required:
+        - id
+        - name
+        - slug
+        - is_open
+        - is_order_paused
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+          example: "サンプルレストラン"
+        slug:
+          type: string
+          example: "sample-restaurant"
+        address:
+          type: [string, "null"]
+          example: "東京都渋谷区..."
+        is_open:
+          type: boolean
+          description: 現在営業中か
+        is_order_paused:
+          type: boolean
+          description: 注文受付を一時停止中か
+        today_business_hours:
+          type: [array, "null"]
+          description: 今日の営業時間
+          items:
+            type: object
+            properties:
+              open_time:
+                type: string
+                example: "11:00"
+              close_time:
+                type: string
+                example: "22:00"
+
+    TenantDetail:
+      allOf:
+        - $ref: "#/components/schemas/Tenant"
+        - type: object
+          description: テナント詳細情報（TenantDetailResource）。Tenant の全フィールドを含む。
+          properties:
+            email:
+              type: [string, "null"]
+              format: email
+            phone:
+              type: [string, "null"]
+            fincode_shop_id:
+              type: [string, "null"]
+              description: fincode ショップ ID
+            is_approved:
+              type: boolean
+              description: テナントが承認済みか
+            order_paused_at:
+              type: [string, "null"]
+              format: date-time
+              description: 注文一時停止開始日時
+            status:
+              type: string
+              description: テナントステータス
+            business_hours:
+              type: array
+              items:
+                $ref: "#/components/schemas/BusinessHour"
+
+    OrderPauseStatus:
+      type: object
+      description: 注文受付一時停止状態
+      required:
+        - is_order_paused
+      properties:
+        is_order_paused:
+          type: boolean
+        order_paused_at:
+          type: [string, "null"]
+          format: date-time
+          description: 一時停止開始日時
+
+    PublicOption:
+      type: object
+      description: 公開メニュー用オプション（PublicOptionResource）
+      required:
+        - id
+        - name
+        - price
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        price:
+          type: integer
+          description: 追加料金（円）
+
+    PublicOptionGroup:
+      type: object
+      description: 公開メニュー用オプショングループ（PublicOptionGroupResource）
+      required:
+        - id
+        - name
+        - required
+        - min_select
+        - max_select
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        required:
+          type: boolean
+        min_select:
+          type: integer
+        max_select:
+          type: integer
+        options:
+          type: array
+          items:
+            $ref: "#/components/schemas/PublicOption"
+
+    PublicMenuItem:
+      type: object
+      description: 公開メニュー用商品（PublicMenuItemResource）
+      required:
+        - id
+        - name
+        - price
+        - is_sold_out
+        - is_available
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: [string, "null"]
+        price:
+          type: integer
+          description: 価格（円）
+        is_sold_out:
+          type: boolean
+        is_available:
+          type: boolean
+          description: 現在提供可能か
+        option_groups:
+          type: array
+          items:
+            $ref: "#/components/schemas/PublicOptionGroup"
+
+    PublicMenuCategory:
+      type: object
+      description: 公開メニュー用カテゴリ（PublicMenuResource）。商品一覧をネストする。
+      required:
+        - id
+        - name
+        - sort_order
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        sort_order:
+          type: integer
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/PublicMenuItem"
+
+    FincodeCard:
+      type: object
+      description: fincode 登録済みカード（CardResource）
+      required:
+        - id
+        - card_no_display
+        - brand
+        - expire
+        - is_default
+      properties:
+        id:
+          type: integer
+        card_no_display:
+          type: string
+          description: "マスクされたカード番号（例: **** **** **** 1234）"
+          example: "**** **** **** 1234"
+        brand:
+          type: string
+          description: カードブランド
+          example: "Visa"
+        expire:
+          type: string
+          description: 有効期限（表示用）
+          example: "12/28"
+        is_default:
+          type: boolean
+          description: デフォルトカードか
+
+    Staff:
+      type: object
+      description: スタッフ情報（StaffResource）
+      required:
+        - id
+        - name
+        - email
+        - is_active
+        - created_at
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        phone:
+          type: [string, "null"]
+        is_active:
+          type: boolean
+        role:
+          type: [string, "null"]
+          description: テナントロール（tenant_staff 固定）
+          example: "tenant_staff"
+        created_at:
+          type: string
+          format: date-time
+
+    DashboardPeriodStats:
+      type: object
+      description: 期間別統計
+      required:
+        - sales
+        - orders
+        - average
+      properties:
+        sales:
+          type: integer
+          description: 売上合計（円）
+        orders:
+          type: integer
+          description: 注文数
+        average:
+          type: integer
+          description: 平均注文金額（円）
+
+    DashboardSummary:
+      type: object
+      description: ダッシュボード日次サマリー（DashboardSummaryResource）
+      required:
+        - today
+        - yesterday
+        - this_month
+        - last_month
+        - comparison
+      properties:
+        today:
+          $ref: "#/components/schemas/DashboardPeriodStats"
+        yesterday:
+          $ref: "#/components/schemas/DashboardPeriodStats"
+        this_month:
+          $ref: "#/components/schemas/DashboardPeriodStats"
+        last_month:
+          $ref: "#/components/schemas/DashboardPeriodStats"
+        comparison:
+          type: object
+          description: 比較データ
+          properties:
+            daily_change:
+              type: object
+              properties:
+                sales_percent:
+                  type: number
+                  format: float
+                  description: 前日比売上変化率（%）
+                orders_percent:
+                  type: number
+                  format: float
+                  description: 前日比注文数変化率（%）
+            monthly_change:
+              type: object
+              properties:
+                sales_percent:
+                  type: number
+                  format: float
+                  description: 前月比売上変化率（%）
+                orders_percent:
+                  type: number
+                  format: float
+                  description: 前月比注文数変化率（%）
+
+    SalesData:
+      type: object
+      description: 売上推移データ（SalesDataResource）
+      required:
+        - date
+        - sales
+        - orders
+      properties:
+        date:
+          type: string
+          format: date
+          description: 集計日
+          example: "2026-03-20"
+        sales:
+          type: integer
+          description: 売上合計（円）
+        orders:
+          type: integer
+          description: 注文数
+
+    TopItem:
+      type: object
+      description: 人気商品ランキングアイテム（TopItemResource）
+      required:
+        - rank
+        - menu_item_id
+        - name
+        - quantity
+        - revenue
+      properties:
+        rank:
+          type: integer
+          description: ランキング順位
+          example: 1
+        menu_item_id:
+          type: integer
+          description: 商品 ID
+        name:
+          type: string
+          description: 商品名
+        quantity:
+          type: integer
+          description: 注文数量合計
+        revenue:
+          type: integer
+          description: 売上金額合計（円）
