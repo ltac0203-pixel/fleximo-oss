@@ -69,12 +69,6 @@ enum AuditAction: string
     case OptionUpdated = 'option.updated';
     case OptionDeleted = 'option.deleted';
 
-    // テナント申し込み
-    case TenantApplicationCreated = 'tenant_application.created';
-    case TenantApplicationReviewStarted = 'tenant_application.review_started';
-    case TenantApplicationApproved = 'tenant_application.approved';
-    case TenantApplicationRejected = 'tenant_application.rejected';
-
     // 顧客管理
     case CustomerSuspended = 'customer.suspended';
     case CustomerBanned = 'customer.banned';
@@ -127,10 +121,6 @@ enum AuditAction: string
             self::OptionCreated => 'オプション作成',
             self::OptionUpdated => 'オプション更新',
             self::OptionDeleted => 'オプション削除',
-            self::TenantApplicationCreated => 'テナント申し込み作成',
-            self::TenantApplicationReviewStarted => 'テナント申し込み審査開始',
-            self::TenantApplicationApproved => 'テナント申し込み承認',
-            self::TenantApplicationRejected => 'テナント申し込み却下',
             self::CustomerSuspended => '顧客一時停止',
             self::CustomerBanned => '顧客BAN',
             self::CustomerReactivated => '顧客再有効化',

@@ -35,7 +35,7 @@ export const FONTS = {
 /**
  * CSS変数オブジェクト
  *
- * Welcome.tsx と ForBusiness/Index.tsx で style属性に適用する
+ * 各ページの style属性に適用する
  *
  * 使用例:
  * ```tsx

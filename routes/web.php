@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
-use App\Http\Controllers\Admin\TenantApplicationController as AdminTenantApplicationController;
 use App\Http\Controllers\Admin\TenantShopIdController;
 use App\Http\Controllers\Auth\BusinessLoginController;
 use App\Http\Controllers\Customer\CardPageController;
@@ -13,21 +12,16 @@ use App\Http\Controllers\Customer\CustomerHomeController;
 use App\Http\Controllers\Customer\MenuPageController;
 use App\Http\Controllers\Customer\OrderPageController;
 use App\Http\Controllers\DashboardRedirectController;
-use App\Http\Controllers\ForBusinessController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Tenant\KdsPageController;
 use App\Http\Controllers\Tenant\TenantDashboardController;
 use App\Http\Controllers\Tenant\TenantMenuController;
 use App\Http\Controllers\Tenant\TenantProfileController;
 use App\Http\Controllers\Tenant\TenantStaffController;
-use App\Http\Controllers\TenantApplicationController;
-use App\Http\Controllers\WelcomeController;
 use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', WelcomeController::class)->name('home');
-
-Route::get('/for-business', ForBusinessController::class)->name('for-business.index');
+Route::redirect('/', '/dashboard')->name('home');
 
 // 事業者向けログイン（ゲストのみアクセス可能）
 Route::middleware('guest')->group(function () {
@@ -156,16 +150,6 @@ Route::prefix('legal')->name('legal.')->group(function () {
     Route::inertia('/tenant-terms', 'Legal/TenantTerms')->name('tenant-terms');
 });
 
-// テナント申し込み（公開、スロットリング適用）
-Route::middleware(['throttle:5,1'])->group(function () {
-    Route::get('/tenant-application', [TenantApplicationController::class, 'create'])
-        ->name('tenant-application.create');
-    Route::post('/tenant-application', [TenantApplicationController::class, 'store'])
-        ->name('tenant-application.store');
-    Route::get('/tenant-application/complete', [TenantApplicationController::class, 'complete'])
-        ->name('tenant-application.complete');
-});
-
 // 管理者向けルート
 Route::middleware(['auth', 'auth.session', 'verified', 'active', 'role:admin', 'throttle:60,1'])
     ->prefix('admin')
@@ -173,20 +157,6 @@ Route::middleware(['auth', 'auth.session', 'verified', 'active', 'role:admin', '
     ->group(function () {
         Route::get('/', fn () => redirect()->route('admin.dashboard'));
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
-
-        // テナント申し込み管理
-        Route::prefix('applications')->name('applications.')->group(function () {
-            Route::get('/', [AdminTenantApplicationController::class, 'index'])->name('index');
-            Route::get('/{application}', [AdminTenantApplicationController::class, 'show'])->name('show');
-            Route::post('/{application}/start-review', [AdminTenantApplicationController::class, 'startReview'])
-                ->name('start-review');
-            Route::post('/{application}/approve', [AdminTenantApplicationController::class, 'approve'])
-                ->name('approve');
-            Route::post('/{application}/reject', [AdminTenantApplicationController::class, 'reject'])
-                ->name('reject');
-            Route::patch('/{application}/notes', [AdminTenantApplicationController::class, 'updateNotes'])
-                ->name('update-notes');
-        });
 
         // Shop ID管理
         Route::get('/tenant-shop-ids', [TenantShopIdController::class, 'index'])->name('tenant-shop-ids.index');

@@ -12,7 +12,6 @@ use App\Models\Option;
 use App\Models\OptionGroup;
 use App\Models\Order;
 use App\Models\Payment;
-use App\Models\TenantApplication;
 use App\Models\User;
 use App\Policies\CartItemPolicy;
 use App\Policies\CartPolicy;
@@ -23,7 +22,6 @@ use App\Policies\OptionPolicy;
 use App\Policies\OrderPolicy;
 use App\Policies\PaymentPolicy;
 use App\Policies\StaffPolicy;
-use App\Policies\TenantApplicationPolicy;
 use App\Services\Webhook\WebhookSignatureVerifier;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -116,7 +114,6 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(CartItem::class, CartItemPolicy::class);
         Gate::policy(Order::class, OrderPolicy::class);
         Gate::policy(Payment::class, PaymentPolicy::class);
-        Gate::policy(TenantApplication::class, TenantApplicationPolicy::class);
 
         // モデルに紐付かない認可ゲート
         Gate::define('dashboard.view', function (User $user): bool {

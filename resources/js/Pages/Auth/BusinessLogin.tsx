@@ -124,15 +124,6 @@ export default function BusinessLogin({ status, canResetPassword }: { status?: s
                     </PrimaryButton>
                 </div>
 
-                <div className="mt-6 text-center">
-                    <span className="text-sm text-ink-light">テナント登録がお済みでないですか？ </span>
-                    <Link
-                        href={route("for-business.index")}
-                        className="rounded-md text-sm text-primary-dark underline hover:text-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-                    >
-                        事業者向けページへ
-                    </Link>
-                </div>
             </form>
         </GuestLayout>
     );
