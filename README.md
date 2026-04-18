@@ -80,7 +80,7 @@ See [`docs/reference/architecture.md`](./docs/reference/architecture.md) and [`d
 
 | Layer            | Tech                                           |
 | ---------------- | ---------------------------------------------- |
-| Backend          | Laravel 12 (PHP ^8.2)                          |
+| Backend          | Laravel 12 (PHP ^8.3)                          |
 | Frontend         | React 19 + Inertia.js 2 + TypeScript 5         |
 | Database         | MariaDB / MySQL                                |
 | Cache / Queue    | Redis                                          |
@@ -97,7 +97,7 @@ See [`docs/reference/architecture.md`](./docs/reference/architecture.md) and [`d
 
 ### Requirements
 
-- PHP ^8.2 with extensions: `mbstring`, `intl`, `pdo_mysql`, `redis`
+- PHP ^8.3 with extensions: `mbstring`, `intl`, `pdo_mysql`, `redis`
 - Composer 2.x
 - Node.js 20+ / npm
 - MariaDB 10.6+ or MySQL 8+

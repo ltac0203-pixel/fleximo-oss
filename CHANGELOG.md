@@ -21,11 +21,18 @@
 
 ### Changed
 
--
+- **BREAKING**: 最小 PHP 要件を `^8.2` から `^8.3` に引き上げ（PHPUnit 12 への更新に伴うもの）
+- PHPUnit を `^11.5.3` から `^12.5.22` に更新
+- CI (test / coverage workflow) の `php-version` を `8.3` に変更
 
 ### Fixed
 
 -
+
+### Security
+
+- Dependabot alert #20 (PHPUnit Argument injection via newline in PHP INI values / GHSA) を解消
+- Dependabot alert #5, #6 (picomatch Method Injection in POSIX Character Classes / GHSA) を解消
 
 ## [0.1.0] - TBD
 

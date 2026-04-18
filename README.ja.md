@@ -79,7 +79,7 @@ PENDING_PAYMENT → PAID → ACCEPTED → IN_PROGRESS → READY → COMPLETED
 
 | レイヤー           | 技術                                           |
 | ------------------ | ---------------------------------------------- |
-| バックエンド       | Laravel 12 (PHP ^8.2)                          |
+| バックエンド       | Laravel 12 (PHP ^8.3)                          |
 | フロントエンド     | React 19 + Inertia.js 2 + TypeScript 5         |
 | データベース       | MariaDB / MySQL                                |
 | キャッシュ・キュー | Redis                                          |
@@ -96,7 +96,7 @@ PENDING_PAYMENT → PAID → ACCEPTED → IN_PROGRESS → READY → COMPLETED
 
 ### 必要環境
 
-- PHP ^8.2（`mbstring`, `intl`, `pdo_mysql`, `redis` 拡張）
+- PHP ^8.3（`mbstring`, `intl`, `pdo_mysql`, `redis` 拡張）
 - Composer 2.x
 - Node.js 20+ / npm
 - MariaDB 10.6+ または MySQL 8+
