@@ -81,7 +81,7 @@ jobs:
           node -e "const fs=require('fs');const xml=fs.readFileSync('coverage.xml','utf8');const m=xml.match(/lines-covered=\"(\\d+)\" lines-valid=\"(\\d+)\"/);if(m){const covered=Number(m[1]);const total=Number(m[2]);const pct=((covered/total)*100).toFixed(2);fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, `## Coverage Report\n\n**Line Coverage:** ${pct}% (${covered}/${total} lines)\n\n`);}"
 
       - name: Upload Coverage Report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: coverage-html-report
           path: coverage/html
