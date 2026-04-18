@@ -2,10 +2,27 @@
 
 [English README](./README.md)
 
-**Fleximo** は、**日本の飲食店向けオープンソース・マルチテナント型モバイルオーダープラットフォーム**です。
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
+[![Status: MVP](https://img.shields.io/badge/status-MVP-orange)](#)
+[![PHP](https://img.shields.io/badge/PHP-%5E8.2-777BB4?logo=php&logoColor=white)](https://www.php.net/)
+[![Laravel](https://img.shields.io/badge/Laravel-12-FF2D20?logo=laravel&logoColor=white)](https://laravel.com/)
+[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](https://react.dev/)
+
+**Fleximo** は、**日本の飲食店・学食向けオープンソース・マルチテナント型モバイルオーダープラットフォーム**です。
 飲食店はレジ待ちなしでテイクアウト注文・決済をウェブ上で受け付けられ、利用者は単一アカウントでプラットフォーム上の全店舗を利用できます。
 
+![Fleximo — 飲食店・学食向けモバイルオーダー](./docs/assets/hero.png)
+
+> 稼働中のリファレンス環境: **https://fleximo.jp**
 > ステータス: **MVP / 初期OSS**。API・スキーマは変更される可能性があります。本番利用時はリリースタグに固定することを推奨します。
+
+## スクリーンショット
+
+| 顧客向けLP (https://fleximo.jp) | 事業者向けページ |
+| --- | --- |
+| ![顧客向けLP](./docs/assets/hero.png) | ![事業者向けページ](./docs/assets/for-business.png) |
+
+フルページキャプチャ: [`docs/assets/landing-full.png`](./docs/assets/landing-full.png)
 
 ---
 
