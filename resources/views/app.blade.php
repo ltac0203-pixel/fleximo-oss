@@ -8,7 +8,7 @@
         $siteName = config('app.name', 'Fleximo');
         $baseUrl = rtrim((string) config('seo.site.base_url', config('app.url', 'https://example.com')), '/');
         $defaultImage = $baseUrl . '/og-image.svg';
-        $defaultDescription = '飲食店・学食向けモバイルオーダープラットフォーム。QRコード注文、キャッシュレス決済、KDSで受注から受け取りまでを効率化します。';
+        $defaultDescription = '日本の飲食店向けオープンソース・マルチテナント モバイルオーダー。QRコード注文、PayPay・クレジットカード決済、KDSで受注から受け取りまでを効率化します。';
         $titleText = $hasSeo && filled($pageSeo['title'] ?? null)
             ? (str_contains((string) $pageSeo['title'], $siteName) ? (string) $pageSeo['title'] : (string) $pageSeo['title'] . ' | ' . $siteName)
             : $siteName;

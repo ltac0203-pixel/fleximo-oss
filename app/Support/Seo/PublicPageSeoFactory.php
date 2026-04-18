@@ -32,7 +32,7 @@ class PublicPageSeoFactory
                         'url' => $this->baseUrl(),
                     ],
                     'areaServed' => 'JP',
-                    'description' => '飲食店・学食向けのQRコード注文、キャッシュレス決済、受け取り導線をまとめたモバイルオーダーサービスです。',
+                    'description' => '日本の飲食店向けマルチテナント モバイルオーダー。QRコード注文、PayPay・クレジットカード決済、受け取り導線をまとめたオープンソースのモバイルオーダーサービスです。学食・フードコートにも対応。',
                     'url' => $this->baseUrl(),
                 ],
             ],
@@ -78,7 +78,7 @@ class PublicPageSeoFactory
                             ],
                         ],
                     ],
-                    'description' => 'QRコード注文、KDS、キャッシュレス決済をまとめて導入できる飲食店向けモバイルオーダーサービスです。',
+                    'description' => 'QRコード注文、KDS、PayPay・クレジットカード決済をまとめて導入できる飲食店・学食・フードコート向けのマルチテナント モバイルオーダーサービスです。',
                     'url' => $this->baseUrl().'/for-business',
                 ],
                 $this->faqPageSchema([
@@ -137,7 +137,7 @@ class PublicPageSeoFactory
                     '@type' => 'WebPage',
                     'name' => 'Fleximo 加盟店申し込み',
                     'url' => $this->baseUrl().'/tenant-application',
-                    'description' => 'Fleximoの加盟店申し込みページです。飲食店・学食向けにモバイルオーダー導入を申請できます。',
+                    'description' => 'Fleximoの加盟店申し込みページです。飲食店・学食・フードコート向けにモバイルオーダー導入を申請できます。',
                     'isPartOf' => [
                         '@type' => 'WebSite',
                         'name' => 'Fleximo',
@@ -228,7 +228,7 @@ class PublicPageSeoFactory
             'name' => 'Fleximo',
             'url' => $this->baseUrl(),
             'logo' => $this->baseUrl().'/og-image.svg',
-            'description' => '飲食店・学食向けモバイルオーダープラットフォーム',
+            'description' => '日本の飲食店向けマルチテナント モバイルオーダー OSS (PayPay / クレジットカード対応)',
             'contactPoint' => [
                 '@type' => 'ContactPoint',
                 'contactType' => 'customer support',

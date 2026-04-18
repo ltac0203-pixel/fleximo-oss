@@ -22,21 +22,21 @@ return [
         'support_email' => env('SEO_SUPPORT_EMAIL', 'support@example.com'),
         'description' => env(
             'SEO_DEFAULT_DESCRIPTION',
-            '飲食店・学食向けモバイルオーダープラットフォーム。QRコード注文、キャッシュレス決済、KDSで受注から受け取りまでを効率化します。'
+            '日本の飲食店向けオープンソース・マルチテナント モバイルオーダー。QRコード注文、PayPay・クレジットカード決済、KDSで受注から受け取りまでを効率化します。学食・フードコート・小規模ECにも対応。'
         ),
     ],
 
     'pages' => [
         'welcome' => [
             'default' => [
-                'title' => env('SEO_WELCOME_TITLE', '学食モバイルオーダー | 並ばずスマホで注文・決済'),
+                'title' => env('SEO_WELCOME_TITLE', 'モバイルオーダー OSS | PayPay対応・並ばずスマホで注文・決済'),
                 'description' => env(
                     'SEO_WELCOME_DESCRIPTION',
-                    'Fleximoは学食・学生食堂向けモバイルオーダーシステム。QRコード注文とキャッシュレス決済で、昼休みの行列を解消。アプリ不要・30秒で登録・完全無料。'
+                    'Fleximoは日本の飲食店向けオープンソース・マルチテナント モバイルオーダー。QRコード注文とPayPay / クレジットカード決済で、ピーク時の行列を解消。アプリ不要・30秒で登録・完全無料。'
                 ),
                 'keywords' => env(
                     'SEO_WELCOME_KEYWORDS',
-                    '学食,モバイルオーダー,QRコード注文,キャッシュレス決済,学生食堂,PayPay,行列解消'
+                    'モバイルオーダー,OSS,オープンソース,マルチテナント,QRコード注文,PayPay,キャッシュレス決済,飲食店,学食,フードコート,行列解消'
                 ),
                 'ogType' => 'website',
             ],
@@ -49,14 +49,14 @@ return [
         ],
         'for_business' => [
             'default' => [
-                'title' => env('SEO_FOR_BUSINESS_TITLE', '飲食店向けモバイルオーダー導入 | 初期費用0円・月額0円'),
+                'title' => env('SEO_FOR_BUSINESS_TITLE', '飲食店向けモバイルオーダー導入 | 初期費用0円・月額0円・PayPay対応'),
                 'description' => env(
                     'SEO_FOR_BUSINESS_DESCRIPTION',
-                    '飲食店・学食向けモバイルオーダーシステム。初期費用0円・月額0円・専用端末不要。QRコード注文とKDSで回転率40%向上、注文ミス90%削減。PayPay・クレジットカード決済対応。'
+                    '飲食店・学食・フードコート向けマルチテナント モバイルオーダー。初期費用0円・月額0円・専用端末不要。QRコード注文とKDSで回転率40%向上、注文ミス90%削減。PayPay・クレジットカード決済対応。'
                 ),
                 'keywords' => env(
                     'SEO_FOR_BUSINESS_KEYWORDS',
-                    '飲食店,モバイルオーダー,導入,初期費用無料,KDS,キッチンディスプレイ,回転率向上,決済,PayPay'
+                    '飲食店,フードコート,学食,モバイルオーダー,導入,初期費用無料,KDS,キッチンディスプレイ,回転率向上,PayPay,キャッシュレス決済'
                 ),
                 'ogType' => 'website',
             ],
@@ -72,7 +72,7 @@ return [
                 'title' => env('SEO_CONTACT_TITLE', 'お問い合わせ | 導入相談・サポート窓口'),
                 'description' => env(
                     'SEO_CONTACT_DESCRIPTION',
-                    'Fleximoへの導入相談、モバイルオーダー運用に関するお問い合わせ、サポート依頼を受け付けています。飲食店・学食向けの導入相談もこちらからご連絡ください。'
+                    'Fleximoへの導入相談、モバイルオーダー運用に関するお問い合わせ、サポート依頼を受け付けています。飲食店・学食・フードコート向けの導入相談もこちらからご連絡ください。'
                 ),
                 'keywords' => env(
                     'SEO_CONTACT_KEYWORDS',
@@ -84,14 +84,14 @@ return [
         ],
         'tenant_application' => [
             'default' => [
-                'title' => env('SEO_TENANT_APPLICATION_TITLE', '加盟店申し込み | モバイルオーダー導入申請'),
+                'title' => env('SEO_TENANT_APPLICATION_TITLE', '加盟店申し込み | モバイルオーダー導入申請 (PayPay対応)'),
                 'description' => env(
                     'SEO_TENANT_APPLICATION_DESCRIPTION',
-                    'Fleximoの加盟店申し込みページです。飲食店・学食・フードコート向けに、QRコード注文、キャッシュレス決済、KDSをまとめて導入できます。'
+                    'Fleximoの加盟店申し込みページです。飲食店・学食・フードコート向けに、QRコード注文、PayPay・クレジットカード決済、KDSをまとめて導入できます。'
                 ),
                 'keywords' => env(
                     'SEO_TENANT_APPLICATION_KEYWORDS',
-                    '加盟店申し込み,モバイルオーダー,QRコード注文,飲食店,学食,KDS,キャッシュレス決済'
+                    '加盟店申し込み,モバイルオーダー,QRコード注文,飲食店,学食,フードコート,KDS,PayPay,キャッシュレス決済'
                 ),
                 'ogType' => 'website',
             ],
