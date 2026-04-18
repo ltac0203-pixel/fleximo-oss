@@ -28,10 +28,10 @@ function FinalCtaSection({ isLoggedIn }: FinalCtaSectionProps) {
                             <span className="text-sm font-medium text-white">登録30秒 ・ 完全無料</span>
                         </div>
                         <h2 className="mt-6 text-3xl font-bold leading-tight text-white sm:text-4xl lg:text-5xl">
-                            今日のランチから使える
+                            今日の注文から使える
                         </h2>
                         <p className="mt-6 max-w-lg text-base leading-relaxed text-white/80">
-                            次の昼休みから、行列とサヨナラしませんか？
+                            次のピーク時から、行列とサヨナラしませんか？
                             30秒で登録して、すぐに注文を始められます。
                         </p>
                         <div className="mt-8 flex flex-wrap gap-3">
@@ -48,7 +48,7 @@ function FinalCtaSection({ isLoggedIn }: FinalCtaSectionProps) {
 
                     <div className="border border-white/15 bg-white/10 p-6 backdrop-blur-sm sm:p-8">
                         <p className="text-xs font-semibold uppercase tracking-[0.28em] text-white/70">
-                            Next lunch flow
+                            Next order flow
                         </p>
                         <div className="mt-5 flex items-center gap-3">
                             {ctaSteps.map((step, index) => (
@@ -79,7 +79,7 @@ function FinalCtaSection({ isLoggedIn }: FinalCtaSectionProps) {
                         </div>
 
                         <p className="mt-5 text-sm leading-7 text-white/75">
-                            会員登録後すぐに利用できます。次の昼休みから、そのまま注文を始められます。
+                            会員登録後すぐに利用できます。次のご注文から、そのまま始められます。
                         </p>
                     </div>
                 </div>

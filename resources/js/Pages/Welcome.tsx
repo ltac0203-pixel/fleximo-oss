@@ -34,7 +34,7 @@ export default function Welcome({ auth, seo, structuredData, siteConfig }: Welco
         name: siteConfig.name,
         url: siteConfig.baseUrl,
         logo: siteConfig.logoUrl,
-        description: "学食・学生食堂向けモバイルオーダーシステム",
+        description: "日本の飲食店向けマルチテナント モバイルオーダー OSS (PayPay / クレジットカード対応)",
         contactPoint: {
             "@type": "ContactPoint",
             contactType: "customer service",

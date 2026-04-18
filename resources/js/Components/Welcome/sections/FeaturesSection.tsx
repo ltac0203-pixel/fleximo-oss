@@ -21,11 +21,11 @@ function FeaturesSection() {
                     </div>
                     <h2 className="mt-4 text-3xl font-bold text-slate-900 sm:text-4xl">
                         <span className="text-sky-500">Fleximo</span>
-                        でランチが変わる
+                        で注文体験が変わる
                     </h2>
                     <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-slate-600 sm:text-base">
-                        注文、待ち時間の把握、キャッシュレス決済までをひとつにまとめて、
-                        学食の混雑をもっと軽くします。
+                        注文、待ち時間の把握、PayPay・クレジットカード決済までをひとつにまとめて、
+                        ピーク時の混雑をもっと軽くします。
                     </p>
                 </div>
             </div>

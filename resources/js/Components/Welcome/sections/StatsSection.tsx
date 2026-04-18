@@ -1,6 +1,6 @@
 import { stats } from "@/Components/Welcome/data";
 
-const statGuides = ["日々のランチに浸透", "ピーク時の混雑を圧縮"] as const;
+const statGuides = ["日々の注文に浸透", "ピーク時の混雑を圧縮"] as const;
 
 const snapshotPoints = [
     "列に並ぶ時間を短くする",
@@ -20,10 +20,10 @@ function StatsSection() {
                             Fast facts
                         </p>
                         <h2 className="mt-3 text-2xl font-bold text-slate-900 sm:text-3xl">
-                            忙しい昼休みに必要な情報だけを、すばやく。
+                            忙しいピーク時に必要な情報だけを、すばやく。
                         </h2>
                         <p className="mt-4 text-sm leading-7 text-slate-600 sm:text-base">
-                            ランチの混雑を軽くするために大切なのは、操作を増やさずに流れを整えること。
+                            食事時の混雑を軽くするために大切なのは、操作を増やさずに流れを整えること。
                             Fleximoはそのための要点をコンパクトにまとめています。
                         </p>
                         <div className="geo-public-panel-soft mt-8 px-5 py-5">
