@@ -1,6 +1,10 @@
 <?php
 
 declare(strict_types=1);
+use App\Support\Sentry\SentryBeforeSend;
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Session\TokenMismatchException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Sentry Laravel SDK configuration file.
@@ -28,13 +32,13 @@ return [
     'send_default_pii' => env('SENTRY_SEND_DEFAULT_PII', false),
 
     // 機密情報（決済・個人情報）をSentryに送信しない
-    'before_send' => [App\Support\Sentry\SentryBeforeSend::class, 'handle'],
+    'before_send' => [SentryBeforeSend::class, 'handle'],
 
     // @see: https://docs.sentry.io/platforms/php/guides/laravel/configuration/options/#ignore_exceptions
     'ignore_exceptions' => [
-        \Illuminate\Session\TokenMismatchException::class,
-        \Symfony\Component\HttpKernel\Exception\NotFoundHttpException::class,
-        \Illuminate\Auth\AuthenticationException::class,
+        TokenMismatchException::class,
+        NotFoundHttpException::class,
+        AuthenticationException::class,
     ],
 
     // @see: https://docs.sentry.io/platforms/php/guides/laravel/configuration/options/#ignore_transactions

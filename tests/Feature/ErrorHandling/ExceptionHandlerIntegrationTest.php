@@ -4,7 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Feature\ErrorHandling;
 
+use Illuminate\Contracts\Debug\ExceptionHandler;
+use Illuminate\Foundation\Exceptions\Handler;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Session\TokenMismatchException;
 use Illuminate\Support\Facades\Route;
 use Tests\TestCase;
@@ -17,7 +22,7 @@ class ExceptionHandlerIntegrationTest extends TestCase
     {
         Route::post('/logout', function () {
             throw new TokenMismatchException;
-        })->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class);
+        })->withoutMiddleware(VerifyCsrfToken::class);
 
         $response = $this->post('/logout');
 
@@ -30,7 +35,7 @@ class ExceptionHandlerIntegrationTest extends TestCase
     {
         Route::post('/test-csrf-route', function () {
             throw new TokenMismatchException;
-        })->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class);
+        })->withoutMiddleware(VerifyCsrfToken::class);
 
         $response = $this->post('/test-csrf-route');
 
@@ -46,12 +51,12 @@ class ExceptionHandlerIntegrationTest extends TestCase
         $renderCallbacks->setAccessible(true);
         $callbacks = $renderCallbacks->getValue($handler);
 
-        $request = \Illuminate\Http\Request::create('/logout', 'POST');
+        $request = Request::create('/logout', 'POST');
         $exception = new TokenMismatchException;
 
         $response = $callbacks[0]($exception, $request);
 
-        $this->assertInstanceOf(\Illuminate\Http\RedirectResponse::class, $response);
+        $this->assertInstanceOf(RedirectResponse::class, $response);
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertEquals(url('/'), $response->getTargetUrl());
     }
@@ -64,22 +69,22 @@ class ExceptionHandlerIntegrationTest extends TestCase
         $renderCallbacks->setAccessible(true);
         $callbacks = $renderCallbacks->getValue($handler);
 
-        $request = \Illuminate\Http\Request::create('/logout', 'POST', server: ['HTTP_REFERER' => 'https://example.com/tenant/dashboard']);
+        $request = Request::create('/logout', 'POST', server: ['HTTP_REFERER' => 'https://example.com/tenant/dashboard']);
         $exception = new TokenMismatchException;
 
         $response = $callbacks[0]($exception, $request);
 
-        $this->assertInstanceOf(\Illuminate\Http\RedirectResponse::class, $response);
+        $this->assertInstanceOf(RedirectResponse::class, $response);
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertStringContainsString('for-business/login', $response->getTargetUrl());
     }
 
-    private function getExceptionHandler(): \Illuminate\Foundation\Exceptions\Handler
+    private function getExceptionHandler(): Handler
     {
-        $handler = app(\Illuminate\Contracts\Debug\ExceptionHandler::class);
+        $handler = app(ExceptionHandler::class);
 
         // Collision ラッパーの場合は内部ハンドラーを取得
-        if ($handler instanceof \Illuminate\Foundation\Exceptions\Handler) {
+        if ($handler instanceof Handler) {
             return $handler;
         }
 

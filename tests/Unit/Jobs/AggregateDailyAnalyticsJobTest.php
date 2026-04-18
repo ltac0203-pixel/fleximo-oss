@@ -10,6 +10,7 @@ use App\Models\AnalyticsCache;
 use App\Models\Order;
 use App\Models\Tenant;
 use App\Models\User;
+use App\Services\AnalyticsService;
 use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -83,7 +84,7 @@ class AggregateDailyAnalyticsJobTest extends TestCase
             ->create(['paid_at' => $date->copy()->setHour(11)]);
 
         $job = new AggregateDailyAnalyticsJob($date);
-        $job->handle(app(\App\Services\AnalyticsService::class));
+        $job->handle(app(AnalyticsService::class));
 
         Queue::assertPushed(AggregateDailyAnalyticsJob::class, 2);
         Queue::assertPushed(AggregateDailyAnalyticsJob::class, function ($job) use ($date) {
@@ -125,7 +126,7 @@ class AggregateDailyAnalyticsJobTest extends TestCase
             ->create(['paid_at' => $date->copy()->setHour(11)]);
 
         $job = new AggregateDailyAnalyticsJob($date, $this->tenant->id);
-        $job->handle(app(\App\Services\AnalyticsService::class));
+        $job->handle(app(AnalyticsService::class));
 
         $this->assertNotNull(AnalyticsCache::getCached($this->tenant->id, MetricType::DailySales, $date));
         $this->assertNull(AnalyticsCache::getCached($tenant2->id, MetricType::DailySales, $date));
@@ -192,7 +193,7 @@ class AggregateDailyAnalyticsJobTest extends TestCase
             ->create(['paid_at' => $date->copy()->setHour(12)]);
 
         $job = new AggregateDailyAnalyticsJob($date, $this->tenant->id);
-        $job->handle(app(\App\Services\AnalyticsService::class));
+        $job->handle(app(AnalyticsService::class));
 
         $this->assertNotNull(AnalyticsCache::getCached($this->tenant->id, MetricType::DailySales, $date));
         $this->assertNotNull(AnalyticsCache::getCached($this->tenant->id, MetricType::DailyOrderStats, $date));

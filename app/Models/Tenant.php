@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\TenantStatus;
+use App\Enums\TenantUserRole;
 use App\Models\Traits\Auditable;
 use App\Support\StringHelper;
 use Carbon\Carbon;
@@ -68,7 +69,7 @@ class Tenant extends Model
             'id',
             'id',
             'user_id'
-        )->where('tenant_users.role', \App\Enums\TenantUserRole::Admin);
+        )->where('tenant_users.role', TenantUserRole::Admin);
     }
 
     public function staff(): HasManyThrough
@@ -80,7 +81,7 @@ class Tenant extends Model
             'id',
             'id',
             'user_id'
-        )->where('tenant_users.role', \App\Enums\TenantUserRole::Staff);
+        )->where('tenant_users.role', TenantUserRole::Staff);
     }
 
     public function allStaff(): HasManyThrough

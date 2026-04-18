@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Str;
+use Pdo\Mysql;
 
 return [
 
@@ -48,10 +49,10 @@ return [
             'strict' => true,
             'engine' => null,
             'options' => extension_loaded('pdo_mysql') ? array_filter([
-                (PHP_VERSION_ID >= 80500 ? \Pdo\Mysql::ATTR_SSL_CA : \PDO::MYSQL_ATTR_SSL_CA) => env('MYSQL_ATTR_SSL_CA'),
-                (PHP_VERSION_ID >= 80500 ? \Pdo\Mysql::ATTR_SSL_CERT : \PDO::MYSQL_ATTR_SSL_CERT) => env('DB_SSL_CERT'),
-                (PHP_VERSION_ID >= 80500 ? \Pdo\Mysql::ATTR_SSL_KEY : \PDO::MYSQL_ATTR_SSL_KEY) => env('DB_SSL_KEY'),
-                (PHP_VERSION_ID >= 80500 ? \Pdo\Mysql::ATTR_SSL_VERIFY_SERVER_CERT : \PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT) => env('MYSQL_ATTR_SSL_CA') ? env('DB_SSL_VERIFY_SERVER_CERT', true) : null,
+                (PHP_VERSION_ID >= 80500 ? Mysql::ATTR_SSL_CA : PDO::MYSQL_ATTR_SSL_CA) => env('MYSQL_ATTR_SSL_CA'),
+                (PHP_VERSION_ID >= 80500 ? Mysql::ATTR_SSL_CERT : PDO::MYSQL_ATTR_SSL_CERT) => env('DB_SSL_CERT'),
+                (PHP_VERSION_ID >= 80500 ? Mysql::ATTR_SSL_KEY : PDO::MYSQL_ATTR_SSL_KEY) => env('DB_SSL_KEY'),
+                (PHP_VERSION_ID >= 80500 ? Mysql::ATTR_SSL_VERIFY_SERVER_CERT : PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT) => env('MYSQL_ATTR_SSL_CA') ? env('DB_SSL_VERIFY_SERVER_CERT', true) : null,
             ], fn ($value) => $value !== null) : [],
         ],
 
@@ -71,10 +72,10 @@ return [
             'strict' => true,
             'engine' => null,
             'options' => extension_loaded('pdo_mysql') ? array_filter([
-                (PHP_VERSION_ID >= 80500 ? \Pdo\Mysql::ATTR_SSL_CA : \PDO::MYSQL_ATTR_SSL_CA) => env('MYSQL_ATTR_SSL_CA'),
-                (PHP_VERSION_ID >= 80500 ? \Pdo\Mysql::ATTR_SSL_CERT : \PDO::MYSQL_ATTR_SSL_CERT) => env('DB_SSL_CERT'),
-                (PHP_VERSION_ID >= 80500 ? \Pdo\Mysql::ATTR_SSL_KEY : \PDO::MYSQL_ATTR_SSL_KEY) => env('DB_SSL_KEY'),
-                (PHP_VERSION_ID >= 80500 ? \Pdo\Mysql::ATTR_SSL_VERIFY_SERVER_CERT : \PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT) => env('MYSQL_ATTR_SSL_CA') ? env('DB_SSL_VERIFY_SERVER_CERT', true) : null,
+                (PHP_VERSION_ID >= 80500 ? Mysql::ATTR_SSL_CA : PDO::MYSQL_ATTR_SSL_CA) => env('MYSQL_ATTR_SSL_CA'),
+                (PHP_VERSION_ID >= 80500 ? Mysql::ATTR_SSL_CERT : PDO::MYSQL_ATTR_SSL_CERT) => env('DB_SSL_CERT'),
+                (PHP_VERSION_ID >= 80500 ? Mysql::ATTR_SSL_KEY : PDO::MYSQL_ATTR_SSL_KEY) => env('DB_SSL_KEY'),
+                (PHP_VERSION_ID >= 80500 ? Mysql::ATTR_SSL_VERIFY_SERVER_CERT : PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT) => env('MYSQL_ATTR_SSL_CA') ? env('DB_SSL_VERIFY_SERVER_CERT', true) : null,
             ], fn ($value) => $value !== null) : [],
         ],
 

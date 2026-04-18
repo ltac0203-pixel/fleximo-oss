@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Providers;
 
+use App\Providers\AppServiceProvider;
 use Tests\TestCase;
 
 class AppServiceProviderSecurityTest extends TestCase
 {
     private function invokeValidateProductionSessionSecurity(): void
     {
-        $provider = new \App\Providers\AppServiceProvider($this->app);
+        $provider = new AppServiceProvider($this->app);
         $method = new \ReflectionMethod($provider, 'validateProductionSessionSecurity');
         $method->invoke($provider);
     }
@@ -59,6 +60,6 @@ class AppServiceProviderSecurityTest extends TestCase
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('SESSION_SECURE_COOKIE');
 
-        (new \App\Providers\AppServiceProvider($this->app))->boot();
+        (new AppServiceProvider($this->app))->boot();
     }
 }

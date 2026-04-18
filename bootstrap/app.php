@@ -2,15 +2,29 @@
 
 declare(strict_types=1);
 
+use App\Http\Middleware\AddSecurityHeaders;
+use App\Http\Middleware\EnsureActiveRouteTenant;
+use App\Http\Middleware\EnsureApprovedUserTenant;
+use App\Http\Middleware\EnsureIdempotencyKey;
+use App\Http\Middleware\EnsureUserIsActive;
+use App\Http\Middleware\EnsureUserRole;
+use App\Http\Middleware\EnsureUserTenantAssignment;
+use App\Http\Middleware\HandleInertiaRequests;
+use App\Http\Middleware\RestrictByIpWhitelist;
+use App\Http\Middleware\SetTenantContext;
+use App\Http\Middleware\ValidateThreeDsCallbackSignature;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Auth\Middleware\EnsureEmailIsVerified;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\TokenMismatchException;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
+use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 use Sentry\Laravel\Integration;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -22,29 +36,29 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->append(\App\Http\Middleware\AddSecurityHeaders::class);
-        $middleware->prependToPriorityList(SubstituteBindings::class, \App\Http\Middleware\SetTenantContext::class);
+        $middleware->append(AddSecurityHeaders::class);
+        $middleware->prependToPriorityList(SubstituteBindings::class, SetTenantContext::class);
 
         $middleware->web(append: [
-            \App\Http\Middleware\HandleInertiaRequests::class,
-            \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
+            HandleInertiaRequests::class,
+            AddLinkHeadersForPreloadedAssets::class,
         ]);
         $middleware->api(prepend: [
-            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
-            \App\Http\Middleware\SetTenantContext::class,
+            EnsureFrontendRequestsAreStateful::class,
+            SetTenantContext::class,
         ]);
 
         $middleware->alias([
-            'role' => \App\Http\Middleware\EnsureUserRole::class,
-            'active' => \App\Http\Middleware\EnsureUserIsActive::class,
-            'tenant.context' => \App\Http\Middleware\SetTenantContext::class,
-            'tenant.user-assigned' => \App\Http\Middleware\EnsureUserTenantAssignment::class,
-            'tenant.user-approved' => \App\Http\Middleware\EnsureApprovedUserTenant::class,
-            'tenant.route-active' => \App\Http\Middleware\EnsureActiveRouteTenant::class,
-            'idempotent' => \App\Http\Middleware\EnsureIdempotencyKey::class,
-            'signed.3ds' => \App\Http\Middleware\ValidateThreeDsCallbackSignature::class,
-            'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-            'ip.whitelist' => \App\Http\Middleware\RestrictByIpWhitelist::class,
+            'role' => EnsureUserRole::class,
+            'active' => EnsureUserIsActive::class,
+            'tenant.context' => SetTenantContext::class,
+            'tenant.user-assigned' => EnsureUserTenantAssignment::class,
+            'tenant.user-approved' => EnsureApprovedUserTenant::class,
+            'tenant.route-active' => EnsureActiveRouteTenant::class,
+            'idempotent' => EnsureIdempotencyKey::class,
+            'signed.3ds' => ValidateThreeDsCallbackSignature::class,
+            'verified' => EnsureEmailIsVerified::class,
+            'ip.whitelist' => RestrictByIpWhitelist::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
@@ -72,7 +86,7 @@ return Application::configure(basePath: dirname(__DIR__))
         });
 
         // API レスポンスは JSON を返すため、Inertia のレンダリングは Web 向けリクエストのみに絞る
-        $exceptions->respond(function (Response $response, \Throwable $exception, Request $request) {
+        $exceptions->respond(function (Response $response, Throwable $exception, Request $request) {
             $statusCode = $response->getStatusCode();
 
             // ローカル環境の500/503はデバッグ情報を優先

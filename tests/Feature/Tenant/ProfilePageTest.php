@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Tenant;
 
+use App\Enums\TenantUserRole;
 use App\Enums\UserRole;
 use App\Models\Tenant;
 use App\Models\TenantUser;
@@ -38,7 +39,7 @@ class ProfilePageTest extends TestCase
         TenantUser::factory()->create([
             'user_id' => $this->tenantAdmin->id,
             'tenant_id' => $this->tenant->id,
-            'role' => \App\Enums\TenantUserRole::Admin,
+            'role' => TenantUserRole::Admin,
         ]);
         $this->tenantAdmin->refresh();
     }
@@ -109,7 +110,7 @@ class ProfilePageTest extends TestCase
         TenantUser::factory()->create([
             'user_id' => $staff->id,
             'tenant_id' => $this->tenant->id,
-            'role' => \App\Enums\TenantUserRole::Staff,
+            'role' => TenantUserRole::Staff,
         ]);
         $staff->refresh();
 

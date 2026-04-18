@@ -7,6 +7,7 @@ namespace Tests\Feature\Payment;
 use App\Enums\OrderStatus;
 use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
+use App\Exceptions\PaymentFailedException;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Models\Tenant;
@@ -216,7 +217,7 @@ class ThreeDSecureTest extends TestCase
         $mockOrchestrator = Mockery::mock(CheckoutOrchestrator::class);
         $mockOrchestrator->shouldReceive('process3dsCallback')
             ->once()
-            ->andThrow(new \App\Exceptions\PaymentFailedException(
+            ->andThrow(new PaymentFailedException(
                 $payment,
                 null,
                 'この決済は3DS認証待ちではありません。'

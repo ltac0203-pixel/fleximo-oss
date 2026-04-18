@@ -7,9 +7,12 @@ namespace App\Services;
 use App\Enums\ReorderSkipReason;
 use App\Exceptions\InvalidOptionSelectionException;
 use App\Exceptions\ItemNotAvailableException;
+use App\Models\Cart;
 use App\Models\MenuItem;
 use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class ReorderService
@@ -80,8 +83,8 @@ class ReorderService
     private function processOrderItem(
         User $user,
         Order $order,
-        \App\Models\OrderItem $orderItem,
-        \Illuminate\Database\Eloquent\Collection $menuItems,
+        OrderItem $orderItem,
+        Collection $menuItems,
     ): array {
         // menu_item_idがnull → 商品が削除済み
         if ($orderItem->menu_item_id === null) {
@@ -171,7 +174,7 @@ class ReorderService
 
     // 注文時のオプションを現在のメニュー状態と照合する
     private function resolveOptions(
-        \App\Models\OrderItem $orderItem,
+        OrderItem $orderItem,
         MenuItem $menuItem,
     ): array {
         if ($orderItem->options->isEmpty()) {
@@ -213,7 +216,7 @@ class ReorderService
 
     // スキップ結果を生成する
     private function skipResult(
-        \App\Models\OrderItem $orderItem,
+        OrderItem $orderItem,
         ReorderSkipReason $reason,
     ): array {
         return [
@@ -229,7 +232,7 @@ class ReorderService
     }
 
     // カート情報をフォーマットする
-    private function formatCart(\App\Models\Cart $cart): array
+    private function formatCart(Cart $cart): array
     {
         return [
             'id' => $cart->id,

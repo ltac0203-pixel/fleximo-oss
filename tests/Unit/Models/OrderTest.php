@@ -10,6 +10,7 @@ use App\Models\OrderItem;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Services\TenantContext;
+use Carbon\Carbon;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use InvalidArgumentException;
@@ -211,7 +212,7 @@ class OrderTest extends TestCase
             'business_date' => '2026-01-20',
         ]);
 
-        $this->assertInstanceOf(\Carbon\Carbon::class, $order->business_date);
+        $this->assertInstanceOf(Carbon::class, $order->business_date);
         $this->assertEquals('2026-01-20', $order->business_date->format('Y-m-d'));
     }
 
@@ -395,7 +396,7 @@ class OrderTest extends TestCase
     {
         $tenant = Tenant::factory()->create();
         $user = User::factory()->customer()->create();
-        $targetDate = \Carbon\Carbon::parse('2026-01-20');
+        $targetDate = Carbon::parse('2026-01-20');
 
         Order::factory()->create([
             'user_id' => $user->id,

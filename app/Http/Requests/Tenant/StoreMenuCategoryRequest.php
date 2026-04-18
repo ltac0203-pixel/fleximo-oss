@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Requests\Tenant;
 
 use App\DTOs\Menu\CreateCategoryData;
+use App\Models\MenuCategory;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreMenuCategoryRequest extends FormRequest
@@ -22,7 +23,7 @@ class StoreMenuCategoryRequest extends FormRequest
 
     public function authorize(): bool
     {
-        return $this->user()->can('create', \App\Models\MenuCategory::class);
+        return $this->user()->can('create', MenuCategory::class);
     }
 
     public function rules(): array

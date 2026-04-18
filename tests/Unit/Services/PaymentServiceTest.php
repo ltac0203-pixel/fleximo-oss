@@ -16,6 +16,7 @@ use App\Services\CardPaymentService;
 use App\Services\Fincode\FincodeApiException;
 use App\Services\Fincode\FincodeClient;
 use App\Services\Fincode\FincodePaymentResponse;
+use App\Services\PaymentInitiationResult;
 use App\Services\PaymentService;
 use App\Services\PayPayPaymentService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -67,7 +68,7 @@ class PaymentServiceTest extends TestCase
             ->shouldReceive('initiateCardPayment')
             ->once()
             ->andReturnUsing(function ($payment) {
-                return \App\Services\PaymentInitiationResult::forCard(
+                return PaymentInitiationResult::forCard(
                     $payment,
                     'p_123456',
                     'a_789012'
@@ -109,7 +110,7 @@ class PaymentServiceTest extends TestCase
             ->shouldReceive('initiatePayPayPayment')
             ->once()
             ->andReturnUsing(function ($payment) {
-                return \App\Services\PaymentInitiationResult::forPayPay(
+                return PaymentInitiationResult::forPayPay(
                     $payment,
                     'https://paypay.example.com/checkout',
                     's_123456'

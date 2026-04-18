@@ -12,6 +12,7 @@ use App\Models\Tenant;
 use App\Models\TenantUser;
 use App\Models\User;
 use App\Notifications\SuspiciousLoginNotification;
+use App\Services\LoginAnomalyDetector;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
@@ -289,7 +290,7 @@ class LoginAnomalyDetectionTest extends TestCase
     public function test_detection_error_does_not_break_login(): void
     {
         // LoginAnomalyDetectorをモックして例外を投げさせる
-        $this->mock(\App\Services\LoginAnomalyDetector::class, function ($mock) {
+        $this->mock(LoginAnomalyDetector::class, function ($mock) {
             $mock->shouldReceive('detect')
                 ->andThrow(new \RuntimeException('Detection failed'));
         });

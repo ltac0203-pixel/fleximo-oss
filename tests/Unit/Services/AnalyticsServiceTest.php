@@ -6,6 +6,7 @@ namespace Tests\Unit\Services;
 
 use App\Enums\MetricType;
 use App\Exceptions\TenantDailyAnalyticsPartialFailureException;
+use App\Jobs\AggregateDailyAnalyticsJob;
 use App\Models\AnalyticsCache;
 use App\Models\HourlyOrderStat;
 use App\Models\MenuItem;
@@ -505,12 +506,12 @@ class AnalyticsServiceTest extends TestCase
 
         $this->assertSame(2, $dispatchedCount);
 
-        Queue::assertPushed(\App\Jobs\AggregateDailyAnalyticsJob::class, 2);
-        Queue::assertPushed(\App\Jobs\AggregateDailyAnalyticsJob::class, function ($job) use ($date) {
+        Queue::assertPushed(AggregateDailyAnalyticsJob::class, 2);
+        Queue::assertPushed(AggregateDailyAnalyticsJob::class, function ($job) use ($date) {
             return $job->tenantId === $this->tenant->id
                 && $job->date->toDateString() === $date->toDateString();
         });
-        Queue::assertPushed(\App\Jobs\AggregateDailyAnalyticsJob::class, function ($job) use ($date, $tenant2) {
+        Queue::assertPushed(AggregateDailyAnalyticsJob::class, function ($job) use ($date, $tenant2) {
             return $job->tenantId === $tenant2->id
                 && $job->date->toDateString() === $date->toDateString();
         });

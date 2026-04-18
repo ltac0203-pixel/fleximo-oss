@@ -8,6 +8,7 @@ use App\Models\Tenant;
 use App\Services\OrderNumberGenerator;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class OrderNumberGeneratorTest extends TestCase
@@ -77,7 +78,7 @@ class OrderNumberGeneratorTest extends TestCase
         $code1 = $this->generator->generate($this->tenant->id, $day1);
 
         // day1の注文番号を保存
-        \Illuminate\Support\Facades\DB::table('orders')->insert([
+        DB::table('orders')->insert([
             'tenant_id' => $this->tenant->id,
             'business_date' => $day1->toDateString(),
             'order_code' => $code1,

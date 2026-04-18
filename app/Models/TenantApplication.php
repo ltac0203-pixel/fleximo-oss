@@ -11,12 +11,13 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 
 /**
  * @property TenantApplicationStatus $status
  * @property BusinessType $business_type
- * @property \Illuminate\Support\Carbon|null $reviewed_at
+ * @property Carbon|null $reviewed_at
  */
 class TenantApplication extends Model
 {

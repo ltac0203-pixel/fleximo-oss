@@ -16,6 +16,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Services\OrderNumberGenerator;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\QueryException;
 
 class OrderCreationService
@@ -151,9 +152,9 @@ class OrderCreationService
     /**
      * メニューアイテムの販売可能性をロック付きで検証し、最新の価格情報を返す
      *
-     * @return \Illuminate\Database\Eloquent\Collection<int, MenuItem>
+     * @return Collection<int, MenuItem>
      */
-    private function verifyItemsWithLock(Cart $cart): \Illuminate\Database\Eloquent\Collection
+    private function verifyItemsWithLock(Cart $cart): Collection
     {
         $menuItemIds = $cart->items->pluck('menu_item_id')->unique();
 
@@ -180,14 +181,14 @@ class OrderCreationService
      * カート内の全オプションをロック付きで取得し、最新の価格情報を返す
      * 削除済みオプション等で欠けがあれば stale 情報をフォールバックせず即座に失敗させる
      *
-     * @return \Illuminate\Database\Eloquent\Collection<int, Option>
+     * @return Collection<int, Option>
      */
-    private function lockOptionsFromCart(Cart $cart): \Illuminate\Database\Eloquent\Collection
+    private function lockOptionsFromCart(Cart $cart): Collection
     {
         $optionIds = $cart->items->flatMap(fn ($item) => $item->options->pluck('option_id'))->unique()->values();
 
         if ($optionIds->isEmpty()) {
-            return new \Illuminate\Database\Eloquent\Collection;
+            return new Collection;
         }
 
         $lockedOptions = Option::whereIn('id', $optionIds)
@@ -212,10 +213,10 @@ class OrderCreationService
      * verifyItemsWithLock / lockOptionsFromCart を通過済みのため lockedMenuItems / lockedOptions には
      * カート内の全 ID が必ず存在する不変条件を前提とする
      *
-     * @param  \Illuminate\Database\Eloquent\Collection<int, MenuItem>  $lockedMenuItems
-     * @param  \Illuminate\Database\Eloquent\Collection<int, Option>  $lockedOptions
+     * @param  Collection<int, MenuItem>  $lockedMenuItems
+     * @param  Collection<int, Option>  $lockedOptions
      */
-    private function createOrderItems(Order $order, Cart $cart, \Illuminate\Database\Eloquent\Collection $lockedMenuItems, \Illuminate\Database\Eloquent\Collection $lockedOptions): void
+    private function createOrderItems(Order $order, Cart $cart, Collection $lockedMenuItems, Collection $lockedOptions): void
     {
         /** @var CartItem $cartItem */
         foreach ($cart->items as $cartItem) {
@@ -243,7 +244,7 @@ class OrderCreationService
     // 注文アイテムオプションを作成する
     // ロック取得した最新のOptionから名前・価格をスナップショットし、TOCTOU攻撃を防止する
     // lockOptionsFromCart で事前検証済みのため lockedOptions には必ず該当 Option が存在する
-    private function createOrderItemOptions(OrderItem $orderItem, CartItem $cartItem, \Illuminate\Database\Eloquent\Collection $lockedOptions): void
+    private function createOrderItemOptions(OrderItem $orderItem, CartItem $cartItem, Collection $lockedOptions): void
     {
         if ($cartItem->options->isEmpty()) {
             return;

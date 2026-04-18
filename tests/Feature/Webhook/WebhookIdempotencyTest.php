@@ -16,6 +16,7 @@ use App\Services\Webhook\WebhookService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Queue;
+use Illuminate\Testing\TestResponse;
 use Tests\TestCase;
 
 class WebhookIdempotencyTest extends TestCase
@@ -41,12 +42,12 @@ class WebhookIdempotencyTest extends TestCase
         return hash_hmac('sha256', $payload, $this->webhookSecret);
     }
 
-    private function sendWebhook(array $data): \Illuminate\Testing\TestResponse
+    private function sendWebhook(array $data): TestResponse
     {
         return $this->sendWebhookToTenant($this->tenant, $data);
     }
 
-    private function sendWebhookToTenant(Tenant $tenant, array $data): \Illuminate\Testing\TestResponse
+    private function sendWebhookToTenant(Tenant $tenant, array $data): TestResponse
     {
         // 新規テナントが fincode_shop_id 未設定の場合、payload 側もテナント側と一致するよう調整する
         $data['shop_id'] = $data['shop_id'] ?? ($tenant->fincode_shop_id ?? self::TEST_SHOP_ID);

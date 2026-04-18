@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Requests\Tenant;
 
 use App\DTOs\Menu\CreateOptionGroupData;
+use App\Models\OptionGroup;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Validator;
 
@@ -26,7 +27,7 @@ class StoreOptionGroupRequest extends FormRequest
 
     public function authorize(): bool
     {
-        return $this->user()->can('create', \App\Models\OptionGroup::class);
+        return $this->user()->can('create', OptionGroup::class);
     }
 
     public function rules(): array

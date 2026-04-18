@@ -6,6 +6,7 @@ namespace App\Http\Requests\Tenant;
 
 use App\DTOs\Menu\UpdateMenuItemData;
 use App\Models\MenuCategory;
+use App\Models\OptionGroup;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Validator;
 
@@ -61,7 +62,7 @@ class UpdateMenuItemRequest extends FormRequest
             }
 
             if ($this->has('option_group_ids')) {
-                $validOptionGroupIds = \App\Models\OptionGroup::where('tenant_id', $tenantId)
+                $validOptionGroupIds = OptionGroup::where('tenant_id', $tenantId)
                     ->whereIn('id', $this->input('option_group_ids'))
                     ->pluck('id')
                     ->toArray();
