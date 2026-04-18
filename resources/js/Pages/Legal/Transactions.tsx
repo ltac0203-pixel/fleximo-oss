@@ -3,11 +3,11 @@ import LegalLayout from "@/Layouts/LegalLayout";
 import LegalSection from "@/Components/Legal/LegalSection";
 import SeoHead from '@/Components/SeoHead';
 import { useSeo } from '@/Hooks/useSeo';
-import type { LegalConfig } from '@/types/common';
+import type { PageProps } from '@/types/common';
 
 export default function Transactions() {
     const { generateMetadata } = useSeo();
-    const { legal } = usePage<{ legal: LegalConfig }>().props;
+    const { legal } = usePage<PageProps>().props;
 
     const metadata = generateMetadata({
         title: '特定商取引法に基づく表記',

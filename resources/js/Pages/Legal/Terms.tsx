@@ -3,11 +3,11 @@ import LegalLayout from "@/Layouts/LegalLayout";
 import LegalSection from "@/Components/Legal/LegalSection";
 import SeoHead from '@/Components/SeoHead';
 import { useSeo } from '@/Hooks/useSeo';
-import type { LegalConfig, SiteConfig } from '@/types/common';
+import type { PageProps } from '@/types/common';
 
 export default function Terms() {
     const { generateMetadata } = useSeo();
-    const { legal, siteConfig } = usePage<{ legal: LegalConfig; siteConfig: SiteConfig }>().props;
+    const { legal, siteConfig } = usePage<PageProps>().props;
 
     const metadata = generateMetadata({
         title: '利用規約',

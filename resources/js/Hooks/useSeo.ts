@@ -1,12 +1,12 @@
 import { usePage } from '@inertiajs/react';
 import type { SeoMetadata } from '@/types/seo';
-import type { SiteConfig } from '@/types/common';
+import type { PageProps } from '@/types/common';
 
 /**
  * SEOメタデータのデフォルト値を提供するhook
  */
 export function useSeo() {
-  const { url, props } = usePage<{ siteConfig: SiteConfig }>();
+  const { url, props } = usePage<PageProps>();
   const siteConfig = props.siteConfig;
 
   const baseUrl = siteConfig.baseUrl;
