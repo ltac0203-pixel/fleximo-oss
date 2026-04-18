@@ -70,7 +70,7 @@ class BusinessLoginController extends Controller
             UserRole::Admin => route('admin.dashboard', absolute: false),
             UserRole::TenantAdmin => route('tenant.dashboard', absolute: false),
             UserRole::TenantStaff => route('tenant.kds', absolute: false),
-            default => route('for-business.index', absolute: false),
+            default => route('for-business.login', absolute: false),
         };
 
         return redirect()->intended($redirectRoute);

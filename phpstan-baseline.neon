@@ -205,12 +205,6 @@ parameters:
 			path: app/Enums/PaymentStatus.php
 
 		-
-			message: '#^Method App\\Enums\\TenantApplicationStatus\:\:values\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Enums/TenantApplicationStatus.php
-
-		-
 			message: '#^Method App\\Enums\\TenantUserRole\:\:values\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -337,12 +331,6 @@ parameters:
 			path: app/Http/Middleware/EnsureUserIsActive.php
 
 		-
-			message: '#^Method App\\Http\\Requests\\Admin\\AdminRevenueDashboardRequest\:\:rules\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Http/Requests/Admin/AdminRevenueDashboardRequest.php
-
-		-
 			message: '#^Method App\\Http\\Requests\\Admin\\BanCustomerRequest\:\:rules\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -353,12 +341,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: app/Http/Requests/Admin/ExportCustomerDataRequest.php
-
-		-
-			message: '#^Method App\\Http\\Requests\\Admin\\ListApplicationsRequest\:\:rules\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Http/Requests/Admin/ListApplicationsRequest.php
 
 		-
 			message: '#^Method App\\Http\\Requests\\Admin\\ListCustomerOrdersRequest\:\:rules\(\) return type has no value type specified in iterable type array\.$#'
@@ -373,22 +355,10 @@ parameters:
 			path: app/Http/Requests/Admin/ListCustomersRequest.php
 
 		-
-			message: '#^Method App\\Http\\Requests\\Admin\\RejectApplicationRequest\:\:rules\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Http/Requests/Admin/RejectApplicationRequest.php
-
-		-
 			message: '#^Method App\\Http\\Requests\\Admin\\SuspendCustomerRequest\:\:rules\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: app/Http/Requests/Admin/SuspendCustomerRequest.php
-
-		-
-			message: '#^Method App\\Http\\Requests\\Admin\\UpdateApplicationNotesRequest\:\:rules\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Http/Requests/Admin/UpdateApplicationNotesRequest.php
 
 		-
 			message: '#^Method App\\Http\\Requests\\Admin\\UpdateTenantShopIdRequest\:\:rules\(\) return type has no value type specified in iterable type array\.$#'
@@ -671,12 +641,6 @@ parameters:
 			identifier: missingType.parameter
 			count: 1
 			path: app/Http/Requests/Tenant/UpdateTenantProfileRequest.php
-
-		-
-			message: '#^Method App\\Http\\Requests\\TenantApplicationRequest\:\:rules\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Http/Requests/TenantApplicationRequest.php
 
 		-
 			message: '#^Access to an undefined property App\\Http\\Resources\\Admin\\CustomerDetailResource\:\:\$accountStatusChangedBy\.$#'
@@ -1909,126 +1873,6 @@ parameters:
 			path: app/Http/Resources/StaffResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Http\\Resources\\TenantApplicationResource\:\:\$applicant_email\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/TenantApplicationResource.php
-
-		-
-			message: '#^Access to an undefined property App\\Http\\Resources\\TenantApplicationResource\:\:\$applicant_name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/TenantApplicationResource.php
-
-		-
-			message: '#^Access to an undefined property App\\Http\\Resources\\TenantApplicationResource\:\:\$applicant_phone\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/TenantApplicationResource.php
-
-		-
-			message: '#^Access to an undefined property App\\Http\\Resources\\TenantApplicationResource\:\:\$application_code\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/TenantApplicationResource.php
-
-		-
-			message: '#^Access to an undefined property App\\Http\\Resources\\TenantApplicationResource\:\:\$business_type\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Resources/TenantApplicationResource.php
-
-		-
-			message: '#^Access to an undefined property App\\Http\\Resources\\TenantApplicationResource\:\:\$createdTenant\.$#'
-			identifier: property.notFound
-			count: 3
-			path: app/Http/Resources/TenantApplicationResource.php
-
-		-
-			message: '#^Access to an undefined property App\\Http\\Resources\\TenantApplicationResource\:\:\$created_at\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/TenantApplicationResource.php
-
-		-
-			message: '#^Access to an undefined property App\\Http\\Resources\\TenantApplicationResource\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/TenantApplicationResource.php
-
-		-
-			message: '#^Access to an undefined property App\\Http\\Resources\\TenantApplicationResource\:\:\$internal_notes\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/TenantApplicationResource.php
-
-		-
-			message: '#^Access to an undefined property App\\Http\\Resources\\TenantApplicationResource\:\:\$rejection_reason\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/TenantApplicationResource.php
-
-		-
-			message: '#^Access to an undefined property App\\Http\\Resources\\TenantApplicationResource\:\:\$reviewed_at\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/TenantApplicationResource.php
-
-		-
-			message: '#^Access to an undefined property App\\Http\\Resources\\TenantApplicationResource\:\:\$reviewer\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Resources/TenantApplicationResource.php
-
-		-
-			message: '#^Access to an undefined property App\\Http\\Resources\\TenantApplicationResource\:\:\$status\.$#'
-			identifier: property.notFound
-			count: 3
-			path: app/Http/Resources/TenantApplicationResource.php
-
-		-
-			message: '#^Access to an undefined property App\\Http\\Resources\\TenantApplicationResource\:\:\$tenant_address\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/TenantApplicationResource.php
-
-		-
-			message: '#^Access to an undefined property App\\Http\\Resources\\TenantApplicationResource\:\:\$tenant_name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/TenantApplicationResource.php
-
-		-
-			message: '#^Access to an undefined property App\\Http\\Resources\\TenantApplicationResource\:\:\$updated_at\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/TenantApplicationResource.php
-
-		-
-			message: '#^Call to an undefined method App\\Http\\Resources\\TenantApplicationResource\:\:canBeApproved\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Http/Resources/TenantApplicationResource.php
-
-		-
-			message: '#^Call to an undefined method App\\Http\\Resources\\TenantApplicationResource\:\:canBeRejected\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Http/Resources/TenantApplicationResource.php
-
-		-
-			message: '#^Call to an undefined method App\\Http\\Resources\\TenantApplicationResource\:\:canStartReview\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Http/Resources/TenantApplicationResource.php
-
-		-
-			message: '#^Method App\\Http\\Resources\\TenantApplicationResource\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Http/Resources/TenantApplicationResource.php
-
-		-
 			message: '#^Access to an undefined property App\\Http\\Resources\\TenantDetailResource\:\:\$businessHours\.$#'
 			identifier: property.notFound
 			count: 1
@@ -2245,18 +2089,6 @@ parameters:
 			path: app/Listeners/SendOrderNotificationEmail.php
 
 		-
-			message: '#^Method App\\Mail\\NewTenantApplicationMail\:\:attachments\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Mail/NewTenantApplicationMail.php
-
-		-
-			message: '#^Property App\\Mail\\NewTenantApplicationMail\:\:\$backoff type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Mail/NewTenantApplicationMail.php
-
-		-
 			message: '#^Method App\\Mail\\OrderCancelledMail\:\:attachments\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -2279,42 +2111,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: app/Mail/OrderCompletedMail.php
-
-		-
-			message: '#^Method App\\Mail\\TenantApplicationApprovedMail\:\:attachments\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Mail/TenantApplicationApprovedMail.php
-
-		-
-			message: '#^Property App\\Mail\\TenantApplicationApprovedMail\:\:\$backoff type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Mail/TenantApplicationApprovedMail.php
-
-		-
-			message: '#^Method App\\Mail\\TenantApplicationReceivedMail\:\:attachments\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Mail/TenantApplicationReceivedMail.php
-
-		-
-			message: '#^Property App\\Mail\\TenantApplicationReceivedMail\:\:\$backoff type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Mail/TenantApplicationReceivedMail.php
-
-		-
-			message: '#^Method App\\Mail\\TenantApplicationRejectedMail\:\:attachments\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Mail/TenantApplicationRejectedMail.php
-
-		-
-			message: '#^Property App\\Mail\\TenantApplicationRejectedMail\:\:\$backoff type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Mail/TenantApplicationRejectedMail.php
 
 		-
 			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder\:\:forPlatform\(\)\.$#'
@@ -3413,66 +3209,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: app/Models/Tenant.php
-
-		-
-			message: '#^Class App\\Models\\TenantApplication uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
-			identifier: missingType.generics
-			count: 1
-			path: app/Models/TenantApplication.php
-
-		-
-			message: '#^Method App\\Models\\TenantApplication\:\:applicantUser\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
-			identifier: missingType.generics
-			count: 1
-			path: app/Models/TenantApplication.php
-
-		-
-			message: '#^Method App\\Models\\TenantApplication\:\:createdTenant\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
-			identifier: missingType.generics
-			count: 1
-			path: app/Models/TenantApplication.php
-
-		-
-			message: '#^Method App\\Models\\TenantApplication\:\:reviewer\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
-			identifier: missingType.generics
-			count: 1
-			path: app/Models/TenantApplication.php
-
-		-
-			message: '#^Method App\\Models\\TenantApplication\:\:scopeSearch\(\) has parameter \$query with generic class Illuminate\\Database\\Eloquent\\Builder but does not specify its types\: TModel$#'
-			identifier: missingType.generics
-			count: 1
-			path: app/Models/TenantApplication.php
-
-		-
-			message: '#^Method App\\Models\\TenantApplication\:\:scopeSearch\(\) return type with generic class Illuminate\\Database\\Eloquent\\Builder does not specify its types\: TModel$#'
-			identifier: missingType.generics
-			count: 1
-			path: app/Models/TenantApplication.php
-
-		-
-			message: '#^Method App\\Models\\TenantApplication\:\:scopeSort\(\) has parameter \$query with generic class Illuminate\\Database\\Eloquent\\Builder but does not specify its types\: TModel$#'
-			identifier: missingType.generics
-			count: 1
-			path: app/Models/TenantApplication.php
-
-		-
-			message: '#^Method App\\Models\\TenantApplication\:\:scopeSort\(\) return type with generic class Illuminate\\Database\\Eloquent\\Builder does not specify its types\: TModel$#'
-			identifier: missingType.generics
-			count: 1
-			path: app/Models/TenantApplication.php
-
-		-
-			message: '#^Method App\\Models\\TenantApplication\:\:scopeStatus\(\) has parameter \$query with generic class Illuminate\\Database\\Eloquent\\Builder but does not specify its types\: TModel$#'
-			identifier: missingType.generics
-			count: 1
-			path: app/Models/TenantApplication.php
-
-		-
-			message: '#^Method App\\Models\\TenantApplication\:\:scopeStatus\(\) return type with generic class Illuminate\\Database\\Eloquent\\Builder does not specify its types\: TModel$#'
-			identifier: missingType.generics
-			count: 1
-			path: app/Models/TenantApplication.php
 
 		-
 			message: '#^Method App\\Models\\TenantBusinessHour\:\:tenant\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
@@ -4723,72 +4459,6 @@ parameters:
 			path: app/Services/PaymentService.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\Order\:\:\$order_count\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/PlatformRevenueDashboardService.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Order\:\:\$total_sales\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/PlatformRevenueDashboardService.php
-
-		-
-			message: '#^Call to function is_array\(\) with string will always evaluate to false\.$#'
-			identifier: function.impossibleType
-			count: 1
-			path: app/Services/PlatformRevenueDashboardService.php
-
-		-
-			message: '#^Method App\\Services\\PlatformRevenueDashboardService\:\:aggregateDailySalesDirect\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/PlatformRevenueDashboardService.php
-
-		-
-			message: '#^Method App\\Services\\PlatformRevenueDashboardService\:\:buildDashboard\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/PlatformRevenueDashboardService.php
-
-		-
-			message: '#^Method App\\Services\\PlatformRevenueDashboardService\:\:normalizeDailyData\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/PlatformRevenueDashboardService.php
-
-		-
-			message: '#^Method App\\Services\\PlatformRevenueDashboardService\:\:normalizeDailyData\(\) is unused\.$#'
-			identifier: method.unused
-			count: 1
-			path: app/Services/PlatformRevenueDashboardService.php
-
-		-
-			message: '#^Method App\\Services\\PlatformRevenueDashboardService\:\:normalizeDailyData\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/PlatformRevenueDashboardService.php
-
-		-
-			message: '#^Method App\\Services\\PlatformRevenueDashboardService\:\:resolveDailySales\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/PlatformRevenueDashboardService.php
-
-		-
-			message: '#^Result of \|\| is always true\.$#'
-			identifier: booleanOr.alwaysTrue
-			count: 1
-			path: app/Services/PlatformRevenueDashboardService.php
-
-		-
-			message: '#^Unreachable statement \- code above always terminates\.$#'
-			identifier: deadCode.unreachable
-			count: 1
-			path: app/Services/PlatformRevenueDashboardService.php
-
-		-
 			message: '#^Access to an undefined property App\\Models\\MenuItem\:\:\$nutrition_info\.$#'
 			identifier: property.notFound
 			count: 1
@@ -5087,42 +4757,6 @@ parameters:
 			identifier: method.unresolvableReturnType
 			count: 1
 			path: app/Services/StaffService.php
-
-		-
-			message: '#^Method App\\Services\\TenantApplication\\SideEffects\\TenantApplicationNotifier\:\:notifyReceived\(\) has parameter \$extraContext with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/TenantApplication/SideEffects/TenantApplicationNotifier.php
-
-		-
-			message: '#^Method App\\Services\\TenantApplication\\SideEffects\\TenantApplicationNotifier\:\:queueMailWithLogging\(\) has parameter \$errorContext with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/TenantApplication/SideEffects/TenantApplicationNotifier.php
-
-		-
-			message: '#^Method App\\Services\\TenantApplication\\SideEffects\\TenantApplicationNotifier\:\:queueMailWithLogging\(\) has parameter \$successContext with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/TenantApplication/SideEffects/TenantApplicationNotifier.php
-
-		-
-			message: '#^Method App\\Services\\TenantApplicationService\:\:createApplicationWithUser\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/TenantApplicationService.php
-
-		-
-			message: '#^Method App\\Services\\TenantApplicationService\:\:getApplications\(\) return type with generic interface Illuminate\\Contracts\\Pagination\\LengthAwarePaginator does not specify its types\: TKey, TValue$#'
-			identifier: missingType.generics
-			count: 1
-			path: app/Services/TenantApplicationService.php
-
-		-
-			message: '#^Method App\\Services\\TenantApplicationService\:\:getDashboardStats\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/TenantApplicationService.php
 
 		-
 			message: '#^Access to an undefined property App\\Models\\Order\:\:\$payment_method\.$#'
@@ -5575,24 +5209,6 @@ parameters:
 			path: app/Support/Seo/PublicPageSeoFactory.php
 
 		-
-			message: '#^Method App\\Support\\Seo\\PublicPageSeoFactory\:\:faqPageSchema\(\) has parameter \$faqEntries with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Support/Seo/PublicPageSeoFactory.php
-
-		-
-			message: '#^Method App\\Support\\Seo\\PublicPageSeoFactory\:\:faqPageSchema\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Support/Seo/PublicPageSeoFactory.php
-
-		-
-			message: '#^Method App\\Support\\Seo\\PublicPageSeoFactory\:\:forBusiness\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Support/Seo/PublicPageSeoFactory.php
-
-		-
 			message: '#^Method App\\Support\\Seo\\PublicPageSeoFactory\:\:menuSchema\(\) has parameter \$categories with generic class Illuminate\\Support\\Collection but does not specify its types\: TKey, TValue$#'
 			identifier: missingType.generics
 			count: 1
@@ -5605,25 +5221,7 @@ parameters:
 			path: app/Support/Seo/PublicPageSeoFactory.php
 
 		-
-			message: '#^Method App\\Support\\Seo\\PublicPageSeoFactory\:\:organizationSchema\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Support/Seo/PublicPageSeoFactory.php
-
-		-
 			message: '#^Method App\\Support\\Seo\\PublicPageSeoFactory\:\:restaurantSchema\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Support/Seo/PublicPageSeoFactory.php
-
-		-
-			message: '#^Method App\\Support\\Seo\\PublicPageSeoFactory\:\:tenantApplication\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Support/Seo/PublicPageSeoFactory.php
-
-		-
-			message: '#^Method App\\Support\\Seo\\PublicPageSeoFactory\:\:tenantApplicationComplete\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: app/Support/Seo/PublicPageSeoFactory.php
@@ -5641,20 +5239,14 @@ parameters:
 			path: app/Support/Seo/PublicPageSeoFactory.php
 
 		-
-			message: '#^Method App\\Support\\Seo\\PublicPageSeoFactory\:\:websiteSchema\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Support/Seo/PublicPageSeoFactory.php
-
-		-
-			message: '#^Method App\\Support\\Seo\\PublicPageSeoFactory\:\:welcome\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Support/Seo/PublicPageSeoFactory.php
-
-		-
 			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) expects callable\(Illuminate\\Database\\Eloquent\\Model, int\)\: array\{''@type''\: ''OpeningHoursSpecification'', dayOfWeek\: string, opens\: string, closes\: string\}, Closure\(App\\Models\\TenantBusinessHour\)\: array\{''@type''\: ''OpeningHoursSpecification'', dayOfWeek\: string, opens\: string, closes\: string\} given\.$#'
 			identifier: argument.type
+			count: 1
+			path: app/Support/Seo/PublicPageSeoFactory.php
+
+		-
+			message: '#^Property App\\Support\\Seo\\PublicPageSeoFactory\:\:\$pageSeoResolver is never read, only written\.$#'
+			identifier: property.onlyWritten
 			count: 1
 			path: app/Support/Seo/PublicPageSeoFactory.php
 

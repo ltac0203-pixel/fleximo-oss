@@ -22,9 +22,6 @@ class GenerateSitemap extends Command
 
         // 静的ページ
         $staticPages = [
-            ['url' => '/', 'priority' => 1.0, 'changefreq' => 'weekly'],
-            ['url' => '/for-business', 'priority' => 0.9, 'changefreq' => 'weekly'],
-            ['url' => '/tenant-application', 'priority' => 0.8, 'changefreq' => 'monthly'],
             ['url' => '/legal/terms', 'priority' => 0.5, 'changefreq' => 'yearly'],
             ['url' => '/legal/privacy-policy', 'priority' => 0.5, 'changefreq' => 'yearly'],
             ['url' => '/legal/transactions', 'priority' => 0.5, 'changefreq' => 'yearly'],

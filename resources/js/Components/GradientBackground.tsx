@@ -37,7 +37,7 @@ function GradientBackground({ variant = "default" }: GradientBackgroundProps) {
         );
     }
 
-    // Business variant: ForBusiness/Index.tsx用
+    // Business variant
     if (variant === "business") {
         return (
             <div className="pointer-events-none absolute inset-0 overflow-hidden">
