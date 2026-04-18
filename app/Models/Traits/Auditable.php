@@ -51,7 +51,7 @@ trait Auditable
     // 指定されたイベントを監査ログに記録するか判定
     protected function shouldAuditEvent(string $event): bool
     {
-        return in_array($event, $this->auditableEvents ?? []);
+        return in_array($event, $this->auditableEvents);
     }
 
     // 機密情報をデータから除外
@@ -59,7 +59,7 @@ trait Auditable
     {
         $exclude = array_merge(
             $this->defaultAuditExclude,
-            $this->auditExclude ?? []
+            $this->auditExclude
         );
 
         return array_diff_key($data, array_flip($exclude));
