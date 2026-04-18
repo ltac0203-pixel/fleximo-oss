@@ -86,8 +86,8 @@ See [`docs/reference/architecture.md`](./docs/reference/architecture.md) and [`d
 ### Setup
 
 ```bash
-git clone https://github.com/<your-org>/fleximo.git
-cd fleximo
+git clone https://github.com/ltac0203-pixel/fleximo-oss.git
+cd fleximo-oss
 
 composer install
 cp .env.example .env

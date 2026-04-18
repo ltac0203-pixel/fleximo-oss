@@ -18,8 +18,8 @@
 ## 1. リポジトリを取得する
 
 ```bash
-git clone https://github.com/<your-org>/fleximo.git
-cd fleximo
+git clone https://github.com/ltac0203-pixel/fleximo-oss.git
+cd fleximo-oss
 ```
 
 ## 2. 依存をインストールする

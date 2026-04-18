@@ -23,8 +23,8 @@
 ```bash
 ssh user@your-server
 cd /var/www
-git clone https://github.com/<your-org>/fleximo.git
-cd fleximo
+git clone https://github.com/ltac0203-pixel/fleximo-oss.git
+cd fleximo-oss
 ```
 
 ### 2. 依存をインストールし、ビルドする
