@@ -151,10 +151,11 @@ APP_URL=https://your-domain.example.com
 DB_CONNECTION=mysql
 REDIS_HOST=127.0.0.1
 
-# fincode
-FINCODE_API_KEY=
-FINCODE_SHOP_ID=
-FINCODE_WEBHOOK_SECRET=
+# fincode（すべての値は fincode 管理画面 https://www.fincode.jp/ から取得）
+FINCODE_API_KEY=            # シークレットキー（サーバー側）。ブラウザに露出させない
+VITE_FINCODE_PUBLIC_KEY=    # パブリックキー（ブラウザ側）。決済フォームの fincode.js で使用
+FINCODE_SHOP_ID=            # プラットフォーム管理者のショップ ID
+FINCODE_WEBHOOK_SECRET=     # Webhook 署名検証用の HMAC シークレット
 
 # 法令対応（本番では必ず自社情報に書き換える）
 COMPANY_NAME="Your Company Name"
@@ -163,6 +164,8 @@ COMPANY_POSTAL_CODE="000-0000"
 COMPANY_ADDRESS="Your Company Address"
 COMPANY_CONTACT_EMAIL=contact@example.com
 ```
+
+> 参加する各テナントのショップ ID は `.env` ではなく DB（テナントごとに保持）に格納します。プラットフォーム管理者が **管理者 → テナントショップ ID** 画面（`/admin/tenant-shop-ids`）から登録し、API 呼び出し時に `Tenant-Shop-Id` ヘッダとして送信されます。詳細は [`docs/how-to/configure-fincode.md`](docs/how-to/configure-fincode.md) を参照。
 
 > **日本でセルフホストする方へ**: 同梱の特商法表記・プライバシーポリシー等（`/legal/*`）は `config/legal.php` のプレースホルダを表示します。本番公開前に `COMPANY_*` 変数を**必ず**自社情報に書き換えてください。プレースホルダのまま公開すると特定商取引法に違反します。
 
