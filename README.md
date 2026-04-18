@@ -152,10 +152,11 @@ APP_URL=https://your-domain.example.com
 DB_CONNECTION=mysql
 REDIS_HOST=127.0.0.1
 
-# fincode
-FINCODE_API_KEY=
-FINCODE_SHOP_ID=
-FINCODE_WEBHOOK_SECRET=
+# fincode (get all values from the fincode management console: https://www.fincode.jp/)
+FINCODE_API_KEY=            # Secret key (server-side). Never expose to the browser.
+VITE_FINCODE_PUBLIC_KEY=    # Public key (browser). Used by fincode.js on the checkout page.
+FINCODE_SHOP_ID=            # Platform shop ID (the operator's own shop).
+FINCODE_WEBHOOK_SECRET=     # HMAC secret for webhook signature verification.
 
 # Legal pages (Japanese 特定商取引法 / Privacy Policy 表記用)
 # OSS版を SaaS として提供する場合、必ず自社情報に書き換えてください
@@ -165,6 +166,8 @@ COMPANY_POSTAL_CODE="000-0000"
 COMPANY_ADDRESS="Your Company Address"
 COMPANY_CONTACT_EMAIL=contact@example.com
 ```
+
+> Each tenant also has its own fincode shop ID, stored per-tenant in the database (not in `.env`). The platform admin registers it from the **Admin → Tenant Shop IDs** page (`/admin/tenant-shop-ids`); it is sent on API calls as the `Tenant-Shop-Id` header. See [`docs/how-to/configure-fincode.md`](docs/how-to/configure-fincode.md).
 
 > **Important for self-hosters in Japan**: The bundled Legal pages (`/legal/transactions`, `/legal/privacy-policy`, `/legal/terms`, `/legal/tenant-terms`) display placeholder values from `config/legal.php`. You **must** override the `COMPANY_*` variables in your `.env` before going to production — these texts are referenced from a Japanese 特定商取引法 (Specified Commercial Transactions Act) standpoint, and showing placeholders to real users is not legally compliant.
 
