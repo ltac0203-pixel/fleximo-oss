@@ -29,7 +29,7 @@ export default function Terms() {
                 <LegalSection title="第2条(定義)" id="section-2">
                     <p>この規約でよく使われる用語の意味は、以下のとおりです。</p>
                     <ol className="list-decimal list-inside space-y-2 ml-4">
-                        <li>「本サービス」は、当社が提供する学食モバイルオーダーシステム「{siteConfig.name}」のことです。</li>
+                        <li>「本サービス」は、当社が提供するマルチテナント モバイルオーダーシステム「{siteConfig.name}」のことです。</li>
                         <li>「ユーザー」は、本サービスを利用するすべての方を指します。</li>
                         <li>「アカウント」は、本サービスを利用するためにユーザーが登録した情報のことです。</li>
                     </ol>

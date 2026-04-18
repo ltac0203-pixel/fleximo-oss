@@ -18,11 +18,11 @@ function HeroSection({ userName, isLoggedIn }: HeroSectionProps) {
                 <div className="max-w-2xl">
                     <div className="inline-flex items-center gap-3 rounded-full border border-sky-200 bg-white/80 px-4 py-2 text-xs font-semibold uppercase tracking-[0.26em] text-sky-700 shadow-sm backdrop-blur-sm">
                         <span className="flex h-2 w-2 rounded-full bg-sky-400" />
-                        学食モバイルオーダー
+                        モバイルオーダー OSS
                     </div>
 
                     <h1 className="mt-8 text-5xl font-bold leading-[1.03] text-slate-900 sm:text-6xl lg:text-7xl">
-                        昼休みの行列、
+                        レジの行列、
                         <br />
                         <span className="mt-2 inline-block text-sky-500">まだ並んでる？</span>
                     </h1>
@@ -116,12 +116,12 @@ function HeroSection({ userName, isLoggedIn }: HeroSectionProps) {
                         <div className="relative flex items-start justify-between gap-4">
                             <div>
                                 <p className="text-xs font-semibold uppercase tracking-[0.3em] text-sky-600">
-                                    Campus order flow
+                                    Self-order flow
                                 </p>
                                 <h2 className="mt-4 text-3xl font-bold leading-[1.15] text-slate-900 sm:text-4xl">
                                     席から注文できる
                                     <br />
-                                    新しい昼休みへ
+                                    新しい注文体験へ
                                 </h2>
                                 <p className="mt-6 text-sm leading-7 text-slate-600 sm:text-base">
                                     テーブルや空いている席からQRを読み取って、自分のペースでメニューを選べます。

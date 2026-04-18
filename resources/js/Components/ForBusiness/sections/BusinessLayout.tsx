@@ -27,7 +27,7 @@ export function BusinessHeader() {
                         </Link>
                         <div className="hidden h-10 w-px bg-sky-100 lg:block" />
                         <p className="hidden max-w-sm text-xs leading-6 text-slate-500 lg:block">
-                            飲食店・学食運営向けに、注文から決済までの流れを軽くする導入ページです。
+                            飲食店・学食・フードコート運営向けに、注文から決済までの流れを軽くする導入ページです。
                         </p>
                     </div>
 

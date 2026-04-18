@@ -13,7 +13,7 @@ export function useSeo() {
   const siteName = siteConfig.name;
   const defaultImage = siteConfig.defaultImageUrl;
   const defaultDescription =
-    '飲食店・学食向けモバイルオーダープラットフォーム。QRコード注文、キャッシュレス決済、KDSで受注から受け取りまでを効率化します。';
+    '日本の飲食店向けオープンソース・マルチテナント モバイルオーダー。QRコード注文、PayPay・クレジットカード決済、KDSで受注から受け取りまでを効率化します。';
 
   /**
    * ページのメタデータを生成

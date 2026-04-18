@@ -14,13 +14,13 @@ function UseSceneSection() {
                         </p>
                     </div>
                     <h2 className="mt-4 text-3xl font-bold text-slate-900 sm:text-4xl">
-                        ランチの流れに、
+                        食事の流れに、
                         <span className="text-sky-500">自然に溶け込む</span>
                     </h2>
                 </div>
                 <p className="max-w-xl text-sm leading-7 text-slate-600 sm:text-base">
-                    Fleximoは、食堂に向かう前後の小さな時間をそのまま注文体験に変えます。
-                    忙しい昼休みでも、手順を意識せずに使える軽さを目指しています。
+                    Fleximoは、店舗に向かう前後の小さな時間をそのまま注文体験に変えます。
+                    混み合うピーク時でも、手順を意識せずに使える軽さを目指しています。
                 </p>
             </div>
 

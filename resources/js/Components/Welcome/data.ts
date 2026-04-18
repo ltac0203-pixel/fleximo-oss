@@ -11,7 +11,7 @@ export const stats: ReadonlyArray<StatItem> = [
     {
         value: "8分",
         label: "平均待ち時間の短縮",
-        description: "列に並ぶ時間を抑えて、昼休みをもっと自由に。",
+        description: "列に並ぶ時間を抑えて、食事の時間をもっと自由に。",
     },
     {
         value: "30秒",
@@ -22,14 +22,14 @@ export const stats: ReadonlyArray<StatItem> = [
 
 export const useScenes: ReadonlyArray<UseSceneItem> = [
     {
-        title: "授業の合間にさっと注文",
-        body: "次の講義まで時間がなくても、移動しながらメニュー確認と決済まで完了できます。",
+        title: "スキマ時間にさっと注文",
+        body: "次の予定まで時間がなくても、移動しながらメニュー確認とPayPay・カード決済まで完了できます。",
         status: "スキマ時間に最適",
         iconKey: "between-classes",
     },
     {
         title: "混雑時でも席からオーダー",
-        body: "食堂の列に離脱せず、空いている席から落ち着いてメニューを選べます。",
+        body: "お店の列に離脱せず、空いている席から落ち着いてメニューを選べます。",
         status: "行列ストレスを軽減",
         iconKey: "from-seat",
     },
@@ -71,7 +71,7 @@ export const features: ReadonlyArray<FeatureItem> = [
         iconKey: "order",
     },
     {
-        eyebrow: "Track your lunch",
+        eyebrow: "Track your order",
         title: "注文状況がわかる",
         body: "注文した料理がいま調理中なのか、もうすぐ出来上がるのか、スマホでリアルタイムに確認できます。",
         meta: "リアルタイム通知",

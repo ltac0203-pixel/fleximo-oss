@@ -9,7 +9,7 @@ export function TrustedBrandsSection() {
                 <p className="text-sm font-semibold uppercase tracking-widest text-sky-600">Proof</p>
                 <h3 className="mt-2 text-2xl font-bold text-slate-900">導入を支える安心の決済実績</h3>
                 <p className="mt-3 text-sm leading-relaxed text-slate-600">
-                    学食運用で求められる主要なキャッシュレスブランドに対応し、現場導入のハードルを下げます。
+                    現場で求められる主要なキャッシュレスブランド（PayPay・各種クレジットカード）に対応し、導入のハードルを下げます。
                 </p>
                 <div className="mt-8 flex flex-wrap items-center justify-center gap-8 text-slate-400">
                     {trustedBrands.map((brand) => (

@@ -21,7 +21,7 @@ function HowItWorksSection() {
                     </h2>
                     <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-slate-600 sm:text-base">
                         使い始めるまでの手順は短く、迷いやすいポイントは画面側で整理。
-                        昼休みのテンポを崩さないように設計しています。
+                        ピーク時のテンポを崩さないように設計しています。
                     </p>
                     <div className="mt-6 flex flex-wrap justify-center gap-3">
                         {processHighlights.map((highlight) => (

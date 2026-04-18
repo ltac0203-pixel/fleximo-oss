@@ -20,8 +20,8 @@ function WelcomeFooter() {
                             <span className="text-2xl font-bold text-ink">Fleximo</span>
                         </div>
                         <p className="mt-4 max-w-md text-sm leading-relaxed text-ink-light">
-                            学食・学生食堂向けモバイルオーダーシステム。
-                            QRコード注文とキャッシュレス決済で、 ランチ体験をスマートに変えます。
+                            日本の飲食店・学食・フードコート向けマルチテナント モバイルオーダー。
+                            QRコード注文とPayPay・クレジットカード決済で、注文体験をスマートに変えます。
                         </p>
                         <div className="mt-6 flex flex-wrap gap-2">
                             {["アプリ不要", "QRコード注文", "キャッシュレス対応"].map((item) => (
