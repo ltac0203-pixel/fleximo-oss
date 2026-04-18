@@ -88,8 +88,8 @@ PENDING_PAYMENT → PAID → ACCEPTED → IN_PROGRESS → READY → COMPLETED
 ### セットアップ
 
 ```bash
-git clone https://github.com/<your-org>/fleximo.git
-cd fleximo
+git clone https://github.com/ltac0203-pixel/fleximo-oss.git
+cd fleximo-oss
 
 composer install
 cp .env.example .env
