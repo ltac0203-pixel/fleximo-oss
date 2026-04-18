@@ -16,6 +16,16 @@ vi.mock("@inertiajs/react", () => ({
     Head: ({ children }: { children?: ReactNode }) => <>{children}</>,
     usePage: () => ({
         url: "/",
+        props: {
+            siteConfig: {
+                name: "Fleximo",
+                baseUrl: "http://localhost",
+                contactEmail: "contact@example.com",
+                supportEmail: "support@example.com",
+                logoUrl: "/logo.png",
+                defaultImageUrl: "/og-default.png",
+            },
+        },
     }),
 }));
 
