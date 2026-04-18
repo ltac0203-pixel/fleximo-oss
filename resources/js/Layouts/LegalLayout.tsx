@@ -3,7 +3,7 @@ import { Link, usePage } from "@inertiajs/react";
 import LegalNav from "@/Components/Legal/LegalNav";
 import GradientBackground from "@/Components/GradientBackground";
 import SkipToContentLink, { MAIN_CONTENT_ID } from "@/Components/SkipToContentLink";
-import type { LegalConfig, SiteConfig } from "@/types/common";
+import type { PageProps } from "@/types/common";
 
 interface LegalLayoutProps extends PropsWithChildren {
     title: string;
@@ -11,7 +11,7 @@ interface LegalLayoutProps extends PropsWithChildren {
 }
 
 export default function LegalLayout({ children, title, lastUpdated }: LegalLayoutProps) {
-    const { legal, siteConfig } = usePage<{ legal: LegalConfig; siteConfig: SiteConfig }>().props;
+    const { legal, siteConfig } = usePage<PageProps>().props;
 
     return (
         <div className="relative min-h-screen bg-white">

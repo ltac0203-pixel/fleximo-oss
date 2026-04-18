@@ -24,7 +24,19 @@ vi.mock("@inertiajs/react", () => ({
             {children}
         </a>
     ),
-    usePage: () => ({ url: "/tenant-application/create" }),
+    usePage: () => ({
+        url: "/tenant-application/create",
+        props: {
+            siteConfig: {
+                name: "Fleximo",
+                baseUrl: "http://localhost",
+                contactEmail: "contact@example.com",
+                supportEmail: "support@example.com",
+                logoUrl: "/logo.png",
+                defaultImageUrl: "/og-default.png",
+            },
+        },
+    }),
     useForm: (initialData: TenantApplicationFormData) => {
         const [data, setDataState] = React.useState(initialData);
 
