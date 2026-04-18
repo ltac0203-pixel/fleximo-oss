@@ -4165,12 +4165,6 @@ parameters:
 			path: app/Services/Checkout/OrderCreationService.php
 
 		-
-			message: '#^Return type of call to method Illuminate\\Support\\Collection\<int,array\<string, mixed\>\>\:\:all\(\) contains unresolvable type\.$#'
-			identifier: method.unresolvableReturnType
-			count: 1
-			path: app/Services/Checkout/OrderCreationService.php
-
-		-
 			message: '#^Unable to resolve the template type TFlatMapKey in call to method Illuminate\\Support\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:flatMap\(\)$#'
 			identifier: argument.templateType
 			count: 1
@@ -5035,12 +5029,6 @@ parameters:
 			path: app/Services/ReorderService.php
 
 		-
-			message: '#^Return type of call to method Illuminate\\Support\\Collection\<int,array\<string, mixed\>\>\:\:values\(\) contains unresolvable type\.$#'
-			identifier: method.unresolvableReturnType
-			count: 1
-			path: app/Services/ReorderService.php
-
-		-
 			message: '#^Unable to resolve the template type TFlatMapKey in call to method Illuminate\\Support\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:flatMap\(\)$#'
 			identifier: argument.templateType
 			count: 1
@@ -5324,12 +5312,6 @@ parameters:
 
 		-
 			message: '#^Return type of call to method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: method.unresolvableReturnType
-			count: 2
-			path: app/Services/TenantService.php
-
-		-
-			message: '#^Return type of call to method Illuminate\\Support\\Collection\<int,array\<string, mixed\>\>\:\:all\(\) contains unresolvable type\.$#'
 			identifier: method.unresolvableReturnType
 			count: 2
 			path: app/Services/TenantService.php
