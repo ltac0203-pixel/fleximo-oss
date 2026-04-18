@@ -1,5 +1,5 @@
 import { impactStats } from "@/Components/ForBusiness/data";
-import { PRIMARY_BUTTON_LARGE, SECONDARY_BUTTON_LARGE } from "@/constants/buttonStyles";
+import { PRIMARY_BUTTON_LARGE } from "@/constants/buttonStyles";
 import { Link } from "@inertiajs/react";
 
 const heroHighlights = ["初期費用0円", "月額0円", "専用端末不要"] as const;
@@ -47,9 +47,6 @@ function HeroSection() {
                     <div className="mt-10 flex flex-wrap gap-4">
                         <Link href={route("tenant-application.create")} className={PRIMARY_BUTTON_LARGE}>
                             無料でテナント申請
-                        </Link>
-                        <Link href={route("contact.index")} className={SECONDARY_BUTTON_LARGE}>
-                            まずは相談する
                         </Link>
                     </div>
                     <div className="mt-6 flex flex-wrap gap-3">

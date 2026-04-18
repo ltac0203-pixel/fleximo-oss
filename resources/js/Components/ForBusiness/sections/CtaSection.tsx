@@ -1,5 +1,5 @@
 import { ctaHighlights } from "@/Components/ForBusiness/data";
-import { INVERTED_BUTTON_PRIMARY, INVERTED_BUTTON_SECONDARY } from "@/constants/buttonStyles";
+import { INVERTED_BUTTON_PRIMARY } from "@/constants/buttonStyles";
 import { Link } from "@inertiajs/react";
 
 function CtaSection() {
@@ -36,9 +36,6 @@ function CtaSection() {
                         <div className="mt-8 flex flex-wrap gap-4">
                             <Link href={route("tenant-application.create")} className={INVERTED_BUTTON_PRIMARY}>
                                 無料でテナント申請
-                            </Link>
-                            <Link href={route("contact.index")} className={INVERTED_BUTTON_SECONDARY}>
-                                お問い合わせ
                             </Link>
                         </div>
                         <p className="mt-5 text-sm leading-7 text-white/75">

@@ -25,7 +25,7 @@ describe("WelcomeFooter", () => {
     it("keeps support links connected to application routes", () => {
         render(<WelcomeFooter />);
 
-        expect(screen.getByRole("link", { name: "お問い合わせ" })).toHaveAttribute("href", "/contact.index");
+        expect(screen.queryByRole("link", { name: "お問い合わせ" })).not.toBeInTheDocument();
         expect(screen.getByRole("link", { name: "事業者様向け" })).toHaveAttribute("href", "/for-business.index");
         expect(screen.getByRole("link", { name: "利用規約" })).toHaveAttribute("href", "/legal.terms");
         expect(screen.getByRole("link", { name: "プライバシーポリシー" })).toHaveAttribute("href", "/legal.privacy-policy");

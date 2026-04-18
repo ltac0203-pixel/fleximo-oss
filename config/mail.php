@@ -123,10 +123,6 @@ return [
             'address' => env('MAIL_FROM_ADDRESS_NO_REPLY', env('MAIL_FROM_ADDRESS', 'hello@example.com')),
             'name' => env('MAIL_FROM_NAME_NO_REPLY', env('MAIL_FROM_NAME', 'Example')),
         ],
-        'contact' => [
-            'address' => env('MAIL_FROM_ADDRESS_CONTACT', env('MAIL_FROM_ADDRESS', 'hello@example.com')),
-            'name' => env('MAIL_FROM_NAME_CONTACT', env('MAIL_FROM_NAME', 'Example')),
-        ],
     ],
 
     /*
