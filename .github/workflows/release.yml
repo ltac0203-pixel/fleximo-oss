@@ -33,13 +33,26 @@ jobs:
           NOTES_FILE="$(mktemp)"
 
           awk -v version="$VERSION" '
-            BEGIN { in_section = 0 }
+            BEGIN {
+              start_marker = "## [" version "]"
+              prefix_len = length(start_marker)
+            }
             /^## \[/ {
               if (in_section) { exit }
-              if ($0 ~ "^## \\[" version "\\]") { in_section = 1; next }
+              if (substr($0, 1, prefix_len) == start_marker) { in_section = 1; next }
             }
-            in_section { print }
-          ' CHANGELOG.md > "$NOTES_FILE"
+            in_section {
+              if ($0 ~ /^\[[^]]+\]:[[:space:]]+https?:/) { next }
+              print
+            }
+          ' CHANGELOG.md | awk '
+            NF == 0 { blank++; next }
+            {
+              if (started && blank) { for (i = 0; i < blank; i++) print "" }
+              blank = 0; started = 1
+              print
+            }
+          ' > "$NOTES_FILE"
 
           if [ ! -s "$NOTES_FILE" ]; then
             echo "No changelog section found for version ${VERSION}." > "$NOTES_FILE"
