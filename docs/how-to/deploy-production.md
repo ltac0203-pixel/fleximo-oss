@@ -14,7 +14,7 @@
 - SSH で接続できるサーバー
 - ドメインと SSL 証明書（Let's Encrypt 等）
 - MariaDB/MySQL・Redis が利用可能
-- PHP 8.2 / Node.js 20 / Composer
+- PHP 8.3 / Node.js 20 / Composer
 
 ## 手順
 

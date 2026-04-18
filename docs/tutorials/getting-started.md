@@ -8,7 +8,7 @@
 
 ## 前提環境
 
-- PHP 8.2 以上（`mbstring`, `intl`, `pdo_mysql`, `redis` 拡張）
+- PHP 8.3 以上（`mbstring`, `intl`, `pdo_mysql`, `redis` 拡張）
 - Composer 2.x
 - Node.js 20 以上
 - MariaDB 10.6+ または MySQL 8+

@@ -2,7 +2,7 @@
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
 [![Status: MVP](https://img.shields.io/badge/status-MVP-orange)](#)
-[![PHP](https://img.shields.io/badge/PHP-%5E8.2-777BB4?logo=php&logoColor=white)](https://www.php.net/)
+[![PHP](https://img.shields.io/badge/PHP-%5E8.3-777BB4?logo=php&logoColor=white)](https://www.php.net/)
 [![Laravel](https://img.shields.io/badge/Laravel-12-FF2D20?logo=laravel&logoColor=white)](https://laravel.com/)
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
@@ -80,7 +80,7 @@ See [`docs/reference/architecture.md`](./docs/reference/architecture.md) and [`d
 
 | Layer            | Tech                                           |
 | ---------------- | ---------------------------------------------- |
-| Backend          | Laravel 12 (PHP ^8.2)                          |
+| Backend          | Laravel 12 (PHP ^8.3)                          |
 | Frontend         | React 19 + Inertia.js 2 + TypeScript 5         |
 | Database         | MariaDB / MySQL                                |
 | Cache / Queue    | Redis                                          |
@@ -97,7 +97,7 @@ See [`docs/reference/architecture.md`](./docs/reference/architecture.md) and [`d
 
 ### Requirements
 
-- PHP ^8.2 with extensions: `mbstring`, `intl`, `pdo_mysql`, `redis`
+- PHP ^8.3 with extensions: `mbstring`, `intl`, `pdo_mysql`, `redis`
 - Composer 2.x
 - Node.js 20+ / npm
 - MariaDB 10.6+ or MySQL 8+
