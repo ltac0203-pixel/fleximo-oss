@@ -8,20 +8,6 @@ use Tests\TestCase;
 
 class PublicPageSeoTest extends TestCase
 {
-    public function test_contact_page_includes_structured_data(): void
-    {
-        $response = $this->get('/contact');
-
-        $response->assertOk();
-        $response->assertInertia(
-            fn ($page) => $page
-                ->component('Contact/Index')
-                ->has('seo')
-                ->has('structuredData')
-        );
-        $response->assertSee('"@type":"ContactPage"', false);
-    }
-
     public function test_tenant_application_complete_page_is_noindex(): void
     {
         $response = $this->get('/tenant-application/complete');

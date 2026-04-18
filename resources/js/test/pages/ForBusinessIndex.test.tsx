@@ -83,10 +83,7 @@ describe("ForBusiness page", () => {
             "href",
             "/for-business.login",
         );
-        expect(screen.getAllByRole("link", { name: "お問い合わせ" })[0]).toHaveAttribute(
-            "href",
-            "/contact.index",
-        );
+        expect(screen.queryByRole("link", { name: "お問い合わせ" })).not.toBeInTheDocument();
     });
 
     it("shows supported payment brands in the proof section", () => {

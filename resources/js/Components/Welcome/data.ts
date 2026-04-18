@@ -121,7 +121,6 @@ export const faqItems: ReadonlyArray<FaqItem> = [
 ];
 
 export const supportLinks: ReadonlyArray<FooterLink> = [
-    { label: "お問い合わせ", routeName: "contact.index" },
     { label: "事業者様向け", routeName: "for-business.index" },
     { label: "利用規約", routeName: "legal.terms" },
     { label: "プライバシーポリシー", routeName: "legal.privacy-policy" },

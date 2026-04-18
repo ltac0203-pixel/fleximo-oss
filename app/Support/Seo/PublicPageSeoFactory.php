@@ -99,33 +99,6 @@ class PublicPageSeoFactory
         ];
     }
 
-    public function contact(): array
-    {
-        return [
-            'seo' => $this->pageSeoResolver->resolve('contact'),
-            'structuredData' => [
-                $this->organizationSchema(),
-                [
-                    '@context' => 'https://schema.org',
-                    '@type' => 'ContactPage',
-                    'name' => 'Fleximo お問い合わせ',
-                    'url' => $this->baseUrl().'/contact',
-                    'description' => 'Fleximoの導入相談、サポート依頼、お問い合わせを受け付ける窓口です。',
-                    'mainEntity' => [
-                        '@type' => 'Organization',
-                        'name' => 'Fleximo',
-                        'url' => $this->baseUrl(),
-                        'contactPoint' => [
-                            '@type' => 'ContactPoint',
-                            'contactType' => 'customer support',
-                            'email' => (string) config('seo.site.support_email', 'support@example.com'),
-                        ],
-                    ],
-                ],
-            ],
-        ];
-    }
-
     public function tenantApplication(): array
     {
         return [

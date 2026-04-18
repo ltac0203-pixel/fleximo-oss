@@ -7,7 +7,6 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\TenantApplicationController as AdminTenantApplicationController;
 use App\Http\Controllers\Admin\TenantShopIdController;
 use App\Http\Controllers\Auth\BusinessLoginController;
-use App\Http\Controllers\ContactController;
 use App\Http\Controllers\Customer\CardPageController;
 use App\Http\Controllers\Customer\CheckoutPageController;
 use App\Http\Controllers\Customer\CustomerHomeController;
@@ -155,12 +154,6 @@ Route::prefix('legal')->name('legal.')->group(function () {
     Route::inertia('/privacy-policy', 'Legal/PrivacyPolicy')->name('privacy-policy');
     Route::inertia('/transactions', 'Legal/Transactions')->name('transactions');
     Route::inertia('/tenant-terms', 'Legal/TenantTerms')->name('tenant-terms');
-});
-
-// お問い合わせ（認証不要、スロットリング適用）
-Route::middleware(['throttle:10,1'])->group(function () {
-    Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
-    Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 });
 
 // テナント申し込み（公開、スロットリング適用）

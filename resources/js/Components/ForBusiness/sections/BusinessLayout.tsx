@@ -35,9 +35,6 @@ export function BusinessHeader() {
                         <Link href={route("home")} className={TEXT_LINK_BUTTON}>
                             一般の方はこちら
                         </Link>
-                        <Link href={route("contact.index")} className={TEXT_LINK_BUTTON}>
-                            お問い合わせ
-                        </Link>
                         <Link href={route("for-business.login")} className={PRIMARY_BUTTON}>
                             事業者ログイン
                         </Link>
@@ -67,9 +64,6 @@ export function BusinessFooter() {
                     <div className="flex flex-wrap gap-6 text-sm text-slate-600">
                         <Link href={route("home")} className={TEXT_LINK_BUTTON}>
                             トップページ
-                        </Link>
-                        <Link href={route("contact.index")} className={TEXT_LINK_BUTTON}>
-                            お問い合わせ
                         </Link>
                         <Link href={route("tenant-application.create")} className={TEXT_LINK_BUTTON}>
                             テナント登録

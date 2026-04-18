@@ -67,21 +67,6 @@ return [
                 // ],
             ],
         ],
-        'contact' => [
-            'default' => [
-                'title' => env('SEO_CONTACT_TITLE', 'お問い合わせ | 導入相談・サポート窓口'),
-                'description' => env(
-                    'SEO_CONTACT_DESCRIPTION',
-                    'Fleximoへの導入相談、モバイルオーダー運用に関するお問い合わせ、サポート依頼を受け付けています。飲食店・学食・フードコート向けの導入相談もこちらからご連絡ください。'
-                ),
-                'keywords' => env(
-                    'SEO_CONTACT_KEYWORDS',
-                    'Fleximo,お問い合わせ,導入相談,サポート,モバイルオーダー,飲食店DX'
-                ),
-                'ogType' => 'website',
-            ],
-            'locales' => [],
-        ],
         'tenant_application' => [
             'default' => [
                 'title' => env('SEO_TENANT_APPLICATION_TITLE', '加盟店申し込み | モバイルオーダー導入申請 (PayPay対応)'),
