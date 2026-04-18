@@ -54,7 +54,7 @@ function createProps(overrides: Partial<WelcomeProps> = {}): WelcomeProps {
         },
         seo: {
             title: "Fleximo",
-            description: "学食向けモバイルオーダー",
+            description: "日本の飲食店向けマルチテナント モバイルオーダー",
         },
         structuredData: [],
         siteConfig: {
@@ -73,8 +73,8 @@ describe("Welcome page", () => {
     it("shows the public LP with register CTAs for guests", () => {
         render(<Welcome {...createProps()} />);
 
-        expect(screen.getByRole("heading", { name: /昼休みの行列、/ })).toBeInTheDocument();
-        expect(screen.getByText("忙しい昼休みに必要な情報だけを、すばやく。")).toBeInTheDocument();
+        expect(screen.getByRole("heading", { name: /レジの行列、/ })).toBeInTheDocument();
+        expect(screen.getByText("忙しいピーク時に必要な情報だけを、すばやく。")).toBeInTheDocument();
 
         const registerLinks = screen.getAllByRole("link", { name: "無料で会員登録" });
         expect(registerLinks).toHaveLength(2);
