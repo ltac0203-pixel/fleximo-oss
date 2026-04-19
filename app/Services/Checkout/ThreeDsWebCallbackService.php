@@ -52,6 +52,13 @@ class ThreeDsWebCallbackService
                 $input->event
             );
 
+            // 3DS callback processing completed successfully, so mark auto-login as consumed.
+            Cache::put(
+                $this->autoLoginCacheKey($payment),
+                true,
+                self::AUTO_LOGIN_CACHE_TTL_SECONDS
+            );
+
             return ThreeDsWebCallbackOutcome::success($result);
         } catch (\Throwable $e) {
             $this->logProcessingFailure($request, $payment, $input->event, $e);
@@ -102,8 +109,6 @@ class ThreeDsWebCallbackService
             $request->session()->regenerate();
             $request->session()->regenerateToken();
         }
-
-        Cache::put($autoLoginCacheKey, true, self::AUTO_LOGIN_CACHE_TTL_SECONDS);
 
         Log::info('3DS callback: auto-login performed for payment owner', [
             'user_id' => $payment->order->user_id,
