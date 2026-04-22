@@ -12,6 +12,7 @@ use App\Http\Controllers\Customer\CustomerHomeController;
 use App\Http\Controllers\Customer\MenuPageController;
 use App\Http\Controllers\Customer\OrderPageController;
 use App\Http\Controllers\DashboardRedirectController;
+use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Tenant\KdsPageController;
 use App\Http\Controllers\Tenant\TenantDashboardController;
@@ -49,6 +50,10 @@ Route::middleware(['auth', 'auth.session', 'active'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // オンボーディングツアーの完了状態管理
+    Route::post('/onboarding/complete', [OnboardingController::class, 'complete'])->name('onboarding.complete');
+    Route::post('/onboarding/reset', [OnboardingController::class, 'reset'])->name('onboarding.reset');
 });
 
 // テナント管理者・スタッフ共通ルート

@@ -8,6 +8,7 @@ export interface User {
     is_customer?: boolean;
     is_tenant_admin?: boolean;
     is_tenant_staff?: boolean;
+    should_show_onboarding?: boolean;
 }
 
 export interface SiteConfig {

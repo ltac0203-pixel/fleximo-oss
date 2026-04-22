@@ -4,6 +4,7 @@ import ErrorFallback from "@/Components/ErrorFallback";
 import GradientBackground from "@/Components/GradientBackground";
 import LogoutConfirmModal from "@/Components/LogoutConfirmModal";
 import SkipToContentLink, { MAIN_CONTENT_ID } from "@/Components/SkipToContentLink";
+import { useOnboardingStore } from "@/stores/onboardingStore";
 import { usePage } from "@inertiajs/react";
 import { PropsWithChildren, useState } from "react";
 import { TenantPageProps } from "@/types";
@@ -18,6 +19,7 @@ export default function TenantLayout({ title, children }: PropsWithChildren<{ ti
     const pageProps = usePage<TenantPageProps>().props;
     const user = pageProps.auth.user!;
     const tenant = pageProps.tenant;
+    const openOnboarding = useOnboardingStore((state) => state.openManual);
 
     const isApproved = tenant.is_approved !== false;
     const navigation = getNavigation(isApproved);
@@ -121,6 +123,28 @@ export default function TenantLayout({ title, children }: PropsWithChildren<{ ti
                                     プロフィール
                                 </span>
                             </Dropdown.Link>
+                            <button
+                                type="button"
+                                onClick={openOnboarding}
+                                className="flex w-full items-start border-l-2 border-transparent px-4 py-2 text-start text-sm text-ink-light transition hover:bg-surface"
+                            >
+                                <span className="inline-flex items-center gap-2">
+                                    <svg
+                                        className="h-4 w-4 text-sky-500"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            d="M9.663 17h4.673M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+                                        />
+                                    </svg>
+                                    オンボーディングを見る
+                                </span>
+                            </button>
                             <button
                                 onClick={() => setShowLogoutModal(true)}
                                 className="flex w-full items-start border-l-2 border-transparent px-4 py-2 text-start text-sm text-ink-light transition hover:bg-surface"
