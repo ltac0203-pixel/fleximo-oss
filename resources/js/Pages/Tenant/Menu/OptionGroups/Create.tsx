@@ -1,3 +1,5 @@
+import FormActions from "@/Components/FormActions";
+import PageHeader from "@/Components/PageHeader";
 import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
 import OptionGroupForm, { FormData, FormErrors } from "@/Components/Tenant/Menu/OptionGroupForm";
@@ -25,8 +27,7 @@ export default function Create(_props: OptionGroupCreateProps) {
 
     const submitOptionGroup = async () => {
         await submit(
-            () =>
-                api.post<{ data: { id: number } }, { errors?: FormErrors }>("/api/tenant/option-groups", formData),
+            () => api.post<{ data: { id: number } }, { errors?: FormErrors }>("/api/tenant/option-groups", formData),
             {
                 logMessage: "Option group creation failed",
                 onSuccess: (response) => {
@@ -60,36 +61,25 @@ export default function Create(_props: OptionGroupCreateProps) {
             <Head title="オプショングループ追加" />
 
             <div className="mx-auto max-w-2xl">
-                <div className="mb-3 flex items-center justify-between">
-                    <h3 className="text-lg font-medium text-gray-900">オプショングループ追加</h3>
-                    <HelpButton onClick={openHelp} />
-                </div>
+                <PageHeader title="オプショングループ追加" help={<HelpButton onClick={openHelp} />} className="mb-3" />
                 <div className="overflow-hidden bg-white">
                     <form onSubmit={handleSubmit} className="p-6">
                         {generalError && <p className="mb-4 text-sm text-red-600">{generalError}</p>}
                         <OptionGroupForm formData={formData} errors={errors} onChange={setFormData} />
 
-                        <p className="mt-4 text-sm text-gray-500">
-                            グループを作成した後、オプションを追加できます。
-                        </p>
+                        <p className="mt-4 text-sm text-gray-500">グループを作成した後、オプションを追加できます。</p>
 
-                        <div className="mt-8 flex justify-end gap-3">
-                            <SecondaryButton type="button" onClick={handleCancel}>
-                                キャンセル
-                            </SecondaryButton>
+                        <FormActions>
+                            <SecondaryButton onClick={handleCancel}>キャンセル</SecondaryButton>
                             <PrimaryButton type="submit" disabled={processing} isBusy={processing}>
-                                作成してオプションを追加
+                                作成
                             </PrimaryButton>
-                        </div>
+                        </FormActions>
                     </form>
                 </div>
             </div>
 
-            <HelpPanel
-                open={showHelp}
-                onClose={closeHelp}
-                content={tenantHelpContent["menu-option-groups-create"]}
-            />
+            <HelpPanel open={showHelp} onClose={closeHelp} content={tenantHelpContent["menu-option-groups-create"]} />
         </TenantLayout>
     );
 }

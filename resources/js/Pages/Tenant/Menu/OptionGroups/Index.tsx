@@ -1,3 +1,4 @@
+import PageHeader from "@/Components/PageHeader";
 import PrimaryButton from "@/Components/PrimaryButton";
 import AvailabilityBadge from "@/Components/Tenant/Menu/AvailabilityBadge";
 import ConfirmDeleteModal from "@/Components/ConfirmDeleteModal";
@@ -45,17 +46,17 @@ export default function Index({ optionGroups }: OptionGroupsIndexProps) {
 
             <div className="overflow-hidden bg-white">
                 <div className="p-6">
-                    <div className="flex justify-between items-center mb-6">
-                        <div className="flex items-center gap-2">
-                            <h3 className="text-lg font-medium text-gray-900">オプショングループ一覧</h3>
-                            <HelpButton onClick={openHelp} />
-                        </div>
-                        {canManage && (
-                            <Link href={route("tenant.menu.option-groups.create")}>
-                                <PrimaryButton>グループを追加</PrimaryButton>
-                            </Link>
-                        )}
-                    </div>
+                    <PageHeader
+                        title="オプショングループ一覧"
+                        help={<HelpButton onClick={openHelp} />}
+                        actions={
+                            canManage ? (
+                                <Link href={route("tenant.menu.option-groups.create")}>
+                                    <PrimaryButton>グループを追加</PrimaryButton>
+                                </Link>
+                            ) : undefined
+                        }
+                    />
 
                     {optionGroups.length === 0 ? (
                         <div className="text-center py-8 text-gray-500">オプショングループがまだありません</div>
@@ -144,11 +145,7 @@ export default function Index({ optionGroups }: OptionGroupsIndexProps) {
                 />
             )}
 
-            <HelpPanel
-                open={showHelp}
-                onClose={closeHelp}
-                content={tenantHelpContent["menu-option-groups"]}
-            />
+            <HelpPanel open={showHelp} onClose={closeHelp} content={tenantHelpContent["menu-option-groups"]} />
 
             <ToastContainer toasts={toasts} onClose={hideToast} />
         </TenantLayout>

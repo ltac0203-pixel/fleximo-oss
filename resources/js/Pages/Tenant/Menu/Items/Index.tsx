@@ -1,3 +1,4 @@
+import PageHeader from "@/Components/PageHeader";
 import PrimaryButton from "@/Components/PrimaryButton";
 import ConfirmDeleteModal from "@/Components/ConfirmDeleteModal";
 import ItemCard from "@/Components/Tenant/Menu/ItemCard";
@@ -39,18 +40,16 @@ export default function Index({ items, categories }: MenuItemsIndexProps) {
         setSelectedItem(null);
     }, []);
 
-    const handleSoldOutToggle = useCallback(
-        (msg: string) => showToast({ type: "success", message: msg }),
-        [showToast],
-    );
+    const handleSoldOutToggle = useCallback((msg: string) => showToast({ type: "success", message: msg }), [showToast]);
 
     const safeItems = useMemo(() => items ?? [], [items]);
     const safeCategories = useMemo(() => categories ?? [], [categories]);
 
     const filteredItems = useMemo(
-        () => filterCategoryId
-            ? safeItems.filter((item) => item.categories?.some((cat) => cat.id === filterCategoryId))
-            : safeItems,
+        () =>
+            filterCategoryId
+                ? safeItems.filter((item) => item.categories?.some((cat) => cat.id === filterCategoryId))
+                : safeItems,
         [safeItems, filterCategoryId],
     );
 
@@ -72,17 +71,17 @@ export default function Index({ items, categories }: MenuItemsIndexProps) {
 
             <div className="overflow-hidden bg-white">
                 <div className="p-6">
-                    <div className="flex justify-between items-center mb-6">
-                        <div className="flex items-center gap-2">
-                            <h3 className="text-lg font-medium text-gray-900">商品一覧</h3>
-                            <HelpButton onClick={openHelp} />
-                        </div>
-                        {canManage && (
-                            <Link href={route("tenant.menu.items.create")}>
-                                <PrimaryButton>商品を追加</PrimaryButton>
-                            </Link>
-                        )}
-                    </div>
+                    <PageHeader
+                        title="商品一覧"
+                        help={<HelpButton onClick={openHelp} />}
+                        actions={
+                            canManage ? (
+                                <Link href={route("tenant.menu.items.create")}>
+                                    <PrimaryButton>商品を追加</PrimaryButton>
+                                </Link>
+                            ) : undefined
+                        }
+                    />
 
                     {/* カテゴリフィルター を明示し、実装意図の誤読を防ぐ。 */}
                     {safeCategories.length > 0 && (
