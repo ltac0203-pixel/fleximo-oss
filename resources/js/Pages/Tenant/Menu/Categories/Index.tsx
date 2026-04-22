@@ -1,3 +1,4 @@
+import PageHeader from "@/Components/PageHeader";
 import PrimaryButton from "@/Components/PrimaryButton";
 import CategoryList from "@/Components/Tenant/Menu/CategoryList";
 import { api } from "@/api";
@@ -73,21 +74,15 @@ export default function Index({ categories }: MenuCategoriesIndexProps) {
                             className="mb-4"
                         />
                     )}
-                    <div className="flex justify-between items-center mb-6">
-                        <div className="flex items-center gap-2">
-                            <h3 className="text-lg font-medium text-gray-900">カテゴリ一覧</h3>
-                            <HelpButton onClick={openHelp} />
-                        </div>
-                        {canManage && (
-                            <PrimaryButton onClick={openCreate}>
-                                カテゴリを追加
-                            </PrimaryButton>
-                        )}
-                    </div>
+                    <PageHeader
+                        title="カテゴリ一覧"
+                        help={<HelpButton onClick={openHelp} />}
+                        actions={
+                            canManage ? <PrimaryButton onClick={openCreate}>カテゴリを追加</PrimaryButton> : undefined
+                        }
+                    />
 
-                    {canManage && (
-                        <p className="text-sm text-gray-500 mb-4">ドラッグ&ドロップで並び順を変更できます</p>
-                    )}
+                    {canManage && <p className="text-sm text-gray-500 mb-4">ドラッグ&ドロップで並び順を変更できます</p>}
 
                     <CategoryList
                         categories={categories}
@@ -132,11 +127,7 @@ export default function Index({ categories }: MenuCategoriesIndexProps) {
                 </>
             )}
 
-            <HelpPanel
-                open={showHelp}
-                onClose={closeHelp}
-                content={tenantHelpContent["menu-categories"]}
-            />
+            <HelpPanel open={showHelp} onClose={closeHelp} content={tenantHelpContent["menu-categories"]} />
 
             <ToastContainer toasts={toasts} onClose={hideToast} />
         </TenantLayout>

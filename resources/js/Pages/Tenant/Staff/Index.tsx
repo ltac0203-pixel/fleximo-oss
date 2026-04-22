@@ -1,3 +1,4 @@
+import PageHeader from "@/Components/PageHeader";
 import PrimaryButton from "@/Components/PrimaryButton";
 import CreateStaffModal from "@/Components/Tenant/CreateStaffModal";
 import ConfirmDeleteModal from "@/Components/ConfirmDeleteModal";
@@ -39,17 +40,13 @@ export default function Index({ staff }: StaffIndexProps) {
 
             <div className="overflow-hidden bg-white">
                 <div className="p-6">
-                    <div className="flex justify-between items-center mb-6">
-                        <div className="flex items-center gap-2">
-                            <h3 className="text-lg font-medium text-gray-900">スタッフ一覧</h3>
-                            <HelpButton onClick={openHelp} />
-                        </div>
-                        {canManage && (
-                            <PrimaryButton onClick={openCreate}>
-                                スタッフを追加
-                            </PrimaryButton>
-                        )}
-                    </div>
+                    <PageHeader
+                        title="スタッフ一覧"
+                        help={<HelpButton onClick={openHelp} />}
+                        actions={
+                            canManage ? <PrimaryButton onClick={openCreate}>スタッフを追加</PrimaryButton> : undefined
+                        }
+                    />
 
                     <StaffTable
                         staff={safeStaff}

@@ -1,3 +1,4 @@
+import FormActions from "@/Components/FormActions";
 import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
 import PrimaryButton from "@/Components/PrimaryButton";
@@ -105,21 +106,23 @@ export default function UpdatePasswordForm({ className = "" }: { className?: str
                     />
                 </div>
 
-                <div className="flex items-center gap-4">
+                <FormActions
+                    leftSlot={
+                        <Transition
+                            show={recentlySuccessful}
+                            enter="transition ease-in-out"
+                            enterFrom="opacity-0"
+                            leave="transition ease-in-out"
+                            leaveTo="opacity-0"
+                        >
+                            <p className="text-sm text-slate-600">更新しました。</p>
+                        </Transition>
+                    }
+                >
                     <PrimaryButton disabled={processing} isBusy={processing}>
-                        保存
+                        更新
                     </PrimaryButton>
-
-                    <Transition
-                        show={recentlySuccessful}
-                        enter="transition ease-in-out"
-                        enterFrom="opacity-0"
-                        leave="transition ease-in-out"
-                        leaveTo="opacity-0"
-                    >
-                        <p className="text-sm text-slate-600">保存しました。</p>
-                    </Transition>
-                </div>
+                </FormActions>
             </form>
         </section>
     );
