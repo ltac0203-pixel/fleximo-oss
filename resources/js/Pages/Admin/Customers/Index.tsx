@@ -3,6 +3,10 @@ import { Head, Link, router } from "@inertiajs/react";
 import { PageProps, PaginatedData, CustomerListItem, AccountStatus } from "@/types";
 import { decodeHtmlEntities } from "@/Utils/decodeHtmlEntities";
 import { getPaginationLinkBaseKey, withStableKeys } from "@/Utils/stableKeys";
+import HelpButton from "@/Components/Common/Help/HelpButton";
+import HelpPanel from "@/Components/Common/Help/HelpPanel";
+import { useHelpPanel } from "@/Hooks/useHelpPanel";
+import { adminHelpContent } from "@/data/adminHelpContent";
 
 type SortableCustomerField = "name" | "email" | "account_status" | "orders_count" | "last_login_at" | "created_at";
 
@@ -43,6 +47,7 @@ export default function Index({
     sortBy,
     sortDir,
 }: CustomersIndexProps) {
+    const { showHelp, openHelp, closeHelp } = useHelpPanel();
     const paginationLinks = withStableKeys(customers.links, getPaginationLinkBaseKey);
 
     const handleSort = (column: SortableCustomerField) => {
@@ -99,7 +104,12 @@ export default function Index({
 
     return (
         <AdminLayout
-            header={<h2 className="text-xl font-semibold leading-tight text-ink">顧客管理</h2>}
+            header={
+                <div className="flex items-center justify-between">
+                    <h2 className="text-xl font-semibold leading-tight text-ink">顧客管理</h2>
+                    <HelpButton onClick={openHelp} />
+                </div>
+            }
         >
             <Head title="顧客管理" />
 
@@ -290,6 +300,8 @@ export default function Index({
                     </div>
                 )}
             </div>
+
+            <HelpPanel open={showHelp} onClose={closeHelp} content={adminHelpContent["admin-customers-index"]} />
         </AdminLayout>
     );
 }

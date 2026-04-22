@@ -3,14 +3,19 @@ import SecondaryButton from "@/Components/SecondaryButton";
 import OptionGroupForm, { FormData, FormErrors } from "@/Components/Tenant/Menu/OptionGroupForm";
 import OptionList from "@/Components/Tenant/Menu/OptionList";
 import { useApiFormSubmission } from "@/Hooks/useApiFormSubmission";
+import { useHelpPanel } from "@/Hooks/useHelpPanel";
 import { api } from "@/api";
 import TenantLayout from "@/Layouts/TenantLayout";
 import { OptionGroupEditProps } from "@/types";
 import { Head, router } from "@inertiajs/react";
 import { FormEvent, FormEventHandler, useState } from "react";
+import HelpButton from "@/Components/Common/Help/HelpButton";
+import HelpPanel from "@/Components/Common/Help/HelpPanel";
+import { tenantHelpContent } from "@/data/tenantHelpContent";
 
 export default function Edit({ optionGroup }: OptionGroupEditProps) {
     const { processing, errors, generalError, setGeneralError, submit } = useApiFormSubmission<FormErrors>();
+    const { showHelp, openHelp, closeHelp } = useHelpPanel();
     const [formData, setFormData] = useState<FormData>({
         name: optionGroup.name,
         required: optionGroup.required,
@@ -61,7 +66,10 @@ export default function Edit({ optionGroup }: OptionGroupEditProps) {
                 <div className="overflow-hidden bg-white">
                     <form onSubmit={handleSubmit} className="p-6">
                         {generalError && <p className="mb-4 text-sm text-red-600">{generalError}</p>}
-                        <h3 className="text-lg font-medium text-gray-900 mb-4">グループ設定</h3>
+                        <div className="mb-4 flex items-center justify-between">
+                            <h3 className="text-lg font-medium text-gray-900">グループ設定</h3>
+                            <HelpButton onClick={openHelp} />
+                        </div>
                         <OptionGroupForm formData={formData} errors={errors} onChange={setFormData} />
 
                         <div className="mt-6 flex justify-end gap-3">
@@ -87,6 +95,12 @@ export default function Edit({ optionGroup }: OptionGroupEditProps) {
                     </div>
                 </div>
             </div>
+
+            <HelpPanel
+                open={showHelp}
+                onClose={closeHelp}
+                content={tenantHelpContent["menu-option-groups-edit"]}
+            />
         </TenantLayout>
     );
 }

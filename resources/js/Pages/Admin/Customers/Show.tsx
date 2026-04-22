@@ -7,6 +7,10 @@ import ExportCustomerDataModal from "@/Pages/Admin/Customers/Partials/ExportCust
 import { Head, Link, usePage } from "@inertiajs/react";
 import { PageProps, CustomerDetail, CustomerOrderItem } from "@/types";
 import { useState } from "react";
+import HelpButton from "@/Components/Common/Help/HelpButton";
+import HelpPanel from "@/Components/Common/Help/HelpPanel";
+import { useHelpPanel } from "@/Hooks/useHelpPanel";
+import { adminHelpContent } from "@/data/adminHelpContent";
 
 interface CustomerShowProps extends PageProps {
     customer: CustomerDetail;
@@ -19,6 +23,7 @@ export default function Show({ customer, recentOrders }: CustomerShowProps) {
     const [showBanModal, setShowBanModal] = useState(false);
     const [showReactivateModal, setShowReactivateModal] = useState(false);
     const [showExportModal, setShowExportModal] = useState(false);
+    const { showHelp, openHelp, closeHelp } = useHelpPanel();
 
     const getStatusBadgeClass = (color: string) => {
         const colorMap: Record<string, string> = {
@@ -42,11 +47,14 @@ export default function Show({ customer, recentOrders }: CustomerShowProps) {
                         </Link>
                         <h2 className="mt-1 text-xl font-semibold leading-tight text-ink">顧客詳細</h2>
                     </div>
-                    <span
-                        className={`inline-flex rounded-full px-3 py-1 text-sm font-medium ${getStatusBadgeClass(customer.account_status_color)}`}
-                    >
-                        {customer.account_status_label}
-                    </span>
+                    <div className="flex items-center gap-3">
+                        <span
+                            className={`inline-flex rounded-full px-3 py-1 text-sm font-medium ${getStatusBadgeClass(customer.account_status_color)}`}
+                        >
+                            {customer.account_status_label}
+                        </span>
+                        <HelpButton onClick={openHelp} />
+                    </div>
                 </div>
             }
         >
@@ -264,6 +272,8 @@ export default function Show({ customer, recentOrders }: CustomerShowProps) {
                 onClose={() => setShowExportModal(false)}
                 customerId={customer.id}
             />
+
+            <HelpPanel open={showHelp} onClose={closeHelp} content={adminHelpContent["admin-customers-show"]} />
         </AdminLayout>
     );
 }
