@@ -197,7 +197,7 @@ export default function Index({ tenants, searchQuery, flash }: TenantShopIdsInde
                                                         onClick={cancelEdit}
                                                         className="rounded bg-edge px-2 py-1 text-xs text-ink-light hover:bg-surface-dim"
                                                     >
-                                                        取消
+                                                        キャンセル
                                                     </button>
                                                 </div>
                                             ) : (
