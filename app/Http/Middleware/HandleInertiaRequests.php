@@ -37,6 +37,7 @@ class HandleInertiaRequests extends Middleware
                     'is_customer' => $user->isCustomer(),
                     'is_tenant_admin' => $user->isTenantAdmin(),
                     'is_tenant_staff' => $user->isTenantStaff(),
+                    'should_show_onboarding' => $user->shouldShowOnboarding(),
                 ] : null,
             ],
             'flash' => [

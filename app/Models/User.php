@@ -36,6 +36,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'password',
         'phone',
         'last_login_at',
+        'onboarding_completed_at',
     ];
 
     protected $hidden = [
@@ -51,6 +52,7 @@ class User extends Authenticatable implements MustVerifyEmail
             'role' => UserRole::class,
             'is_active' => 'boolean',
             'last_login_at' => 'datetime',
+            'onboarding_completed_at' => 'datetime',
             'account_status' => AccountStatus::class,
             'account_status_changed_at' => 'datetime',
         ];
@@ -128,6 +130,11 @@ class User extends Authenticatable implements MustVerifyEmail
     public function isActive(): bool
     {
         return $this->is_active;
+    }
+
+    public function shouldShowOnboarding(): bool
+    {
+        return $this->onboarding_completed_at === null;
     }
 
     public function sendPasswordResetNotification($token): void

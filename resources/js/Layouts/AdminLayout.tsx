@@ -2,6 +2,7 @@ import Dropdown from "@/Components/Dropdown";
 import ErrorBoundary from "@/Components/ErrorBoundary";
 import ErrorFallback from "@/Components/ErrorFallback";
 import SkipToContentLink, { MAIN_CONTENT_ID } from "@/Components/SkipToContentLink";
+import { useOnboardingStore } from "@/stores/onboardingStore";
 import { Link, usePage } from "@inertiajs/react";
 import { PropsWithChildren, ReactNode, useState } from "react";
 import { PageProps } from "@/types";
@@ -9,6 +10,7 @@ import { PageProps } from "@/types";
 export default function AdminLayout({ header, children }: PropsWithChildren<{ header?: ReactNode }>) {
     const [showingSidebar, setShowingSidebar] = useState(false);
     const user = usePage<PageProps>().props.auth.user!;
+    const openOnboarding = useOnboardingStore((state) => state.openManual);
 
     const navigation = [
         {
@@ -109,6 +111,28 @@ export default function AdminLayout({ header, children }: PropsWithChildren<{ he
                                     プロフィール
                                 </span>
                             </Dropdown.Link>
+                            <button
+                                type="button"
+                                onClick={openOnboarding}
+                                className="flex w-full items-start border-l-2 border-transparent px-4 py-2 text-start text-sm leading-5 text-gray-700 transition hover:bg-gray-100"
+                            >
+                                <span className="inline-flex items-center gap-2">
+                                    <svg
+                                        className="h-4 w-4 text-sky-500"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            d="M9.663 17h4.673M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+                                        />
+                                    </svg>
+                                    オンボーディングを見る
+                                </span>
+                            </button>
                             <Dropdown.Link href={route("logout")} method="post" as="button">
                                 <span className="inline-flex items-center gap-2">
                                     <svg

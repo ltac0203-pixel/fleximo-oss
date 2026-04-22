@@ -5,6 +5,7 @@ import { createInertiaApp } from "@inertiajs/react";
 import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
 import { createRoot } from "react-dom/client";
 import GlobalLoadingOverlay from "@/Components/Loading/GlobalLoadingOverlay";
+import GlobalOnboardingTour from "@/Components/Common/Onboarding/GlobalOnboardingTour";
 import NavigationProgressBar from "@/Components/Loading/NavigationProgressBar";
 import PageTransition from "@/Components/PageTransition";
 import ErrorBoundary, { FallbackProps } from "@/Components/ErrorBoundary";
@@ -50,6 +51,7 @@ void createInertiaApp({
                 </ErrorBoundary>
                 <NavigationProgressBar />
                 <GlobalLoadingOverlay />
+                <GlobalOnboardingTour />
             </>,
         );
     },
