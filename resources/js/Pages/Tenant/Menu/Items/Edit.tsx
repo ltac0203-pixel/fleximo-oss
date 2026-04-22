@@ -1,3 +1,5 @@
+import FormActions from "@/Components/FormActions";
+import PageHeader from "@/Components/PageHeader";
 import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
 import ItemForm from "@/Components/Tenant/Menu/ItemForm";
@@ -45,18 +47,15 @@ export default function Edit({ tenant, item, categories, optionGroups }: MenuIte
     const submitItem = async () => {
         await submit(
             () =>
-                api.patch<unknown, { errors?: FormErrors }>(
-                `/api/tenant/menu/items/${item.id}`,
-                    {
-                        ...formData,
-                        allergen_note: formData.allergen_note || null,
-                        nutrition_info: Object.values(formData.nutrition_info).some((v) => v !== "")
-                            ? Object.fromEntries(
-                                  Object.entries(formData.nutrition_info).map(([k, v]) => [k, v === "" ? null : v]),
-                              )
-                            : null,
-                    },
-                ),
+                api.patch<unknown, { errors?: FormErrors }>(`/api/tenant/menu/items/${item.id}`, {
+                    ...formData,
+                    allergen_note: formData.allergen_note || null,
+                    nutrition_info: Object.values(formData.nutrition_info).some((v) => v !== "")
+                        ? Object.fromEntries(
+                              Object.entries(formData.nutrition_info).map(([k, v]) => [k, v === "" ? null : v]),
+                          )
+                        : null,
+                }),
             {
                 logMessage: "Menu item update failed",
                 logContext: {
@@ -93,10 +92,7 @@ export default function Edit({ tenant, item, categories, optionGroups }: MenuIte
             <Head title="商品編集" />
 
             <div className="mx-auto max-w-3xl">
-                <div className="mb-3 flex items-center justify-between">
-                    <h3 className="text-lg font-medium text-gray-900">商品編集</h3>
-                    <HelpButton onClick={openHelp} />
-                </div>
+                <PageHeader title="商品編集" help={<HelpButton onClick={openHelp} />} className="mb-3" />
                 <div className="overflow-hidden bg-white">
                     <form onSubmit={handleSubmit} className="p-6">
                         {generalError && <p className="mb-4 text-sm text-red-600">{generalError}</p>}
@@ -111,14 +107,12 @@ export default function Edit({ tenant, item, categories, optionGroups }: MenuIte
                             onActiveToggleRequest={handleActiveToggleRequest}
                         />
 
-                        <div className="mt-8 flex justify-end gap-3">
-                            <SecondaryButton type="button" onClick={handleCancel}>
-                                キャンセル
-                            </SecondaryButton>
+                        <FormActions>
+                            <SecondaryButton onClick={handleCancel}>キャンセル</SecondaryButton>
                             <PrimaryButton type="submit" disabled={processing} isBusy={processing}>
                                 更新
                             </PrimaryButton>
-                        </div>
+                        </FormActions>
                     </form>
                 </div>
             </div>

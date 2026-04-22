@@ -1,3 +1,6 @@
+import Breadcrumb from "@/Components/Breadcrumb";
+import FormActions from "@/Components/FormActions";
+import PageHeader from "@/Components/PageHeader";
 import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
 import OptionGroupForm, { FormData, FormErrors } from "@/Components/Tenant/Menu/OptionGroupForm";
@@ -26,11 +29,7 @@ export default function Edit({ optionGroup }: OptionGroupEditProps) {
 
     const submitOptionGroup = async () => {
         await submit(
-            () =>
-                api.patch<unknown, { errors?: FormErrors }>(
-                `/api/tenant/option-groups/${optionGroup.id}`,
-                formData,
-            ),
+            () => api.patch<unknown, { errors?: FormErrors }>(`/api/tenant/option-groups/${optionGroup.id}`, formData),
             {
                 logMessage: "Option group update failed",
                 logContext: {
@@ -62,24 +61,26 @@ export default function Edit({ optionGroup }: OptionGroupEditProps) {
             <Head title="オプショングループ編集" />
 
             <div className="mx-auto max-w-2xl space-y-6">
+                <Breadcrumb
+                    items={[
+                        { label: "メニュー", href: route("tenant.menu.items.page") },
+                        { label: "オプショングループ", href: route("tenant.menu.option-groups.page") },
+                        { label: optionGroup.name },
+                    ]}
+                />
                 {/* グループ設定へ最短到達できるよう、主編集領域を先頭に置くため。 */}
                 <div className="overflow-hidden bg-white">
                     <form onSubmit={handleSubmit} className="p-6">
                         {generalError && <p className="mb-4 text-sm text-red-600">{generalError}</p>}
-                        <div className="mb-4 flex items-center justify-between">
-                            <h3 className="text-lg font-medium text-gray-900">グループ設定</h3>
-                            <HelpButton onClick={openHelp} />
-                        </div>
+                        <PageHeader title="グループ設定" help={<HelpButton onClick={openHelp} />} className="mb-4" />
                         <OptionGroupForm formData={formData} errors={errors} onChange={setFormData} />
 
-                        <div className="mt-6 flex justify-end gap-3">
-                            <SecondaryButton type="button" onClick={handleCancel}>
-                                戻る
-                            </SecondaryButton>
+                        <FormActions className="mt-6">
+                            <SecondaryButton onClick={handleCancel}>キャンセル</SecondaryButton>
                             <PrimaryButton type="submit" disabled={processing} isBusy={processing}>
                                 更新
                             </PrimaryButton>
-                        </div>
+                        </FormActions>
                     </form>
                 </div>
 
@@ -96,11 +97,7 @@ export default function Edit({ optionGroup }: OptionGroupEditProps) {
                 </div>
             </div>
 
-            <HelpPanel
-                open={showHelp}
-                onClose={closeHelp}
-                content={tenantHelpContent["menu-option-groups-edit"]}
-            />
+            <HelpPanel open={showHelp} onClose={closeHelp} content={tenantHelpContent["menu-option-groups-edit"]} />
         </TenantLayout>
     );
 }
