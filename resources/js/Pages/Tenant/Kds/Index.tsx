@@ -9,15 +9,20 @@ import { useReadyAutoComplete } from "@/Hooks/useReadyAutoComplete";
 import { useNotificationSound } from "@/Hooks/useNotificationSound";
 import { useOrderPause } from "@/Hooks/useOrderPause";
 import { useToast } from "@/Hooks/useToast";
+import { useHelpPanel } from "@/Hooks/useHelpPanel";
 import { KdsOrder, KdsOrderStatus, KdsPageProps, KdsStatusUpdateTarget } from "@/types";
 import { KDS_STATUS_PRIORITY } from "@/Utils/kdsHelpers";
 import { normalizeErrorMessage } from "@/Utils/errorHelpers";
+import HelpButton from "@/Components/Common/Help/HelpButton";
+import HelpPanel from "@/Components/Common/Help/HelpPanel";
+import { tenantHelpContent } from "@/data/tenantHelpContent";
 
 export default function KdsIndex({ orders: initialOrders, businessDate, serverTime, isOrderPaused: initialPaused, readyAutoCompleteSeconds }: KdsPageProps) {
     const { playNewOrderSound } = useNotificationSound();
     const { toasts, showToast, hideToast } = useToast();
     const { isOrderPaused, isToggling, toggleOrderPause } = useOrderPause(initialPaused);
     const { activeStatuses, toggleStatus } = useKdsStatusFilter();
+    const { showHelp, openHelp, closeHelp } = useHelpPanel();
 
     const handleNewOrder = useCallback(
         (newOrders: KdsOrder[]) => {
@@ -118,6 +123,12 @@ export default function KdsIndex({ orders: initialOrders, businessDate, serverTi
             </div>
 
             <ToastContainer toasts={toasts} onClose={hideToast} />
+
+            <div className="fixed bottom-4 right-4 z-30">
+                <HelpButton onClick={openHelp} ariaLabel="KDS のヘルプを表示" />
+            </div>
+
+            <HelpPanel open={showHelp} onClose={closeHelp} content={tenantHelpContent["tenant-kds"]} />
         </KdsLayout>
     );
 }

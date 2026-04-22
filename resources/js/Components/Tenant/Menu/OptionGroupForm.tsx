@@ -1,6 +1,7 @@
 import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
 import TextInput from "@/Components/TextInput";
+import InlineHelp from "@/Components/Common/Help/InlineHelp";
 
 export interface FormData {
     name: string;
@@ -52,15 +53,19 @@ export default function OptionGroupForm({ formData, errors, onChange }: OptionGr
                     onChange={(e) => onChange({ ...formData, required: e.target.checked })}
                     className="h-4 w-4 text-primary-dark focus:ring-primary border-edge-strong rounded"
                 />
-                <label htmlFor="required" className="ml-2 block text-sm text-ink">
+                <label htmlFor="required" className="ml-2 mr-2 block text-sm text-ink">
                     必須にする
                 </label>
+                <InlineHelp contentKey="option-is-required" />
                 <InputError id="required-error" message={errors.required} className="mt-2" />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
                 <div>
-                    <InputLabel htmlFor="min_select" value="最小選択数" />
+                    <div className="flex items-center gap-2">
+                        <InputLabel htmlFor="min_select" value="最小選択数" />
+                        <InlineHelp contentKey="option-min-selections" />
+                    </div>
                     <TextInput
                         id="min_select"
                         type="number"
@@ -80,7 +85,10 @@ export default function OptionGroupForm({ formData, errors, onChange }: OptionGr
                 </div>
 
                 <div>
-                    <InputLabel htmlFor="max_select" value="最大選択数" />
+                    <div className="flex items-center gap-2">
+                        <InputLabel htmlFor="max_select" value="最大選択数" />
+                        <InlineHelp contentKey="option-max-selections" />
+                    </div>
                     <TextInput
                         id="max_select"
                         type="number"

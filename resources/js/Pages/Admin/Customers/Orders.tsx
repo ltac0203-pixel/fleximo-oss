@@ -3,6 +3,10 @@ import { Head, Link, router } from "@inertiajs/react";
 import { PageProps, PaginatedData, CustomerDetail, CustomerOrderItem } from "@/types";
 import { decodeHtmlEntities } from "@/Utils/decodeHtmlEntities";
 import { getPaginationLinkBaseKey, withStableKeys } from "@/Utils/stableKeys";
+import HelpButton from "@/Components/Common/Help/HelpButton";
+import HelpPanel from "@/Components/Common/Help/HelpPanel";
+import { useHelpPanel } from "@/Hooks/useHelpPanel";
+import { adminHelpContent } from "@/data/adminHelpContent";
 
 interface CustomerOrdersProps extends PageProps {
     customer: CustomerDetail;
@@ -21,6 +25,7 @@ export default function Orders({
     tenants,
     statuses,
 }: CustomerOrdersProps) {
+    const { showHelp, openHelp, closeHelp } = useHelpPanel();
     const paginationLinks = withStableKeys(orders.links, getPaginationLinkBaseKey);
 
     const handleFilterChange = (newTenant?: string, newStatus?: string) => {
@@ -45,19 +50,22 @@ export default function Orders({
     return (
         <AdminLayout
             header={
-                <div>
-                    <nav className="text-sm text-muted">
-                        <Link href={route("admin.customers.index")} className="hover:text-ink-light">
-                            顧客管理
-                        </Link>
-                        <span className="mx-2">/</span>
-                        <Link href={route("admin.customers.show", customer.id)} className="hover:text-ink-light">
-                            {customer.name}
-                        </Link>
-                        <span className="mx-2">/</span>
-                        <span className="text-ink">注文履歴</span>
-                    </nav>
-                    <h2 className="mt-1 text-xl font-semibold leading-tight text-ink">注文履歴</h2>
+                <div className="flex items-center justify-between">
+                    <div>
+                        <nav className="text-sm text-muted">
+                            <Link href={route("admin.customers.index")} className="hover:text-ink-light">
+                                顧客管理
+                            </Link>
+                            <span className="mx-2">/</span>
+                            <Link href={route("admin.customers.show", customer.id)} className="hover:text-ink-light">
+                                {customer.name}
+                            </Link>
+                            <span className="mx-2">/</span>
+                            <span className="text-ink">注文履歴</span>
+                        </nav>
+                        <h2 className="mt-1 text-xl font-semibold leading-tight text-ink">注文履歴</h2>
+                    </div>
+                    <HelpButton onClick={openHelp} />
                 </div>
             }
         >
@@ -186,6 +194,8 @@ export default function Orders({
                     </div>
                 )}
             </div>
+
+            <HelpPanel open={showHelp} onClose={closeHelp} content={adminHelpContent["admin-customers-orders"]} />
         </AdminLayout>
     );
 }

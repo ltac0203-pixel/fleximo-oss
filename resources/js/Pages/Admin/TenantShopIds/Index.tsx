@@ -4,6 +4,11 @@ import { PageProps, PaginatedData } from "@/types";
 import { decodeHtmlEntities } from "@/Utils/decodeHtmlEntities";
 import { getPaginationLinkBaseKey, withStableKeys } from "@/Utils/stableKeys";
 import { useState } from "react";
+import HelpButton from "@/Components/Common/Help/HelpButton";
+import HelpPanel from "@/Components/Common/Help/HelpPanel";
+import InlineHelp from "@/Components/Common/Help/InlineHelp";
+import { useHelpPanel } from "@/Hooks/useHelpPanel";
+import { adminHelpContent } from "@/data/adminHelpContent";
 
 interface TenantShopIdItem {
     id: number;
@@ -23,6 +28,7 @@ export default function Index({ tenants, searchQuery, flash }: TenantShopIdsInde
     const [editingId, setEditingId] = useState<number | null>(null);
     const [editValue, setEditValue] = useState("");
     const [processing, setProcessing] = useState(false);
+    const { showHelp, openHelp, closeHelp } = useHelpPanel();
     const paginationLinks = withStableKeys(tenants.links, getPaginationLinkBaseKey);
 
     const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
@@ -74,7 +80,14 @@ export default function Index({ tenants, searchQuery, flash }: TenantShopIdsInde
     };
 
     return (
-        <AdminLayout header={<h2 className="text-xl font-semibold leading-tight text-ink">Shop ID管理</h2>}>
+        <AdminLayout
+            header={
+                <div className="flex items-center justify-between">
+                    <h2 className="text-xl font-semibold leading-tight text-ink">Shop ID管理</h2>
+                    <HelpButton onClick={openHelp} />
+                </div>
+            }
+        >
             <Head title="Shop ID管理" />
 
             <div>
@@ -114,7 +127,10 @@ export default function Index({ tenants, searchQuery, flash }: TenantShopIdsInde
                                     メール
                                 </th>
                                 <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">
-                                    Shop ID
+                                    <span className="inline-flex items-center gap-2">
+                                        Shop ID
+                                        <InlineHelp contentKey="tenant-shop-id" />
+                                    </span>
                                 </th>
                                 <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">
                                     ステータス
@@ -237,6 +253,8 @@ export default function Index({ tenants, searchQuery, flash }: TenantShopIdsInde
                     </div>
                 )}
             </div>
+
+            <HelpPanel open={showHelp} onClose={closeHelp} content={adminHelpContent["admin-tenant-shop-ids"]} />
         </AdminLayout>
     );
 }

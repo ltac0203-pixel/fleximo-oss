@@ -4,15 +4,20 @@ import ItemForm from "@/Components/Tenant/Menu/ItemForm";
 import { FormData, FormErrors } from "@/Components/Tenant/Menu/ItemForm/types";
 import { useApiFormSubmission } from "@/Hooks/useApiFormSubmission";
 import { useActiveToggle } from "@/Hooks/useActiveToggle";
+import { useHelpPanel } from "@/Hooks/useHelpPanel";
 import { api } from "@/api";
 import TenantLayout from "@/Layouts/TenantLayout";
 import { MenuItemEditProps } from "@/types";
 import { Head, router } from "@inertiajs/react";
 import { FormEvent, FormEventHandler, useState } from "react";
 import ActiveToggleModal from "@/Components/Tenant/Menu/ActiveToggleModal";
+import HelpButton from "@/Components/Common/Help/HelpButton";
+import HelpPanel from "@/Components/Common/Help/HelpPanel";
+import { tenantHelpContent } from "@/data/tenantHelpContent";
 
 export default function Edit({ tenant, item, categories, optionGroups }: MenuItemEditProps) {
     const { processing, errors, generalError, submit } = useApiFormSubmission<FormErrors>();
+    const { showHelp, openHelp, closeHelp } = useHelpPanel();
     const [formData, setFormData] = useState<FormData>({
         name: item.name,
         description: item.description || "",
@@ -88,6 +93,10 @@ export default function Edit({ tenant, item, categories, optionGroups }: MenuIte
             <Head title="商品編集" />
 
             <div className="mx-auto max-w-3xl">
+                <div className="mb-3 flex items-center justify-between">
+                    <h3 className="text-lg font-medium text-gray-900">商品編集</h3>
+                    <HelpButton onClick={openHelp} />
+                </div>
                 <div className="overflow-hidden bg-white">
                     <form onSubmit={handleSubmit} className="p-6">
                         {generalError && <p className="mb-4 text-sm text-red-600">{generalError}</p>}
@@ -120,6 +129,8 @@ export default function Edit({ tenant, item, categories, optionGroups }: MenuIte
                 onClose={cancelToggle}
                 onConfirm={executeActiveToggle}
             />
+
+            <HelpPanel open={showHelp} onClose={closeHelp} content={tenantHelpContent["menu-items-edit"]} />
         </TenantLayout>
     );
 }

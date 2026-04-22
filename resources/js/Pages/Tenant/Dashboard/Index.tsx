@@ -7,6 +7,10 @@ import SummaryCards from "@/Components/Dashboard/SummaryCards";
 import TopItemsCard from "@/Components/Dashboard/TopItemsCard";
 import CustomerInsightsCard from "@/Components/Dashboard/CustomerInsightsCard";
 import ExportControls from "@/Components/Dashboard/ExportControls";
+import HelpButton from "@/Components/Common/Help/HelpButton";
+import HelpPanel from "@/Components/Common/Help/HelpPanel";
+import { useHelpPanel } from "@/Hooks/useHelpPanel";
+import { tenantHelpContent } from "@/data/tenantHelpContent";
 
 const SalesChart = lazy(() => import("@/Components/Dashboard/SalesChart"));
 const PaymentMethodCard = lazy(() => import("@/Components/Dashboard/PaymentMethodCard"));
@@ -50,6 +54,8 @@ const EmptyState = () => (
 );
 
 export default function Index({ summary, recentSales }: DashboardIndexProps) {
+    const { showHelp, openHelp, closeHelp } = useHelpPanel();
+
     // 部分データで誤計算した値を出さないため、必須データが揃うまで待機する。
     if (!summary || !recentSales || !summary.this_month || !summary.today) {
         return (
@@ -70,6 +76,9 @@ export default function Index({ summary, recentSales }: DashboardIndexProps) {
             <Head title="ダッシュボード" />
 
             <div className="geo-fade-in">
+                <div className="mb-4 flex justify-end">
+                    <HelpButton onClick={openHelp} />
+                </div>
                 {isEmpty ? (
                     <EmptyState />
                 ) : (
@@ -98,6 +107,8 @@ export default function Index({ summary, recentSales }: DashboardIndexProps) {
                     </div>
                 )}
             </div>
+
+            <HelpPanel open={showHelp} onClose={closeHelp} content={tenantHelpContent["tenant-dashboard"]} />
         </TenantLayout>
     );
 }
