@@ -1,16 +1,14 @@
 import Modal from "@/Components/Modal";
 import { useItemDetailForm } from "@/Hooks/useItemDetailForm";
-import { CartItemData, CustomerMenuItem } from "@/types";
+import { BaseModalProps, CartItemData, CustomerMenuItem } from "@/types";
 import AllergenBadge from "./AllergenBadge";
 import NutritionTable from "./NutritionTable";
 import OptionSelector from "./OptionSelector";
 import PriceCalculator from "./PriceCalculator";
 import QuantitySelector from "./QuantitySelector";
 
-interface ItemDetailModalProps {
-    show: boolean;
+interface ItemDetailModalProps extends BaseModalProps {
     item: CustomerMenuItem | null;
-    onClose: () => void;
     onAddToCart: (data: CartItemData) => void;
     isLoading?: boolean;
 }

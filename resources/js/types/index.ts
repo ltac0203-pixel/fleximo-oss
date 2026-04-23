@@ -10,3 +10,4 @@ export * from "./dashboard";
 export * from "./admin";
 export * from "./customer";
 export * from "./reorder";
+export * from "./modal";

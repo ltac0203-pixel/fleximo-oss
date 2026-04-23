@@ -1,9 +1,8 @@
 import Modal from "@/Components/Modal";
+import { BaseModalProps } from "@/types";
 import { useState } from "react";
 
-interface ExportCustomerDataModalProps {
-    show: boolean;
-    onClose: () => void;
+interface ExportCustomerDataModalProps extends BaseModalProps {
     customerId: number;
 }
 
