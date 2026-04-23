@@ -1,6 +1,6 @@
 import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
-import PrimaryButton from "@/Components/PrimaryButton";
+import Button from "@/Components/UI/Button";
 import TextInput from "@/Components/TextInput";
 import GuestLayout from "@/Layouts/GuestLayout";
 import { Head, Link, useForm } from "@inertiajs/react";
@@ -127,9 +127,14 @@ export default function Register() {
                         すでに登録済みですか？
                     </Link>
 
-                    <PrimaryButton className="ms-4" disabled={processing} isBusy={processing}>
+                    <Button
+                        variant="primary"
+                        className="ms-4"
+                        disabled={processing}
+                        isBusy={processing}
+                    >
                         登録する
-                    </PrimaryButton>
+                    </Button>
                 </div>
             </form>
         </GuestLayout>

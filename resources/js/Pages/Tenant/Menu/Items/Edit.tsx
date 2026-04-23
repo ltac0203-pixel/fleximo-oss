@@ -1,7 +1,6 @@
 import FormActions from "@/Components/FormActions";
 import PageHeader from "@/Components/PageHeader";
-import PrimaryButton from "@/Components/PrimaryButton";
-import SecondaryButton from "@/Components/SecondaryButton";
+import Button from "@/Components/UI/Button";
 import ItemForm from "@/Components/Tenant/Menu/ItemForm";
 import { FormData, FormErrors } from "@/Components/Tenant/Menu/ItemForm/types";
 import { useApiFormSubmission } from "@/Hooks/useApiFormSubmission";
@@ -108,10 +107,17 @@ export default function Edit({ tenant, item, categories, optionGroups }: MenuIte
                         />
 
                         <FormActions>
-                            <SecondaryButton onClick={handleCancel}>キャンセル</SecondaryButton>
-                            <PrimaryButton type="submit" disabled={processing} isBusy={processing}>
+                            <Button variant="secondary" type="button" onClick={handleCancel}>
+                                キャンセル
+                            </Button>
+                            <Button
+                                variant="primary"
+                                type="submit"
+                                disabled={processing}
+                                isBusy={processing}
+                            >
                                 更新
-                            </PrimaryButton>
+                            </Button>
                         </FormActions>
                     </form>
                 </div>

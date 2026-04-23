@@ -1,7 +1,6 @@
 import { Head, router } from "@inertiajs/react";
 import ErrorLayout from "@/Components/Error/ErrorLayout";
-import PrimaryButton from "@/Components/PrimaryButton";
-import SecondaryButton from "@/Components/SecondaryButton";
+import Button from "@/Components/UI/Button";
 import { ErrorPageProps } from "@/types";
 
 function isTenantRole(role?: string): boolean {
@@ -35,18 +34,30 @@ export default function Error403(props: ErrorPageProps) {
             >
                 {isTenantRole(role) ? (
                     <>
-                        <PrimaryButton onClick={handleLogout}>ログアウトする</PrimaryButton>
-                        <SecondaryButton onClick={handleGoBack}>前のページへ</SecondaryButton>
+                        <Button variant="primary" onClick={handleLogout}>
+                            ログアウトする
+                        </Button>
+                        <Button variant="secondary" type="button" onClick={handleGoBack}>
+                            前のページへ
+                        </Button>
                     </>
                 ) : isAuthenticated ? (
                     <>
-                        <PrimaryButton onClick={handleGoHome}>ホームに戻る</PrimaryButton>
-                        <SecondaryButton onClick={handleLogout}>ログアウト</SecondaryButton>
+                        <Button variant="primary" onClick={handleGoHome}>
+                            ホームに戻る
+                        </Button>
+                        <Button variant="secondary" type="button" onClick={handleLogout}>
+                            ログアウト
+                        </Button>
                     </>
                 ) : (
                     <>
-                        <PrimaryButton onClick={handleGoHome}>ホームに戻る</PrimaryButton>
-                        <SecondaryButton onClick={handleGoBack}>前のページへ</SecondaryButton>
+                        <Button variant="primary" onClick={handleGoHome}>
+                            ホームに戻る
+                        </Button>
+                        <Button variant="secondary" type="button" onClick={handleGoBack}>
+                            前のページへ
+                        </Button>
                     </>
                 )}
             </ErrorLayout>

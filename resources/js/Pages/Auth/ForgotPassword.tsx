@@ -1,5 +1,5 @@
 import InputError from "@/Components/InputError";
-import PrimaryButton from "@/Components/PrimaryButton";
+import Button from "@/Components/UI/Button";
 import TextInput from "@/Components/TextInput";
 import GuestLayout from "@/Layouts/GuestLayout";
 import { PageProps } from "@/types";
@@ -65,9 +65,9 @@ export default function ForgotPassword({ status }: ForgotPasswordProps) {
                     >
                         ログインに戻る
                     </Link>
-                    <PrimaryButton disabled={processing} isBusy={processing}>
+                    <Button variant="primary" disabled={processing} isBusy={processing}>
                         パスワード再設定リンクを送信
-                    </PrimaryButton>
+                    </Button>
                 </div>
             </form>
         </GuestLayout>

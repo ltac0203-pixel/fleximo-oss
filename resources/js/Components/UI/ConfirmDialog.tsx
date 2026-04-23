@@ -1,8 +1,6 @@
 import { ReactNode } from "react";
 import Modal from "@/Components/Modal";
-import SecondaryButton from "@/Components/SecondaryButton";
-import DangerButton from "@/Components/DangerButton";
-import PrimaryButton from "@/Components/PrimaryButton";
+import Button from "@/Components/UI/Button";
 
 type ConfirmTone = "default" | "danger";
 type ConfirmMaxWidth = "sm" | "md" | "lg" | "xl" | "2xl";
@@ -32,7 +30,7 @@ export default function ConfirmDialog({
     maxWidth = "sm",
     children,
 }: ConfirmDialogProps) {
-    const ConfirmButton = tone === "danger" ? DangerButton : PrimaryButton;
+    const confirmVariant = tone === "danger" ? "danger" : "primary";
 
     return (
         <Modal show={show} onClose={onClose} maxWidth={maxWidth}>
@@ -40,10 +38,17 @@ export default function ConfirmDialog({
                 <h2 className="text-lg font-medium text-ink">{title}</h2>
                 {children}
                 <div className="mt-6 flex justify-end gap-3">
-                    <SecondaryButton onClick={onClose}>{cancelLabel}</SecondaryButton>
-                    <ConfirmButton onClick={onConfirm} disabled={processing} isBusy={processing}>
+                    <Button variant="secondary" type="button" onClick={onClose}>
+                        {cancelLabel}
+                    </Button>
+                    <Button
+                        variant={confirmVariant}
+                        onClick={onConfirm}
+                        disabled={processing}
+                        isBusy={processing}
+                    >
                         {confirmLabel}
-                    </ConfirmButton>
+                    </Button>
                 </div>
             </div>
         </Modal>

@@ -1,5 +1,5 @@
 import PageHeader from "@/Components/PageHeader";
-import PrimaryButton from "@/Components/PrimaryButton";
+import Button from "@/Components/UI/Button";
 import CategoryList from "@/Components/Tenant/Menu/CategoryList";
 import { api } from "@/api";
 import { ENDPOINTS } from "@/api/endpoints";
@@ -78,7 +78,11 @@ export default function Index({ categories }: MenuCategoriesIndexProps) {
                         title="カテゴリ一覧"
                         help={<HelpButton onClick={openHelp} />}
                         actions={
-                            canManage ? <PrimaryButton onClick={openCreate}>カテゴリを追加</PrimaryButton> : undefined
+                            canManage ? (
+                                <Button variant="primary" onClick={openCreate}>
+                                    カテゴリを追加
+                                </Button>
+                            ) : undefined
                         }
                     />
 

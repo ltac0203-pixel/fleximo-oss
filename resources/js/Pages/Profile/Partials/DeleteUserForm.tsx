@@ -1,4 +1,4 @@
-import DangerButton from "@/Components/DangerButton";
+import Button from "@/Components/UI/Button";
 import { useForm } from "@inertiajs/react";
 import { FormEventHandler } from "react";
 
@@ -20,9 +20,9 @@ export default function LogoutForm({ className = "" }: { className?: string }) {
             </header>
 
             <form onSubmit={handleLogout}>
-                <DangerButton disabled={processing} isBusy={processing}>
+                <Button variant="danger" disabled={processing} isBusy={processing}>
                     ログアウト
-                </DangerButton>
+                </Button>
             </form>
         </section>
     );

@@ -1,4 +1,4 @@
-import PrimaryButton from "@/Components/PrimaryButton";
+import Button from "@/Components/UI/Button";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { PageProps } from "@/types";
 import { Head, Link, useForm } from "@inertiajs/react";
@@ -48,9 +48,9 @@ export default function VerifyEmail({ status }: VerifyEmailProps) {
 
                 <form onSubmit={submit}>
                     <div className="mt-4 flex items-center justify-between">
-                        <PrimaryButton disabled={processing} isBusy={processing}>
+                        <Button variant="primary" disabled={processing} isBusy={processing}>
                             認証メールを再送する
-                        </PrimaryButton>
+                        </Button>
 
                         <Link
                             href={route("logout")}

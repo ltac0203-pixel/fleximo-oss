@@ -1,7 +1,7 @@
 import TenantLayout from "@/Layouts/TenantLayout";
 import { Head, Link, usePage } from "@inertiajs/react";
 import { PageProps, TenantBusinessHour, TenantPageProps } from "@/types";
-import SecondaryButton from "@/Components/SecondaryButton";
+import Button from "@/Components/UI/Button";
 
 export default function Index({ tenant }: TenantPageProps) {
     const { auth } = usePage<PageProps>().props;
@@ -32,7 +32,9 @@ export default function Index({ tenant }: TenantPageProps) {
                 <h2 className="text-xl font-semibold text-slate-900">店舗情報</h2>
                 {canEdit && (
                     <Link href={route("tenant.profile.edit")}>
-                        <SecondaryButton>編集</SecondaryButton>
+                        <Button variant="secondary" type="button">
+                            編集
+                        </Button>
                     </Link>
                 )}
             </div>

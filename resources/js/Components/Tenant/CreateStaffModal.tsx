@@ -1,8 +1,7 @@
 import { api } from "@/api";
 import InputError from "@/Components/InputError";
 import Modal from "@/Components/Modal";
-import PrimaryButton from "@/Components/PrimaryButton";
-import SecondaryButton from "@/Components/SecondaryButton";
+import Button from "@/Components/UI/Button";
 import StaffForm from "@/Components/Tenant/StaffForm";
 import { useApiFormSubmission } from "@/Hooks/useApiFormSubmission";
 import { router } from "@inertiajs/react";
@@ -67,11 +66,18 @@ export default function CreateStaffModal({ show, onClose, onSuccess }: CreateSta
                 </div>
 
                 <div className="mt-6 flex justify-end">
-                    <SecondaryButton onClick={handleClose}>キャンセル</SecondaryButton>
+                    <Button variant="secondary" type="button" onClick={handleClose}>
+                        キャンセル
+                    </Button>
 
-                    <PrimaryButton className="ms-3" disabled={processing} isBusy={processing}>
+                    <Button
+                        variant="primary"
+                        className="ms-3"
+                        disabled={processing}
+                        isBusy={processing}
+                    >
                         追加
-                    </PrimaryButton>
+                    </Button>
                 </div>
             </form>
         </Modal>
