@@ -1,6 +1,5 @@
 import FormActions from "@/Components/FormActions";
-import InputError from "@/Components/InputError";
-import InputLabel from "@/Components/InputLabel";
+import FormField from "@/Components/UI/FormField";
 import PrimaryButton from "@/Components/PrimaryButton";
 import TextInput from "@/Components/TextInput";
 import { Transition } from "@headlessui/react";
@@ -42,9 +41,7 @@ export default function UpdateProfileInformation({
             </header>
 
             <form onSubmit={submit} className="mt-6 space-y-6">
-                <div>
-                    <InputLabel htmlFor="name" value="お名前" />
-
+                <FormField label="お名前" htmlFor="name" error={errors.name}>
                     <TextInput
                         id="name"
                         className="mt-1 block w-full"
@@ -56,13 +53,9 @@ export default function UpdateProfileInformation({
                         isFocused
                         autoComplete="name"
                     />
+                </FormField>
 
-                    <InputError id="name-error" className="mt-2" message={errors.name} />
-                </div>
-
-                <div>
-                    <InputLabel htmlFor="email" value="メールアドレス" />
-
+                <FormField label="メールアドレス" htmlFor="email" error={errors.email}>
                     <TextInput
                         id="email"
                         type="email"
@@ -74,9 +67,7 @@ export default function UpdateProfileInformation({
                         required
                         autoComplete="username"
                     />
-
-                    <InputError id="email-error" className="mt-2" message={errors.email} />
-                </div>
+                </FormField>
 
                 {mustVerifyEmail && user.email_verified_at === null && (
                     <div>

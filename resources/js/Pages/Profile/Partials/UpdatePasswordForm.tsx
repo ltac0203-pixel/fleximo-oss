@@ -1,6 +1,5 @@
 import FormActions from "@/Components/FormActions";
-import InputError from "@/Components/InputError";
-import InputLabel from "@/Components/InputLabel";
+import FormField from "@/Components/UI/FormField";
 import PrimaryButton from "@/Components/PrimaryButton";
 import TextInput from "@/Components/TextInput";
 import { Transition } from "@headlessui/react";
@@ -49,9 +48,7 @@ export default function UpdatePasswordForm({ className = "" }: { className?: str
             </header>
 
             <form onSubmit={updatePassword} className="mt-6 space-y-6">
-                <div>
-                    <InputLabel htmlFor="current_password" value="現在のパスワード" />
-
+                <FormField label="現在のパスワード" htmlFor="current_password" error={errors.current_password}>
                     <TextInput
                         id="current_password"
                         ref={currentPasswordInput}
@@ -63,13 +60,9 @@ export default function UpdatePasswordForm({ className = "" }: { className?: str
                         className="mt-1 block w-full"
                         autoComplete="current-password"
                     />
+                </FormField>
 
-                    <InputError id="current_password-error" message={errors.current_password} className="mt-2" />
-                </div>
-
-                <div>
-                    <InputLabel htmlFor="password" value="新しいパスワード" />
-
+                <FormField label="新しいパスワード" htmlFor="password" error={errors.password}>
                     <TextInput
                         id="password"
                         ref={passwordInput}
@@ -81,13 +74,13 @@ export default function UpdatePasswordForm({ className = "" }: { className?: str
                         className="mt-1 block w-full"
                         autoComplete="new-password"
                     />
+                </FormField>
 
-                    <InputError id="password-error" message={errors.password} className="mt-2" />
-                </div>
-
-                <div>
-                    <InputLabel htmlFor="password_confirmation" value="パスワード（確認）" />
-
+                <FormField
+                    label="パスワード（確認）"
+                    htmlFor="password_confirmation"
+                    error={errors.password_confirmation}
+                >
                     <TextInput
                         id="password_confirmation"
                         value={data.password_confirmation}
@@ -98,13 +91,7 @@ export default function UpdatePasswordForm({ className = "" }: { className?: str
                         className="mt-1 block w-full"
                         autoComplete="new-password"
                     />
-
-                    <InputError
-                        id="password_confirmation-error"
-                        message={errors.password_confirmation}
-                        className="mt-2"
-                    />
-                </div>
+                </FormField>
 
                 <FormActions
                     leftSlot={
