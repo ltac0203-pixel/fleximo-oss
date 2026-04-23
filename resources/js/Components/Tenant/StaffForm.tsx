@@ -1,6 +1,6 @@
 import Checkbox from "@/Components/Checkbox";
 import InputError from "@/Components/InputError";
-import InputLabel from "@/Components/InputLabel";
+import FormField from "@/Components/UI/FormField";
 import TextInput from "@/Components/TextInput";
 
 interface FormData {
@@ -33,8 +33,12 @@ export default function StaffForm({ formData, errors, onChange, isEdit = false }
 
     return (
         <div className="space-y-4">
-            <div>
-                <InputLabel htmlFor={`${idPrefix}name`} value="名前" required={!isEdit} />
+            <FormField
+                label="名前"
+                htmlFor={`${idPrefix}name`}
+                required={!isEdit}
+                error={errors.name}
+            >
                 <TextInput
                     id={`${idPrefix}name`}
                     value={formData.name}
@@ -46,11 +50,14 @@ export default function StaffForm({ formData, errors, onChange, isEdit = false }
                     required
                     isFocused
                 />
-                <InputError id={`${idPrefix}name-error`} message={errors.name} className="mt-2" />
-            </div>
+            </FormField>
 
-            <div>
-                <InputLabel htmlFor={`${idPrefix}email`} value="メールアドレス" required={!isEdit} />
+            <FormField
+                label="メールアドレス"
+                htmlFor={`${idPrefix}email`}
+                required={!isEdit}
+                error={errors.email}
+            >
                 <TextInput
                     id={`${idPrefix}email`}
                     type="email"
@@ -62,15 +69,14 @@ export default function StaffForm({ formData, errors, onChange, isEdit = false }
                     className="mt-1 block w-full"
                     required
                 />
-                <InputError id={`${idPrefix}email-error`} message={errors.email} className="mt-2" />
-            </div>
+            </FormField>
 
-            <div>
-                <InputLabel
-                    htmlFor={`${idPrefix}password`}
-                    value={isEdit ? "パスワード（変更する場合のみ）" : "パスワード"}
-                    required={!isEdit}
-                />
+            <FormField
+                label={isEdit ? "パスワード（変更する場合のみ）" : "パスワード"}
+                htmlFor={`${idPrefix}password`}
+                required={!isEdit}
+                error={errors.password}
+            >
                 <TextInput
                     id={`${idPrefix}password`}
                     type="password"
@@ -82,12 +88,15 @@ export default function StaffForm({ formData, errors, onChange, isEdit = false }
                     required={!isEdit}
                     autoComplete="new-password"
                 />
-                <InputError id={`${idPrefix}password-error`} message={errors.password} className="mt-2" />
-            </div>
+            </FormField>
 
             {!isEdit && (
-                <div>
-                    <InputLabel htmlFor="password_confirmation" value="パスワード（確認）" required />
+                <FormField
+                    label="パスワード（確認）"
+                    htmlFor="password_confirmation"
+                    required
+                    error={errors.password_confirmation}
+                >
                     <TextInput
                         id="password_confirmation"
                         type="password"
@@ -101,16 +110,14 @@ export default function StaffForm({ formData, errors, onChange, isEdit = false }
                         required
                         autoComplete="new-password"
                     />
-                    <InputError
-                        id="password_confirmation-error"
-                        message={errors.password_confirmation}
-                        className="mt-2"
-                    />
-                </div>
+                </FormField>
             )}
 
-            <div>
-                <InputLabel htmlFor={`${idPrefix}phone`} value="電話番号（任意）" />
+            <FormField
+                label="電話番号（任意）"
+                htmlFor={`${idPrefix}phone`}
+                error={errors.phone}
+            >
                 <TextInput
                     id={`${idPrefix}phone`}
                     type="tel"
@@ -121,8 +128,7 @@ export default function StaffForm({ formData, errors, onChange, isEdit = false }
                     onChange={(e) => onChange({ ...formData, phone: e.target.value })}
                     className="mt-1 block w-full"
                 />
-                <InputError id={`${idPrefix}phone-error`} message={errors.phone} className="mt-2" />
-            </div>
+            </FormField>
 
             {isEdit && (
                 <div>
