@@ -4,15 +4,12 @@ import Modal from "@/Components/Modal";
 import Button from "@/Components/UI/Button";
 import StaffForm from "@/Components/Tenant/StaffForm";
 import { useApiFormSubmission } from "@/Hooks/useApiFormSubmission";
-import { Staff } from "@/types";
+import { FormModalProps, Staff } from "@/types";
 import { router } from "@inertiajs/react";
 import { FormEvent, FormEventHandler, useEffect, useState } from "react";
 
-interface EditStaffModalProps {
-    show: boolean;
+interface EditStaffModalProps extends FormModalProps<string> {
     staff: Staff | null;
-    onClose: () => void;
-    onSuccess?: (message: string) => void;
 }
 
 interface FormErrors {

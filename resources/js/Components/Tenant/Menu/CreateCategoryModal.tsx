@@ -2,15 +2,12 @@ import Modal from "@/Components/Modal";
 import Button from "@/Components/UI/Button";
 import { api } from "@/api";
 import { useApiFormSubmission } from "@/Hooks/useApiFormSubmission";
+import { FormModalProps } from "@/types";
 import { router } from "@inertiajs/react";
 import { FormEvent, FormEventHandler, useState } from "react";
 import CategoryForm from "./CategoryForm";
 
-interface CreateCategoryModalProps {
-    show: boolean;
-    onClose: () => void;
-    onSuccess?: (message: string) => void;
-}
+type CreateCategoryModalProps = FormModalProps<string>;
 
 interface FormErrors {
     name?: string;

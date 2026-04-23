@@ -1,10 +1,9 @@
 import Modal from "@/Components/Modal";
+import { BaseModalProps } from "@/types";
 import { useForm } from "@inertiajs/react";
 import { FormEventHandler } from "react";
 
-interface BanCustomerModalProps {
-    show: boolean;
-    onClose: () => void;
+interface BanCustomerModalProps extends BaseModalProps {
     customerId: number;
 }
 
