@@ -1,4 +1,4 @@
-import { loadingStore } from "./Utils/loadingStore";
+import { loadingStore } from "./stores/loadingStore";
 import { attachGlobalErrorHandlers } from "./Utils/logger";
 
 const startLoading = () => loadingStore.increment();

@@ -1,7 +1,7 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, afterEach, describe, expect, it, vi } from "vitest";
 import GlobalLoadingOverlay from "@/Components/Loading/GlobalLoadingOverlay";
-import { loadingStore } from "@/Utils/loadingStore";
+import { loadingStore } from "@/stores/loadingStore";
 
 const routerPostMock = vi.hoisted(() => vi.fn());
 const routerVisitMock = vi.hoisted(() => vi.fn());

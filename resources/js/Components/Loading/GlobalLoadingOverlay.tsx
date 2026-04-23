@@ -1,20 +1,14 @@
 import { useEffect, useState } from "react";
-import { loadingStore } from "@/Utils/loadingStore";
+import { useLoadingActive } from "@/stores/loadingStore";
 import { navigateToSafeHome } from "@/Utils/safeHomeNavigation";
 
 const SHOW_DELAY_MS = 150;
 const TIMEOUT_MS = 15_000;
 
 export default function GlobalLoadingOverlay() {
-    const [isLoading, setIsLoading] = useState(loadingStore.getCount() > 0);
+    const isLoading = useLoadingActive();
     const [isVisible, setIsVisible] = useState(false);
     const [isTimedOut, setIsTimedOut] = useState(false);
-
-    useEffect(() => {
-        return loadingStore.subscribe((count) => {
-            setIsLoading(count > 0);
-        });
-    }, []);
 
     useEffect(() => {
         let showTimer: number | undefined;
