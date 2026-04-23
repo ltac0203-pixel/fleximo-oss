@@ -4,7 +4,7 @@ const incrementMock = vi.hoisted(() => vi.fn());
 const decrementMock = vi.hoisted(() => vi.fn());
 const attachGlobalErrorHandlersMock = vi.hoisted(() => vi.fn());
 
-vi.mock("@/Utils/loadingStore", () => ({
+vi.mock("@/stores/loadingStore", () => ({
     loadingStore: {
         increment: incrementMock,
         decrement: decrementMock,
