@@ -1,4 +1,4 @@
-import ConfirmModal from "@/Components/ConfirmModal";
+import ConfirmDialog from "@/Components/UI/ConfirmDialog";
 import { useOptionActions } from "@/Hooks/useOptionActions";
 import { Option } from "@/types";
 import { useState } from "react";
@@ -164,7 +164,7 @@ export default function OptionList({ optionGroupId, options, onOptionsChange, on
                 )}
             </div>
 
-            <ConfirmModal
+            <ConfirmDialog
                 show={confirmDeleteId !== null}
                 onClose={() => setConfirmDeleteId(null)}
                 onConfirm={() => {
@@ -173,9 +173,12 @@ export default function OptionList({ optionGroupId, options, onOptionsChange, on
                     }
                 }}
                 title="オプション削除"
-                message="このオプションを削除してもよろしいですか？"
+                confirmLabel="削除"
+                tone="danger"
                 processing={processing && activeAction === "delete"}
-            />
+            >
+                <p className="mt-2 text-sm text-muted">このオプションを削除してもよろしいですか？</p>
+            </ConfirmDialog>
 
             {/* 新規オプション追加 を明示し、実装意図の誤読を防ぐ。 */}
             <div className="border-t pt-4">
@@ -206,7 +209,7 @@ export default function OptionList({ optionGroupId, options, onOptionsChange, on
                             void handleAddOption();
                         }}
                         disabled={processing || !newOption.name.trim()}
-                        aria-busy={(activeAction === "add") || undefined}
+                        aria-busy={activeAction === "add" || undefined}
                         className="px-4 py-2 text-sm font-medium text-white bg-primary-dark hover:bg-primary-dark disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center min-w-14"
                     >
                         {activeAction === "add" ? (

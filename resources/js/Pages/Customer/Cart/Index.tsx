@@ -6,7 +6,7 @@ import ToastContainer from "@/Components/UI/ToastContainer";
 import { useCart } from "@/Hooks/useCart";
 import { useToast } from "@/Hooks/useToast";
 import { CartPageProps, PageProps } from "@/types";
-import ConfirmModal from "@/Components/ConfirmModal";
+import ConfirmDialog from "@/Components/UI/ConfirmDialog";
 import { Head, router, usePage } from "@inertiajs/react";
 import { useState, useCallback } from "react";
 
@@ -102,17 +102,11 @@ export default function CartIndex(_props: CartPageProps) {
                     {/* エラー表示: useCart 由来のエラーを優先し、なければ flash.error を出す。
                         同時に両方表示すると情報過多になるため単一表示に絞る。 */}
                     {error ? (
-                        <div
-                            className="geo-surface mx-4 mt-4 border-red-200 bg-red-50/80 p-4"
-                            role="alert"
-                        >
+                        <div className="geo-surface mx-4 mt-4 border-red-200 bg-red-50/80 p-4" role="alert">
                             <p className="text-sm text-red-600">{error}</p>
                         </div>
                     ) : flash?.error ? (
-                        <div
-                            className="geo-surface mx-4 mt-4 border-amber-200 bg-amber-50/80 p-4"
-                            role="alert"
-                        >
+                        <div className="geo-surface mx-4 mt-4 border-amber-200 bg-amber-50/80 p-4" role="alert">
                             <p className="text-sm text-amber-700">{flash.error}</p>
                         </div>
                     ) : null}
@@ -170,7 +164,7 @@ export default function CartIndex(_props: CartPageProps) {
                     )}
                 </main>
 
-                <ConfirmModal
+                <ConfirmDialog
                     show={confirmClearCartId !== null}
                     onClose={() => setConfirmClearCartId(null)}
                     onConfirm={() => {
@@ -179,8 +173,11 @@ export default function CartIndex(_props: CartPageProps) {
                         }
                     }}
                     title="カート削除"
-                    message="このお店のカートをすべて削除しますか？"
-                />
+                    confirmLabel="削除"
+                    tone="danger"
+                >
+                    <p className="mt-2 text-sm text-muted">このお店のカートをすべて削除しますか？</p>
+                </ConfirmDialog>
 
                 {/* チェックアウトサマリー */}
                 {hasItems && (
