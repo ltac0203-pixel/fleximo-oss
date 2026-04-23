@@ -58,23 +58,33 @@ Fleximo の管理画面 (Admin / Tenant) と顧客画面 (Customer) で、ナビ
 
 ```tsx
 <FormActions>
-    <SecondaryButton onClick={handleCancel}>キャンセル</SecondaryButton>
-    <PrimaryButton type="submit" isBusy={processing}>
+    <Button variant="secondary" type="button" onClick={handleCancel}>
+        キャンセル
+    </Button>
+    <Button variant="primary" type="submit" isBusy={processing}>
         更新
-    </PrimaryButton>
+    </Button>
 </FormActions>
 ```
 
 - **右寄せ**、セカンダリ → プライマリの順 (視線の流れ: 打ち消し → 実行)
 - 送信処理中の表示は `isBusy` プロップで統一
-- 削除など破壊的操作を含むフォームは `leftSlot` に DangerButton を置く:
+- 削除など破壊的操作を含むフォームは `leftSlot` に `variant="danger"` ボタンを置く:
 
 ```tsx
-<FormActions leftSlot={<DangerButton onClick={handleDelete}>削除する</DangerButton>}>
-    <SecondaryButton onClick={handleCancel}>キャンセル</SecondaryButton>
-    <PrimaryButton type="submit" isBusy={processing}>
+<FormActions
+    leftSlot={
+        <Button variant="danger" type="button" onClick={handleDelete}>
+            削除する
+        </Button>
+    }
+>
+    <Button variant="secondary" type="button" onClick={handleCancel}>
+        キャンセル
+    </Button>
+    <Button variant="primary" type="submit" isBusy={processing}>
         更新
-    </PrimaryButton>
+    </Button>
 </FormActions>
 ```
 
@@ -86,7 +96,11 @@ Fleximo の管理画面 (Admin / Tenant) と顧客画面 (Customer) で、ナビ
 <PageHeader
     title="商品一覧"
     help={<HelpButton onClick={openHelp} />}
-    actions={<PrimaryButton onClick={openCreate}>商品を追加</PrimaryButton>}
+    actions={
+        <Button variant="primary" onClick={openCreate}>
+            商品を追加
+        </Button>
+    }
 />
 ```
 
@@ -107,26 +121,26 @@ Fleximo の管理画面 (Admin / Tenant) と顧客画面 (Customer) で、ナビ
 | 新規作成 (フォーム submit) | `作成`            | Create 画面                    |
 | 新規作成 (一覧の CTA)      | `○○を追加`        | Index 画面のヘッダー           |
 | 更新 (フォーム submit)     | `更新`            | Edit 画面 (「保存」は使わない) |
-| 削除                       | `削除する`        | DangerButton                   |
-| 中止                       | `キャンセル`      | SecondaryButton                |
+| 削除                       | `削除する`        | `<Button variant="danger">`    |
+| 中止                       | `キャンセル`      | `<Button variant="secondary">` |
 | 確定 (決済)                | `${金額}を支払う` | Cart / Checkout                |
 | 確定 (非決済)              | `確定する`        | 注文受付確定など               |
 | 詳細                       | `詳細`            | テーブル内テキストリンク       |
 
 ## 5. ボタンサイズ・バリアント運用
 
-| 要素                            | サイズ   | 使用箇所                                                  |
-| ------------------------------- | -------- | --------------------------------------------------------- |
-| PrimaryButton `md` (デフォルト) | md       | フォームの submit、リストの CTA                           |
-| PrimaryButton `sm`              | sm       | テーブル内の行アクション                                  |
-| PrimaryButton `lg`              | lg       | 顧客画面の決済ボタン                                      |
-| PrimaryButton `tone="outline"`  | -        | カード内の軽い CTA のみ (主操作では使わない)              |
-| DangerButton                    | 削除専用 | 「無効化」「アーカイブ」は Secondary + 確認モーダルで対応 |
+| 要素                                                | サイズ   | 使用箇所                                                  |
+| --------------------------------------------------- | -------- | --------------------------------------------------------- |
+| `<Button variant="primary">` (`size="md"` デフォルト) | md       | フォームの submit、リストの CTA                           |
+| `<Button variant="primary" size="sm">`              | sm       | テーブル内の行アクション                                  |
+| `<Button variant="primary" size="lg">`              | lg       | 顧客画面の決済ボタン                                      |
+| `<Button variant="primary" tone="outline">`         | -        | カード内の軽い CTA のみ (主操作では使わない)              |
+| `<Button variant="danger">`                         | 削除専用 | 「無効化」「アーカイブ」は secondary + 確認モーダルで対応 |
 
 ## 6. アクセシビリティ
 
-- **フォーム内の副ボタンは `type="button"` を必ず明記**する (submit の暴発を防ぐ。`SecondaryButton` はデフォルトで `type="button"`)
-- `aria-busy` は PrimaryButton/DangerButton の `isBusy` プロップで自動付与される
+- **フォーム内の副ボタンは `type="button"` を必ず明記**する (submit の暴発を防ぐ。`<Button variant="secondary">` も `type="button"` を明示すること)
+- `aria-busy` は `<Button variant="primary">` / `<Button variant="danger">` の `isBusy` プロップで自動付与される (`secondary` は `isBusy` 非対応)
 - モバイルタップ領域は最小 44px × 44px (現行の `BUTTON_SIZE_CLASSES` の `md` 以上を下限とする)
 - パンくずには `aria-label="パンくずリスト"` と最後の要素に `aria-current="page"` を付ける (Breadcrumb コンポーネントが自動で付与)
 

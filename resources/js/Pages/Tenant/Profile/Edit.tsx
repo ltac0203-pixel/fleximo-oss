@@ -15,7 +15,7 @@ import { FormEventHandler, useEffect } from "react";
 import InputLabel from "@/Components/InputLabel";
 import TextInput from "@/Components/TextInput";
 import InputError from "@/Components/InputError";
-import PrimaryButton from "@/Components/PrimaryButton";
+import Button from "@/Components/UI/Button";
 import HelpButton from "@/Components/Tenant/HelpButton";
 import HelpPanel from "@/Components/Tenant/HelpPanel";
 import { tenantHelpContent } from "@/data/tenantHelpContent";
@@ -273,9 +273,9 @@ export default function Edit({ tenant }: TenantPageProps) {
                     </div>
 
                     <FormActions>
-                        <PrimaryButton disabled={processing} isBusy={processing}>
+                        <Button variant="primary" disabled={processing} isBusy={processing}>
                             更新
-                        </PrimaryButton>
+                        </Button>
                     </FormActions>
                 </form>
             </div>

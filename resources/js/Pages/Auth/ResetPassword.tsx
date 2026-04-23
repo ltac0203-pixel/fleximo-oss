@@ -1,6 +1,6 @@
 import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
-import PrimaryButton from "@/Components/PrimaryButton";
+import Button from "@/Components/UI/Button";
 import TextInput from "@/Components/TextInput";
 import GuestLayout from "@/Layouts/GuestLayout";
 import { PageProps } from "@/types";
@@ -101,9 +101,14 @@ export default function ResetPassword({ token, email }: ResetPasswordProps) {
                 </div>
 
                 <div className="mt-4 flex items-center justify-end">
-                    <PrimaryButton className="ms-4" disabled={processing} isBusy={processing}>
+                    <Button
+                        variant="primary"
+                        className="ms-4"
+                        disabled={processing}
+                        isBusy={processing}
+                    >
                         パスワードを再設定
-                    </PrimaryButton>
+                    </Button>
                 </div>
             </form>
         </GuestLayout>

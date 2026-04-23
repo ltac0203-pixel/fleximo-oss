@@ -1,5 +1,5 @@
 import PageHeader from "@/Components/PageHeader";
-import PrimaryButton from "@/Components/PrimaryButton";
+import Button from "@/Components/UI/Button";
 import AvailabilityBadge from "@/Components/Tenant/Menu/AvailabilityBadge";
 import ConfirmDeleteModal from "@/Components/ConfirmDeleteModal";
 import ToastContainer from "@/Components/UI/ToastContainer";
@@ -52,7 +52,7 @@ export default function Index({ optionGroups }: OptionGroupsIndexProps) {
                         actions={
                             canManage ? (
                                 <Link href={route("tenant.menu.option-groups.create")}>
-                                    <PrimaryButton>グループを追加</PrimaryButton>
+                                    <Button variant="primary">グループを追加</Button>
                                 </Link>
                             ) : undefined
                         }

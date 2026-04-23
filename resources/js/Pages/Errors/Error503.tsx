@@ -1,6 +1,6 @@
 import { Head } from "@inertiajs/react";
 import ErrorLayout from "@/Components/Error/ErrorLayout";
-import PrimaryButton from "@/Components/PrimaryButton";
+import Button from "@/Components/UI/Button";
 import { ErrorPageProps } from "@/types";
 
 export default function Error503(_props: ErrorPageProps) {
@@ -17,7 +17,9 @@ export default function Error503(_props: ErrorPageProps) {
                 title="ただいまメンテナンス中です"
                 message="サービスの改善作業を行っています。しばらくしてから再度アクセスしてください。"
             >
-                <PrimaryButton onClick={handleReload}>再読み込み</PrimaryButton>
+                <Button variant="primary" onClick={handleReload}>
+                    再読み込み
+                </Button>
             </ErrorLayout>
         </>
     );

@@ -1,7 +1,6 @@
 import { Head, router } from "@inertiajs/react";
 import ErrorLayout from "@/Components/Error/ErrorLayout";
-import PrimaryButton from "@/Components/PrimaryButton";
-import SecondaryButton from "@/Components/SecondaryButton";
+import Button from "@/Components/UI/Button";
 import { ErrorPageProps } from "@/types";
 
 export default function Error419(_props: ErrorPageProps) {
@@ -22,8 +21,12 @@ export default function Error419(_props: ErrorPageProps) {
                 title="ページの有効期限が切れました"
                 message="セッションの有効期限が切れました。ページを再読み込みしてから、もう一度お試しください。"
             >
-                <PrimaryButton onClick={handleReload}>再読み込み</PrimaryButton>
-                <SecondaryButton onClick={handleGoHome}>ホームに戻る</SecondaryButton>
+                <Button variant="primary" onClick={handleReload}>
+                    再読み込み
+                </Button>
+                <Button variant="secondary" type="button" onClick={handleGoHome}>
+                    ホームに戻る
+                </Button>
             </ErrorLayout>
         </>
     );

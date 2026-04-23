@@ -1,8 +1,7 @@
 import Breadcrumb from "@/Components/Breadcrumb";
 import FormActions from "@/Components/FormActions";
 import PageHeader from "@/Components/PageHeader";
-import PrimaryButton from "@/Components/PrimaryButton";
-import SecondaryButton from "@/Components/SecondaryButton";
+import Button from "@/Components/UI/Button";
 import OptionGroupForm, { FormData, FormErrors } from "@/Components/Tenant/Menu/OptionGroupForm";
 import OptionList from "@/Components/Tenant/Menu/OptionList";
 import { useApiFormSubmission } from "@/Hooks/useApiFormSubmission";
@@ -76,10 +75,17 @@ export default function Edit({ optionGroup }: OptionGroupEditProps) {
                         <OptionGroupForm formData={formData} errors={errors} onChange={setFormData} />
 
                         <FormActions className="mt-6">
-                            <SecondaryButton onClick={handleCancel}>キャンセル</SecondaryButton>
-                            <PrimaryButton type="submit" disabled={processing} isBusy={processing}>
+                            <Button variant="secondary" type="button" onClick={handleCancel}>
+                                キャンセル
+                            </Button>
+                            <Button
+                                variant="primary"
+                                type="submit"
+                                disabled={processing}
+                                isBusy={processing}
+                            >
                                 更新
-                            </PrimaryButton>
+                            </Button>
                         </FormActions>
                     </form>
                 </div>

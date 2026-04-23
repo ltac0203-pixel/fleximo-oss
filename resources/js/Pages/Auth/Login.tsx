@@ -1,7 +1,7 @@
 import Checkbox from "@/Components/Checkbox";
 import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
-import PrimaryButton from "@/Components/PrimaryButton";
+import Button from "@/Components/UI/Button";
 import TextInput from "@/Components/TextInput";
 import GuestLayout from "@/Layouts/GuestLayout";
 import { PageProps } from "@/types";
@@ -123,9 +123,14 @@ export default function Login({ status, canResetPassword }: { status?: string; c
                         </Link>
                     )}
 
-                    <PrimaryButton className="ms-4" disabled={processing} isBusy={processing}>
+                    <Button
+                        variant="primary"
+                        className="ms-4"
+                        disabled={processing}
+                        isBusy={processing}
+                    >
                         ログイン
-                    </PrimaryButton>
+                    </Button>
                 </div>
 
                 <div className="mt-6 text-center">

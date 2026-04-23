@@ -1,5 +1,5 @@
 import PageHeader from "@/Components/PageHeader";
-import PrimaryButton from "@/Components/PrimaryButton";
+import Button from "@/Components/UI/Button";
 import CreateStaffModal from "@/Components/Tenant/CreateStaffModal";
 import ConfirmDeleteModal from "@/Components/ConfirmDeleteModal";
 import EditStaffModal from "@/Components/Tenant/EditStaffModal";
@@ -44,7 +44,11 @@ export default function Index({ staff }: StaffIndexProps) {
                         title="スタッフ一覧"
                         help={<HelpButton onClick={openHelp} />}
                         actions={
-                            canManage ? <PrimaryButton onClick={openCreate}>スタッフを追加</PrimaryButton> : undefined
+                            canManage ? (
+                                <Button variant="primary" onClick={openCreate}>
+                                    スタッフを追加
+                                </Button>
+                            ) : undefined
                         }
                     />
 

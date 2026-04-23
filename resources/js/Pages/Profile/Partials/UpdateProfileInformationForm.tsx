@@ -1,6 +1,6 @@
 import FormActions from "@/Components/FormActions";
 import FormField from "@/Components/UI/FormField";
-import PrimaryButton from "@/Components/PrimaryButton";
+import Button from "@/Components/UI/Button";
 import TextInput from "@/Components/TextInput";
 import { Transition } from "@headlessui/react";
 import { PageProps } from "@/types";
@@ -104,9 +104,9 @@ export default function UpdateProfileInformation({
                         </Transition>
                     }
                 >
-                    <PrimaryButton disabled={processing} isBusy={processing}>
+                    <Button variant="primary" disabled={processing} isBusy={processing}>
                         更新
-                    </PrimaryButton>
+                    </Button>
                 </FormActions>
             </form>
         </section>

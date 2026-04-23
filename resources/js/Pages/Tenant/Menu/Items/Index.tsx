@@ -1,5 +1,5 @@
 import PageHeader from "@/Components/PageHeader";
-import PrimaryButton from "@/Components/PrimaryButton";
+import Button from "@/Components/UI/Button";
 import ConfirmDeleteModal from "@/Components/ConfirmDeleteModal";
 import ItemCard from "@/Components/Tenant/Menu/ItemCard";
 import ToastContainer from "@/Components/UI/ToastContainer";
@@ -77,7 +77,7 @@ export default function Index({ items, categories }: MenuItemsIndexProps) {
                         actions={
                             canManage ? (
                                 <Link href={route("tenant.menu.items.create")}>
-                                    <PrimaryButton>商品を追加</PrimaryButton>
+                                    <Button variant="primary">商品を追加</Button>
                                 </Link>
                             ) : undefined
                         }
