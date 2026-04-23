@@ -11,6 +11,8 @@ import HelpButton from "@/Components/Common/Help/HelpButton";
 import HelpPanel from "@/Components/Common/Help/HelpPanel";
 import { useHelpPanel } from "@/Hooks/useHelpPanel";
 import { adminHelpContent } from "@/data/adminHelpContent";
+import Badge from "@/Components/UI/Badge";
+import { toAccountStatusTone } from "@/constants/statusColors";
 
 interface CustomerShowProps extends PageProps {
     customer: CustomerDetail;
@@ -24,15 +26,6 @@ export default function Show({ customer, recentOrders }: CustomerShowProps) {
     const [showReactivateModal, setShowReactivateModal] = useState(false);
     const [showExportModal, setShowExportModal] = useState(false);
     const { showHelp, openHelp, closeHelp } = useHelpPanel();
-
-    const getStatusBadgeClass = (color: string) => {
-        const colorMap: Record<string, string> = {
-            green: "bg-green-100 text-green-800",
-            yellow: "bg-yellow-100 text-yellow-800",
-            red: "bg-red-100 text-red-800",
-        };
-        return colorMap[color] || "bg-surface-dim text-ink";
-    };
 
     return (
         <AdminLayout
@@ -48,11 +41,13 @@ export default function Show({ customer, recentOrders }: CustomerShowProps) {
                         <h2 className="mt-1 text-xl font-semibold leading-tight text-ink">顧客詳細</h2>
                     </div>
                     <div className="flex items-center gap-3">
-                        <span
-                            className={`inline-flex rounded-full px-3 py-1 text-sm font-medium ${getStatusBadgeClass(customer.account_status_color)}`}
+                        <Badge
+                            tone={toAccountStatusTone(customer.account_status_color)}
+                            size="md"
+                            shape="pill"
                         >
                             {customer.account_status_label}
-                        </span>
+                        </Badge>
                         <HelpButton onClick={openHelp} />
                     </div>
                 </div>

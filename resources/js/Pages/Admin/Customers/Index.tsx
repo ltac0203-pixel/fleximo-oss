@@ -7,6 +7,8 @@ import HelpButton from "@/Components/Common/Help/HelpButton";
 import HelpPanel from "@/Components/Common/Help/HelpPanel";
 import { useHelpPanel } from "@/Hooks/useHelpPanel";
 import { adminHelpContent } from "@/data/adminHelpContent";
+import Badge from "@/Components/UI/Badge";
+import { toAccountStatusTone } from "@/constants/statusColors";
 
 type SortableCustomerField = "name" | "email" | "account_status" | "orders_count" | "last_login_at" | "created_at";
 
@@ -91,15 +93,6 @@ export default function Index({
             },
             { preserveState: true },
         );
-    };
-
-    const getStatusBadgeClass = (color: string) => {
-        const colorMap: Record<string, string> = {
-            green: "bg-green-100 text-green-800",
-            yellow: "bg-yellow-100 text-yellow-800",
-            red: "bg-red-100 text-red-800",
-        };
-        return colorMap[color] || "bg-surface-dim text-ink";
     };
 
     return (
@@ -242,11 +235,13 @@ export default function Index({
                                             {customer.email}
                                         </td>
                                         <td className="whitespace-nowrap px-6 py-4">
-                                            <span
-                                                className={`inline-flex rounded-full px-2 py-1 text-xs font-medium ${getStatusBadgeClass(customer.account_status_color)}`}
+                                            <Badge
+                                                tone={toAccountStatusTone(customer.account_status_color)}
+                                                size="sm"
+                                                shape="pill"
                                             >
                                                 {customer.account_status_label}
-                                            </span>
+                                            </Badge>
                                         </td>
                                         <td className="whitespace-nowrap px-6 py-4 text-sm text-muted">
                                             {customer.orders_count}
