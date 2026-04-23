@@ -4,7 +4,7 @@ import { useFincode } from "@/Hooks/useFincode";
 import { useCardManagement } from "@/Hooks/useCardManagement";
 import { CardsIndexProps } from "@/types";
 import { Head, Link } from "@inertiajs/react";
-import ConfirmModal from "@/Components/ConfirmModal";
+import ConfirmDialog from "@/Components/UI/ConfirmDialog";
 import { useEffect, useState } from "react";
 
 export default function CardsIndex({ tenant, cards: initialCards, fincodePublicKey, isProduction }: CardsIndexProps) {
@@ -134,7 +134,7 @@ export default function CardsIndex({ tenant, cards: initialCards, fincodePublicK
                             }}
                         />
 
-                        <ConfirmModal
+                        <ConfirmDialog
                             show={confirmDeleteId !== null}
                             onClose={() => setConfirmDeleteId(null)}
                             onConfirm={() => {
@@ -143,9 +143,12 @@ export default function CardsIndex({ tenant, cards: initialCards, fincodePublicK
                                 }
                             }}
                             title="カード削除"
-                            message="このカードを削除しますか？"
+                            confirmLabel="削除"
+                            tone="danger"
                             processing={deletingId !== null}
-                        />
+                        >
+                            <p className="mt-2 text-sm text-muted">このカードを削除しますか？</p>
+                        </ConfirmDialog>
 
                         {/* 運用ルールを事前に示し、問い合わせや誤操作を減らす。 */}
                         <div className="text-xs text-slate-500 space-y-1">
