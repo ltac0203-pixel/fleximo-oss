@@ -9,6 +9,7 @@ import HelpPanel from "@/Components/Common/Help/HelpPanel";
 import InlineHelp from "@/Components/Common/Help/InlineHelp";
 import { useHelpPanel } from "@/Hooks/useHelpPanel";
 import { adminHelpContent } from "@/data/adminHelpContent";
+import Badge from "@/Components/UI/Badge";
 
 interface TenantShopIdItem {
     id: number;
@@ -61,21 +62,6 @@ export default function Index({ tenants, searchQuery, flash }: TenantShopIdsInde
                 },
                 onFinish: () => setProcessing(false),
             },
-        );
-    };
-
-    const getStatusBadge = (status: string, isActive: boolean) => {
-        if (status === "active" && isActive) {
-            return (
-                <span className="inline-flex rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-800">
-                    有効
-                </span>
-            );
-        }
-        return (
-            <span className="inline-flex rounded-full bg-surface-dim px-2 py-1 text-xs font-medium text-ink">
-                無効
-            </span>
         );
     };
 
@@ -207,7 +193,15 @@ export default function Index({ tenants, searchQuery, flash }: TenantShopIdsInde
                                             )}
                                         </td>
                                         <td className="whitespace-nowrap px-6 py-4">
-                                            {getStatusBadge(tenant.status, tenant.is_active)}
+                                            {tenant.status === "active" && tenant.is_active ? (
+                                                <Badge tone="green" size="sm" shape="pill">
+                                                    有効
+                                                </Badge>
+                                            ) : (
+                                                <Badge tone="neutral" size="sm" shape="pill">
+                                                    無効
+                                                </Badge>
+                                            )}
                                         </td>
                                         <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
                                             {editingId !== tenant.id && (
