@@ -1,6 +1,4 @@
-import DangerButton from "@/Components/DangerButton";
-import Modal from "@/Components/Modal";
-import SecondaryButton from "@/Components/SecondaryButton";
+import ConfirmDialog from "@/Components/UI/ConfirmDialog";
 import { useDeleteAction } from "@/Hooks/useDeleteAction";
 
 interface ConfirmDeleteModalProps {
@@ -41,31 +39,21 @@ export default function ConfirmDeleteModal({
         : "削除してもよろしいですか？この操作は取り消せません。";
 
     return (
-        <Modal show={show} onClose={onClose} maxWidth="md">
-            <div className="p-6">
-                <h2 className="text-lg font-medium text-ink">{title}</h2>
-
-                {error && <p className="mt-4 text-sm text-red-600">{error}</p>}
-
-                <p className="mt-4 text-sm text-ink-light">{message ?? defaultMessage}</p>
-
-                {warningMessage && <p className="mt-2 text-sm text-red-600">{warningMessage}</p>}
-
-                <div className="mt-6 flex justify-end">
-                    <SecondaryButton onClick={onClose}>キャンセル</SecondaryButton>
-
-                    <DangerButton
-                        className="ms-3"
-                        onClick={() => {
-                            void executeDelete();
-                        }}
-                        disabled={processing}
-                        isBusy={processing}
-                    >
-                        削除
-                    </DangerButton>
-                </div>
-            </div>
-        </Modal>
+        <ConfirmDialog
+            show={show}
+            onClose={onClose}
+            onConfirm={() => {
+                void executeDelete();
+            }}
+            title={title}
+            confirmLabel="削除"
+            tone="danger"
+            processing={processing}
+            maxWidth="md"
+        >
+            {error && <p className="mt-4 text-sm text-red-600">{error}</p>}
+            <p className="mt-4 text-sm text-ink-light">{message ?? defaultMessage}</p>
+            {warningMessage && <p className="mt-2 text-sm text-red-600">{warningMessage}</p>}
+        </ConfirmDialog>
     );
 }
