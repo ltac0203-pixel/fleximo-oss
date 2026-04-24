@@ -4,15 +4,12 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Enums\OrderStatus;
 use App\Enums\PaymentMethod;
 use App\Enums\SalesPeriod;
-use App\Models\Order;
-use App\Models\Scopes\TenantScope;
 use App\Services\Dashboard\SalesDataFormatter;
+use App\Services\Stats\Queries\CustomerInsightsQuery;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
 
 // テナントダッシュボード用データ組み立てサービス
 // ダッシュボードAPIのパブリックインターフェースを提供
@@ -30,7 +27,8 @@ class TenantDashboardService
 
     public function __construct(
         private readonly TenantStatsRepository $statsRepository,
-        private readonly SalesDataFormatter $salesDataFormatter
+        private readonly SalesDataFormatter $salesDataFormatter,
+        private readonly CustomerInsightsQuery $customerInsightsQuery,
     ) {}
 
     private function cacheKey(int $tenantId, string $metric, string ...$params): string
@@ -218,44 +216,11 @@ class TenantDashboardService
         $key = $this->cacheKey($tenantId, 'customer_insights', $startDate->format('Y-m-d'), $endDate->format('Y-m-d'));
         $ttl = $this->ttlForDateRange($startDate, $endDate);
 
-        return Cache::remember($key, $ttl, function () use ($tenantId, $startDate, $endDate) {
-            $dateRange = [$startDate->format('Y-m-d'), $endDate->format('Y-m-d')];
-            $salesStatuses = OrderStatus::salesStatusValues();
-
-            // リピート率算出の母数として、期間内に1回以上注文したユニーク顧客数を取得する
-            $uniqueCustomers = (int) Order::withoutGlobalScope(TenantScope::class)
-                ->where('tenant_id', $tenantId)
-                ->whereBetween('business_date', $dateRange)
-                ->whereIn('status', $salesStatuses)
-                ->distinct('user_id')
-                ->count('user_id');
-
-            // 期間内の顧客のうち、期間前に注文が無い人＝新規顧客と判定する
-            $newCustomers = (int) Order::withoutGlobalScope(TenantScope::class)
-                ->where('tenant_id', $tenantId)
-                ->whereBetween('business_date', $dateRange)
-                ->whereIn('status', $salesStatuses)
-                ->whereNotExists(function ($query) use ($tenantId, $startDate, $salesStatuses) {
-                    $query->select(DB::raw(1))
-                        ->from('orders as prior')
-                        ->whereColumn('prior.user_id', 'orders.user_id')
-                        ->where('prior.tenant_id', $tenantId)
-                        ->where('prior.business_date', '<', $startDate->format('Y-m-d'))
-                        ->whereIn('prior.status', $salesStatuses);
-                })
-                ->distinct()
-                ->count('user_id');
-
-            $repeatCustomers = $uniqueCustomers - $newCustomers;
-            $repeatRate = $uniqueCustomers > 0 ? round(($repeatCustomers / $uniqueCustomers) * 100, 1) : 0;
-
-            return [
-                'unique_customers' => $uniqueCustomers,
-                'new_customers' => $newCustomers,
-                'repeat_customers' => $repeatCustomers,
-                'repeat_rate' => $repeatRate,
-            ];
-        });
+        return Cache::remember(
+            $key,
+            $ttl,
+            fn () => $this->customerInsightsQuery->forRange($tenantId, $startDate, $endDate)
+        );
     }
 
     // 変化率を計算する
