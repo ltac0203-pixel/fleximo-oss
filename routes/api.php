@@ -9,16 +9,13 @@ use App\Http\Controllers\Api\Customer\FavoriteController;
 use App\Http\Controllers\Api\Customer\OrderController;
 use App\Http\Controllers\Api\Customer\ReorderController;
 use App\Http\Controllers\Api\HealthCheckController;
-use App\Http\Controllers\Api\MenuController;
 use App\Http\Controllers\Api\Tenant\DashboardController;
 use App\Http\Controllers\Api\Tenant\KdsController;
 use App\Http\Controllers\Api\Tenant\OrderPauseController;
-use App\Http\Controllers\Api\TenantController;
 use App\Http\Controllers\Tenant\MenuCategoryController;
 use App\Http\Controllers\Tenant\MenuItemController;
 use App\Http\Controllers\Tenant\OptionController;
 use App\Http\Controllers\Tenant\OptionGroupController;
-use App\Http\Controllers\Tenant\ProfileController;
 use App\Http\Controllers\Tenant\StaffController;
 use App\Http\Controllers\Webhook\FincodeWebhookController;
 use Illuminate\Support\Facades\Route;
@@ -37,29 +34,11 @@ use Illuminate\Support\Facades\Route;
 // ヘルスチェック（認証不要、ロードバランサー・監視ツール向け）
 Route::middleware('ip.whitelist')->get('/health', HealthCheckController::class)->name('health');
 
-// 全認証ユーザー向けAPI（テナント検索）
-Route::middleware(['auth:sanctum', 'verified', 'active', 'throttle:60,1'])
-    ->group(function () {
-        Route::get('/tenants', [TenantController::class, 'index'])->name('tenants.index');
-        Route::middleware('tenant.route-active')->group(function () {
-            Route::get('/tenants/{tenant}', [TenantController::class, 'show'])->name('tenants.show');
-            Route::get('/tenants/{tenant}/menu', [MenuController::class, 'index'])->name('tenants.menu');
-        });
-    });
-
 // テナント管理者・スタッフ向けAPI
 Route::middleware(['auth:sanctum', 'verified', 'active', 'role:tenant_admin,tenant_staff', 'tenant.user-assigned', 'tenant.user-approved', 'throttle:60,1'])
     ->prefix('tenant')
     ->name('tenant.')
     ->group(function () {
-        // プロフィール（API）
-        Route::prefix('profile')->name('profile.api.')->group(function () {
-            Route::get('/', [ProfileController::class, 'show'])->name('show');
-            Route::middleware('role:tenant_admin')
-                ->patch('/', [ProfileController::class, 'update'])
-                ->name('update');
-        });
-
         // スタッフ管理（テナント管理者のみ、Policyで制御）
         Route::apiResource('staff', StaffController::class);
 
@@ -104,7 +83,6 @@ Route::middleware(['auth:sanctum', 'verified', 'active', 'role:tenant_admin,tena
 
         // ダッシュボード（テナント管理者・スタッフ共通）
         Route::prefix('dashboard')->name('dashboard.')->group(function () {
-            Route::get('/summary', [DashboardController::class, 'summary'])->name('summary');
             Route::get('/hourly', [DashboardController::class, 'hourly'])->name('hourly');
             Route::get('/sales', [DashboardController::class, 'sales'])->name('sales');
             Route::get('/top-items', [DashboardController::class, 'topItems'])->name('top-items');

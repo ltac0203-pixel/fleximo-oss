@@ -10,9 +10,7 @@ use App\Http\Requests\Tenant\DashboardExportRequest;
 use App\Http\Requests\Tenant\DashboardHourlyRequest;
 use App\Http\Requests\Tenant\DashboardPaymentMethodsRequest;
 use App\Http\Requests\Tenant\DashboardSalesRequest;
-use App\Http\Requests\Tenant\DashboardSummaryRequest;
 use App\Http\Requests\Tenant\DashboardTopItemsRequest;
-use App\Http\Resources\DashboardSummaryResource;
 use App\Http\Resources\SalesDataResource;
 use App\Http\Resources\TopItemResource;
 use App\Services\TenantDashboardExportService;
@@ -27,20 +25,6 @@ class DashboardController extends Controller
         private readonly TenantDashboardService $dashboardService,
         private readonly TenantDashboardExportService $dashboardExportService,
     ) {}
-
-    public function summary(DashboardSummaryRequest $request): JsonResponse
-    {
-        Gate::authorize('dashboard.view');
-
-        $tenantId = $request->user()->getTenantId();
-        $date = $request->getDate();
-
-        $summary = $this->dashboardService->getSummary($tenantId, $date);
-
-        return response()->json([
-            'data' => new DashboardSummaryResource($summary),
-        ]);
-    }
 
     public function sales(DashboardSalesRequest $request): JsonResponse
     {

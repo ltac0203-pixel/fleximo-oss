@@ -13,14 +13,12 @@ class EnsureApprovedUserTenant
     // 未承認テナントでもダッシュボード確認とログアウトは許可し、承認待機状態のままシステムを利用不能にしない
     protected array $allowedRoutes = [
         'tenant.dashboard',
-        'tenant.dashboard.summary',
         'tenant.dashboard.hourly',
         'tenant.dashboard.sales',
         'tenant.dashboard.top-items',
         'tenant.dashboard.payment-methods',
         'tenant.dashboard.customer-insights',
         'tenant.dashboard.export.csv',
-        'tenant.profile.api.show',
         'logout',
     ];
 
