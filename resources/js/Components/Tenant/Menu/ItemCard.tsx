@@ -1,4 +1,4 @@
-import ConfirmModal from "@/Components/ConfirmModal";
+import ConfirmDialog from "@/Components/UI/ConfirmDialog";
 import { useMenuItemSoldOut } from "@/Hooks/useMenuItemSoldOut";
 import { MenuItem } from "@/types";
 import { formatPrice } from "@/Utils/formatPrice";
@@ -92,19 +92,21 @@ function ItemCard({ item, onDelete, onError, onSoldOutToggle, canManage = true }
             </div>
 
             {/* 売り切れ切り替えの確認モーダル */}
-            <ConfirmModal
+            <ConfirmDialog
                 show={showSoldOutConfirm}
                 onClose={() => setShowSoldOutConfirm(false)}
                 onConfirm={executeToggleSoldOut}
                 title={item.is_sold_out ? "在庫を復活しますか？" : "売り切れに設定しますか？"}
-                message={
-                    item.is_sold_out
-                        ? `「${item.name}」を販売可能にします。顧客がこの商品を注文できるようになります。`
-                        : `「${item.name}」を売り切れにします。顧客はこの商品を注文できなくなります。`
-                }
                 confirmLabel={item.is_sold_out ? "在庫を復活する" : "売り切れにする"}
+                tone="danger"
                 processing={toggling}
-            />
+            >
+                <p className="mt-2 text-sm text-muted">
+                    {item.is_sold_out
+                        ? `「${item.name}」を販売可能にします。顧客がこの商品を注文できるようになります。`
+                        : `「${item.name}」を売り切れにします。顧客はこの商品を注文できなくなります。`}
+                </p>
+            </ConfirmDialog>
         </div>
     );
 }

@@ -39,7 +39,7 @@ vi.mock("@/Components/Customer/Cards/SavedCardList", () => ({
     default: () => null,
 }));
 
-vi.mock("@/Components/ConfirmModal", () => ({
+vi.mock("@/Components/UI/ConfirmDialog", () => ({
     default: () => null,
 }));
 
