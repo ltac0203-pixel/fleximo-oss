@@ -7,6 +7,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property int $id
+ * @property int $tenant_id
+ * @property int $weekday
+ * @property string $open_time
+ * @property string $close_time
+ * @property int $sort_order
+ */
 class TenantBusinessHour extends Model
 {
     protected $fillable = [

@@ -283,12 +283,6 @@ parameters:
 			path: app/Http/Controllers/Api/Tenant/DashboardController.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$is_open\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Customer/CheckoutPageController.php
-
-		-
 			message: '#^Parameter \#2 \$tenant of method App\\Services\\FincodeCustomerService\:\:getCards\(\) expects App\\Models\\Tenant, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
 			identifier: argument.type
 			count: 1
@@ -1957,12 +1951,6 @@ parameters:
 			path: app/Http/Resources/TenantResource.php
 
 		-
-			message: '#^Call to an undefined method App\\Http\\Resources\\TenantResource\:\:getBusinessStatus\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Http/Resources/TenantResource.php
-
-		-
 			message: '#^Method App\\Http\\Resources\\TenantResource\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -3091,18 +3079,6 @@ parameters:
 			path: app/Models/Scopes/TenantScope.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$close_time\.$#'
-			identifier: property.notFound
-			count: 4
-			path: app/Models/Tenant.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$open_time\.$#'
-			identifier: property.notFound
-			count: 4
-			path: app/Models/Tenant.php
-
-		-
 			message: '#^Class App\\Models\\Tenant uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
 			identifier: missingType.generics
 			count: 1
@@ -3121,12 +3097,6 @@ parameters:
 			path: app/Models/Tenant.php
 
 		-
-			message: '#^Method App\\Models\\Tenant\:\:businessHours\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
-			identifier: missingType.generics
-			count: 1
-			path: app/Models/Tenant.php
-
-		-
 			message: '#^Method App\\Models\\Tenant\:\:filterSensitiveData\(\) has parameter \$data with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -3134,18 +3104,6 @@ parameters:
 
 		-
 			message: '#^Method App\\Models\\Tenant\:\:filterSensitiveData\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Models/Tenant.php
-
-		-
-			message: '#^Method App\\Models\\Tenant\:\:getBusinessStatus\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Models/Tenant.php
-
-		-
-			message: '#^Method App\\Models\\Tenant\:\:getTodayBusinessHours\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: app/Models/Tenant.php
@@ -3194,12 +3152,6 @@ parameters:
 
 		-
 			message: '#^Property App\\Models\\Tenant\:\:\$auditableEvents type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Models/Tenant.php
-
-		-
-			message: '#^Property App\\Models\\Tenant\:\:\$businessStatusCache type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: app/Models/Tenant.php
@@ -4877,30 +4829,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: app/Services/TenantDashboardService.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$close_time\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Services/TenantService.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$open_time\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Services/TenantService.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$sort_order\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Services/TenantService.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$weekday\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Services/TenantService.php
 
 		-
 			message: '#^Method App\\Services\\TenantService\:\:getActiveTenants\(\) return type with generic class Illuminate\\Database\\Eloquent\\Collection does not specify its types\: TKey, TModel$#'

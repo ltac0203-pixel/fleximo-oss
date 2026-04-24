@@ -13,11 +13,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Log;
 
-// BelongsToTenant でテナント管理者/スタッフ側のクエリを自動スコープする。
-// 顧客は複数テナントのカートを保持するため、顧客向けクエリでは
-// withoutGlobalScope(TenantScope::class) で明示的にバイパスすること。
-// @see \App\Models\Traits\BelongsToTenant
-// @see \App\Models\Order::scopeForCustomerAcrossTenants()
+/**
+ * BelongsToTenant でテナント管理者/スタッフ側のクエリを自動スコープする。
+ * 顧客は複数テナントのカートを保持するため、顧客向けクエリでは
+ * withoutGlobalScope(TenantScope::class) で明示的にバイパスすること。
+ *
+ * @see BelongsToTenant
+ * @see Order::scopeForCustomerAcrossTenants()
+ *
+ * @property-read Tenant $tenant
+ */
 class Cart extends Model
 {
     use BelongsToTenant, HasFactory;

@@ -9,6 +9,7 @@ use App\Enums\TenantUserRole;
 use App\Models\Traits\Auditable;
 use App\Support\StringHelper;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -18,6 +19,7 @@ use Illuminate\Support\Carbon;
 /**
  * @property TenantStatus|null $status
  * @property Carbon|null $order_paused_at
+ * @property-read Collection<int, TenantBusinessHour> $businessHours
  */
 class Tenant extends Model
 {
@@ -51,6 +53,9 @@ class Tenant extends Model
         return $this->hasMany(TenantUser::class);
     }
 
+    /**
+     * @return HasMany<TenantBusinessHour, $this>
+     */
     public function businessHours(): HasMany
     {
         return $this->hasMany(TenantBusinessHour::class)
