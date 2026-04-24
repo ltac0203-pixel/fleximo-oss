@@ -19,6 +19,15 @@ class StatsCacheResolver
 
     public const TTL_HISTORICAL = 3600; // 1 時間 - 過去データ相当
 
+    // リクエスト単位で当日を凍結する。TenantStatsRepository と同方針で、
+    // リクエスト処理中に日付が跨いでも TTL 判定がブレないことを担保する。
+    private readonly Carbon $resolvedToday;
+
+    public function __construct()
+    {
+        $this->resolvedToday = Carbon::today();
+    }
+
     // 単日向け: 指定 date が今日なら REALTIME、それ以外は HISTORICAL。
     public function rememberForDate(string $key, Carbon $date, Closure $loader): mixed
     {
@@ -39,11 +48,11 @@ class StatsCacheResolver
 
     private function ttlForDate(Carbon $date): int
     {
-        return $date->isToday() ? self::TTL_REALTIME : self::TTL_HISTORICAL;
+        return $date->isSameDay($this->resolvedToday) ? self::TTL_REALTIME : self::TTL_HISTORICAL;
     }
 
     private function ttlForDateRange(Carbon $startDate, Carbon $endDate): int
     {
-        return Carbon::today()->between($startDate, $endDate) ? self::TTL_REALTIME : self::TTL_HISTORICAL;
+        return $this->resolvedToday->between($startDate, $endDate) ? self::TTL_REALTIME : self::TTL_HISTORICAL;
     }
 }

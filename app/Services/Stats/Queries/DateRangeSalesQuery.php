@@ -5,10 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Stats\Queries;
 
 use App\Enums\MetricType;
-use App\Enums\OrderStatus;
 use App\Models\AnalyticsCache;
-use App\Models\Order;
-use App\Models\Scopes\TenantScope;
 use App\Services\Stats\Concerns\FillsMissingDates;
 use Carbon\Carbon;
 
@@ -45,12 +42,12 @@ class DateRangeSalesQuery
             }
 
             // バッチ未実行等でキャッシュが欠損している日はDBから直接補完する
-            $missingDates = $this->findMissingDates($startDate, $cacheEnd, $cachedDates);
-            if ($missingDates !== []) {
-                $fallback = $this->aggregateFallback($tenantId, $missingDates);
-                $totalSales += $fallback['total_sales'];
-                $totalOrders += $fallback['order_count'];
-            }
+            $fallback = $this->aggregateSalesByDates(
+                $tenantId,
+                $this->findMissingDates($startDate, $cacheEnd, $cachedDates)
+            );
+            $totalSales += $fallback['total_sales'];
+            $totalOrders += $fallback['order_count'];
         }
 
         // 当日分は注文が随時追加されるため、キャッシュではなくDBから最新値を取得する
@@ -63,26 +60,6 @@ class DateRangeSalesQuery
         return [
             'total_sales' => $totalSales,
             'order_count' => $totalOrders,
-        ];
-    }
-
-    /**
-     * @param  list<string>  $dates
-     * @return array{total_sales: int, order_count: int}
-     */
-    private function aggregateFallback(int $tenantId, array $dates): array
-    {
-        $stats = Order::withoutGlobalScope(TenantScope::class)
-            ->where('tenant_id', $tenantId)
-            ->whereIn('business_date', $dates)
-            ->whereIn('status', OrderStatus::salesStatusValues())
-            ->selectRaw('COUNT(*) as order_count')
-            ->selectRaw('COALESCE(SUM(total_amount), 0) as total_sales')
-            ->first();
-
-        return [
-            'total_sales' => (int) $stats->total_sales,
-            'order_count' => (int) $stats->order_count,
         ];
     }
 }

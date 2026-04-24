@@ -7,10 +7,9 @@ namespace App\Services\Stats\Queries;
 use App\Enums\MetricType;
 use App\Enums\OrderStatus;
 use App\Models\AnalyticsCache;
-use App\Models\Order;
-use App\Models\Scopes\TenantScope;
 use App\Services\Stats\Concerns\FillsMissingDates;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 // 任意期間の日付別統計 (Y-m-d キーの連想配列) を取得。グラフ描画で欠損日も
 // ゼロ値で必要なため全日付を初期化したうえでキャッシュ・フォールバック・当日リアルタイムで上書きする。
@@ -76,26 +75,29 @@ class DailySalesSeriesQuery
     }
 
     /**
+     * 呼び出し側で tenant_id を必須にしているため、クエリビルダ直接でも安全。
+     *
      * @param  list<string>  $dates
      * @return array<string, array{total_sales: int, order_count: int, average_order_value: int}>
      */
     private function aggregateFallbackByDate(int $tenantId, array $dates): array
     {
-        $rows = Order::withoutGlobalScope(TenantScope::class)
+        $rows = DB::table('orders')
             ->where('tenant_id', $tenantId)
             ->whereIn('business_date', $dates)
             ->whereIn('status', OrderStatus::salesStatusValues())
-            ->selectRaw('DATE(business_date) as date_key')
+            ->select('business_date')
             ->selectRaw('COUNT(*) as order_count')
             ->selectRaw('COALESCE(SUM(total_amount), 0) as total_sales')
-            ->groupByRaw('DATE(business_date)')
+            ->groupBy('business_date')
             ->get();
 
         $result = [];
         foreach ($rows as $row) {
-            $orderCount = (int) $row->order_count;
-            $totalSales = (int) $row->total_sales;
-            $result[(string) $row->date_key] = [
+            $orderCount = (int) ($row->order_count ?? 0);
+            $totalSales = (int) ($row->total_sales ?? 0);
+            $dateKey = (string) ($row->business_date ?? '');
+            $result[$dateKey] = [
                 'total_sales' => $totalSales,
                 'order_count' => $orderCount,
                 'average_order_value' => $this->averageOrderValue($totalSales, $orderCount),

@@ -12,10 +12,6 @@ use App\Services\Dashboard\StatsCacheResolver;
 use App\Services\Stats\Queries\CustomerInsightsQuery;
 use Carbon\Carbon;
 
-// テナントダッシュボード用データ組み立てサービス
-// ダッシュボードAPIのパブリックインターフェースを提供
-// 統計データ取得はTenantStatsRepositoryに委譲
-// キャッシュキー組み立ては DashboardCacheKeys、TTL 判定は StatsCacheResolver に分離
 class TenantDashboardService
 {
     // 本日含む直近7日分を取得するため、6日前を開始日とする
@@ -28,7 +24,6 @@ class TenantDashboardService
         private readonly StatsCacheResolver $cacheResolver,
     ) {}
 
-    // サマリーデータを取得
     public function getSummary(int $tenantId, Carbon $date): array
     {
         return $this->cacheResolver->rememberForDate(
@@ -73,7 +68,6 @@ class TenantDashboardService
         );
     }
 
-    // 直近1週間の売上データを取得
     public function getRecentWeekSalesData(int $tenantId): array
     {
         $today = Carbon::today();
@@ -88,7 +82,6 @@ class TenantDashboardService
         );
     }
 
-    // 期間別売上データを取得
     public function getSalesData(int $tenantId, SalesPeriod $period, Carbon $startDate, Carbon $endDate): array
     {
         return $this->cacheResolver->rememberForDateRange(
@@ -112,7 +105,6 @@ class TenantDashboardService
         return $this->salesDataFormatter->format($period, $fetchStart, $endDate, $dailyStats);
     }
 
-    // 人気商品ランキングを取得
     public function getTopItems(int $tenantId, string $period, int $limit = 10): array
     {
         return $this->cacheResolver->rememberRealtime(
@@ -139,7 +131,6 @@ class TenantDashboardService
         );
     }
 
-    // 人気商品集計の開始日を期間指定から解決する
     private function resolveTopItemsStartDate(string $period, Carbon $today): Carbon
     {
         return match ($period) {
@@ -150,7 +141,6 @@ class TenantDashboardService
         };
     }
 
-    // 時間帯別分布を取得
     public function getHourlyDistribution(int $tenantId, Carbon $date): array
     {
         return $this->cacheResolver->rememberForDate(
@@ -160,7 +150,6 @@ class TenantDashboardService
         );
     }
 
-    // 決済方法別統計を取得
     public function getPaymentMethodStats(int $tenantId, Carbon $startDate, Carbon $endDate): array
     {
         return $this->cacheResolver->rememberForDateRange(
@@ -197,7 +186,6 @@ class TenantDashboardService
         );
     }
 
-    // 顧客分析データを取得
     public function getCustomerInsights(int $tenantId, Carbon $startDate, Carbon $endDate): array
     {
         return $this->cacheResolver->rememberForDateRange(
@@ -208,7 +196,6 @@ class TenantDashboardService
         );
     }
 
-    // 変化率を計算する
     private function percentChange(int $current, int $previous): ?float
     {
         if ($previous === 0) {
