@@ -239,12 +239,12 @@ class ReorderService
             'id' => $cart->id,
             'user_id' => $cart->user_id,
             'tenant_id' => $cart->tenant_id,
-            'tenant' => $cart->tenant ? [
+            'tenant' => [
                 'id' => $cart->tenant->id,
                 'name' => $cart->tenant->name,
                 'slug' => $cart->tenant->slug,
                 'is_open' => (new BusinessHoursSchedule($cart->tenant->businessHours))->isOpenAt(now()),
-            ] : null,
+            ],
             'items' => $cart->items->map(function ($item) {
                 return [
                     'id' => $item->id,

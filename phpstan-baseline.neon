@@ -283,12 +283,6 @@ parameters:
 			path: app/Http/Controllers/Api/Tenant/DashboardController.php
 
 		-
-			message: '#^Parameter \#2 \$tenant of method App\\Services\\FincodeCustomerService\:\:getCards\(\) expects App\\Models\\Tenant, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Http/Controllers/Customer/CheckoutPageController.php
-
-		-
 			message: '#^Method App\\Http\\Controllers\\Webhook\\FincodeWebhookController\:\:resolveFincodeId\(\) has parameter \$payload with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -3769,24 +3763,6 @@ parameters:
 			path: app/Services/Checkout/CheckoutValidationService.php
 
 		-
-			message: '#^Parameter \#1 \$tenant of method App\\Services\\Checkout\\CheckoutValidationService\:\:validateOrderNotPaused\(\) expects App\\Models\\Tenant, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Services/Checkout/CheckoutValidationService.php
-
-		-
-			message: '#^Parameter \#1 \$tenant of method App\\Services\\Checkout\\CheckoutValidationService\:\:validatePaymentMethod\(\) expects App\\Models\\Tenant, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Services/Checkout/CheckoutValidationService.php
-
-		-
-			message: '#^Parameter \#1 \$tenant of method App\\Services\\Checkout\\CheckoutValidationService\:\:validateTenantOpen\(\) expects App\\Models\\Tenant, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Services/Checkout/CheckoutValidationService.php
-
-		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$option_id\.$#'
 			identifier: property.notFound
 			count: 2
@@ -4491,7 +4467,7 @@ parameters:
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
 			identifier: property.notFound
-			count: 4
+			count: 3
 			path: app/Services/ReorderService.php
 
 		-
@@ -4521,7 +4497,7 @@ parameters:
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
 			identifier: property.notFound
-			count: 3
+			count: 2
 			path: app/Services/ReorderService.php
 
 		-
@@ -4558,12 +4534,6 @@ parameters:
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$required\.$#'
 			identifier: property.notFound
 			count: 2
-			path: app/Services/ReorderService.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$slug\.$#'
-			identifier: property.notFound
-			count: 1
 			path: app/Services/ReorderService.php
 
 		-
@@ -4846,18 +4816,6 @@ parameters:
 			message: '#^Method App\\Services\\TenantService\:\:searchForShopIdManagement\(\) return type with generic interface Illuminate\\Contracts\\Pagination\\LengthAwarePaginator does not specify its types\: TKey, TValue$#'
 			identifier: missingType.generics
 			count: 1
-			path: app/Services/TenantService.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 2
-			path: app/Services/TenantService.php
-
-		-
-			message: '#^Return type of call to method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: method.unresolvableReturnType
-			count: 2
 			path: app/Services/TenantService.php
 
 		-
@@ -5163,12 +5121,6 @@ parameters:
 		-
 			message: '#^Method App\\Support\\Seo\\PublicPageSeoFactory\:\:tenantMenu\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 1
-			path: app/Support/Seo/PublicPageSeoFactory.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) expects callable\(Illuminate\\Database\\Eloquent\\Model, int\)\: array\{''@type''\: ''OpeningHoursSpecification'', dayOfWeek\: string, opens\: string, closes\: string\}, Closure\(App\\Models\\TenantBusinessHour\)\: array\{''@type''\: ''OpeningHoursSpecification'', dayOfWeek\: string, opens\: string, closes\: string\} given\.$#'
-			identifier: argument.type
 			count: 1
 			path: app/Support/Seo/PublicPageSeoFactory.php
 
