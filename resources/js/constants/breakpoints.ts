@@ -30,29 +30,6 @@ export const BREAKPOINTS = {
 export type Breakpoint = keyof typeof BREAKPOINTS;
 
 /**
- * 指定したブレークポイント以上かを判定
- *
- * @param breakpoint - 判定するブレークポイント名
- * @param width - 判定する幅（省略時は現在のウィンドウ幅）
- * @returns ブレークポイント以上の場合true
- *
- * @example
- * if (isBreakpoint('lg')) {
- *   // 1024px以上の処理
- * }
- *
- * @example
- * const width = 800;
- * if (isBreakpoint('md', width)) {
- *   // 指定幅がmd（768px）以上
- * }
- */
-export const isBreakpoint = (breakpoint: Breakpoint, width?: number): boolean => {
-    const targetWidth = width ?? (typeof window !== "undefined" ? window.innerWidth : 0);
-    return targetWidth >= BREAKPOINTS[breakpoint];
-};
-
-/**
  * メディアクエリ文字列を生成
  *
  * @param breakpoint - ブレークポイント名
