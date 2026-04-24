@@ -19,7 +19,7 @@
 
 ### Changed
 
--
+- `TenantStatsRepository` を `app/Services/Stats/Queries/` 配下の 8 つの Query Object に分解するファサードに縮小（398 行 → 105 行）。`TenantDashboardService::getCustomerInsights` の生 Eloquent クエリも `CustomerInsightsQuery` に抽出。public シグネチャは完全維持
 
 ### Fixed
 
