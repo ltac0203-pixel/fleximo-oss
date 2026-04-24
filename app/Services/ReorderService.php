@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Domain\Tenant\BusinessHours\BusinessHoursSchedule;
 use App\Enums\ReorderSkipReason;
 use App\Exceptions\InvalidOptionSelectionException;
 use App\Exceptions\ItemNotAvailableException;
@@ -242,7 +243,7 @@ class ReorderService
                 'id' => $cart->tenant->id,
                 'name' => $cart->tenant->name,
                 'slug' => $cart->tenant->slug,
-                'is_open' => $cart->tenant->is_open ?? false,
+                'is_open' => (new BusinessHoursSchedule($cart->tenant->businessHours))->isOpenAt(now()),
             ] : null,
             'items' => $cart->items->map(function ($item) {
                 return [

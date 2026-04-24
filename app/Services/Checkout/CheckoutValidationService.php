@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Checkout;
 
+use App\Domain\Tenant\BusinessHours\BusinessHoursSchedule;
 use App\Enums\PaymentMethod;
 use App\Exceptions\EmptyCartException;
 use App\Exceptions\ItemNotAvailableException;
@@ -26,7 +27,7 @@ class CheckoutValidationService
     // テナントが営業中であることを検証する
     public function validateTenantOpen(Tenant $tenant): void
     {
-        if (! $tenant->is_open) {
+        if (! (new BusinessHoursSchedule($tenant->businessHours))->isOpenAt(now())) {
             throw new TenantClosedException;
         }
     }
