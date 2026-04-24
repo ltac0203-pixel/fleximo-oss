@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Customer;
 
+use App\Domain\Tenant\BusinessHours\BusinessHoursSchedule;
 use App\Http\Controllers\Controller;
 use App\Models\Tenant;
 use App\Services\PublicMenuService;
@@ -29,7 +30,7 @@ class MenuPageController extends Controller
 
         $menu = $this->menuService->getMenu($tenant);
 
-        $status = $tenant->getBusinessStatus();
+        $status = (new BusinessHoursSchedule($tenant->businessHours))->statusAt();
 
         $isFavorited = auth()->check() && auth()->user()->isCustomer()
             ? auth()->user()->hasFavoriteTenant($tenant->id)
@@ -42,9 +43,9 @@ class MenuPageController extends Controller
                 'slug' => $tenant->slug,
                 'address' => $tenant->address,
                 'is_active' => $tenant->is_active,
-                'is_open' => $status['is_open'],
+                'is_open' => $status->isOpen,
                 'is_order_paused' => $tenant->is_order_paused,
-                'today_business_hours' => $status['today_business_hours'],
+                'today_business_hours' => $status->todayBusinessHours,
                 'is_favorited' => $isFavorited,
             ],
             'menu' => $menu,

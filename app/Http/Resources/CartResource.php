@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Resources;
 
+use App\Domain\Tenant\BusinessHours\BusinessHoursSchedule;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -28,14 +29,14 @@ class CartResource extends JsonResource
             'item_count' => $this->item_count,
             'is_empty' => $this->isEmpty(),
             'tenant' => $this->whenLoaded('tenant', function () {
-                $status = $this->tenant->getBusinessStatus();
+                $status = (new BusinessHoursSchedule($this->tenant->businessHours))->statusAt();
 
                 return [
                     'id' => $this->tenant->id,
                     'name' => $this->tenant->name,
                     'slug' => $this->tenant->slug,
-                    'is_open' => $status['is_open'],
-                    'today_business_hours' => $status['today_business_hours'],
+                    'is_open' => $status->isOpen,
+                    'today_business_hours' => $status->todayBusinessHours,
                 ];
             }),
             'created_at' => $this->created_at,

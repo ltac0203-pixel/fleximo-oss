@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Customer;
 
+use App\Domain\Tenant\BusinessHours\BusinessHoursSchedule;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CardResource;
 use App\Http\Resources\CartResource;
@@ -52,7 +53,7 @@ class CheckoutPageController extends Controller
             return redirect()->route('order.cart.show');
         }
 
-        if (! $cart->tenant->is_open) {
+        if (! (new BusinessHoursSchedule($cart->tenant->businessHours))->isOpenAt(now())) {
             return redirect()->route('order.cart.show')
                 ->with('error', '店舗が営業時間外のため、注文手続きに進めません。');
         }
