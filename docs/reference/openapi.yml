@@ -3379,7 +3379,7 @@ components:
 
     PublicMenuCategory:
       type: object
-      description: 公開メニュー用カテゴリ（PublicMenuResource）。商品一覧をネストする。
+      description: 公開メニュー用カテゴリ。商品一覧をネストする。
       required:
         - id
         - name
