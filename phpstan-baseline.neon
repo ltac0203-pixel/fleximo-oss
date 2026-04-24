@@ -4819,142 +4819,136 @@ parameters:
 			path: app/Services/TenantService.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\Order\:\:\$date_key\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/TenantStatsRepository.php
+			message: '#^Unable to resolve the template type TCacheValue in call to static method Illuminate\\Cache\\Repository\:\:remember\(\)$#'
+			identifier: argument.templateType
+			count: 3
+			path: app/Services/Dashboard/StatsCacheResolver.php
 
 		-
 			message: '#^Access to an undefined property App\\Models\\Order\:\:\$order_count\.$#'
 			identifier: property.notFound
-			count: 3
-			path: app/Services/TenantStatsRepository.php
+			count: 1
+			path: app/Services/Stats/Queries/DailySalesQuery.php
 
 		-
 			message: '#^Access to an undefined property App\\Models\\Order\:\:\$total_sales\.$#'
 			identifier: property.notFound
-			count: 3
-			path: app/Services/TenantStatsRepository.php
+			count: 1
+			path: app/Services/Stats/Queries/DailySalesQuery.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Order\:\:\$date_key\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Stats/Queries/DailySalesSeriesQuery.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Order\:\:\$order_count\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Stats/Queries/DailySalesSeriesQuery.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Order\:\:\$total_sales\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Stats/Queries/DailySalesSeriesQuery.php
+
+		-
+			message: '#^Cannot call method format\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Services/Stats/Queries/DailySalesSeriesQuery.php
+
+		-
+			message: '#^Offset ''average_order_value'' on string on left side of \?\? does not exist\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: app/Services/Stats/Queries/DailySalesSeriesQuery.php
+
+		-
+			message: '#^Offset ''order_count'' on string on left side of \?\? does not exist\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: app/Services/Stats/Queries/DailySalesSeriesQuery.php
+
+		-
+			message: '#^Offset ''total_sales'' on string on left side of \?\? does not exist\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: app/Services/Stats/Queries/DailySalesSeriesQuery.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Order\:\:\$order_count\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Stats/Queries/DateRangeSalesQuery.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Order\:\:\$total_sales\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Stats/Queries/DateRangeSalesQuery.php
+
+		-
+			message: '#^Cannot call method format\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Services/Stats/Queries/DateRangeSalesQuery.php
+
+		-
+			message: '#^Offset ''order_count'' on string on left side of \?\? does not exist\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: app/Services/Stats/Queries/DateRangeSalesQuery.php
+
+		-
+			message: '#^Offset ''total_sales'' on string on left side of \?\? does not exist\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: app/Services/Stats/Queries/DateRangeSalesQuery.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Order\:\:\$order_count\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Stats/Queries/MonthToDateSalesQuery.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Order\:\:\$total_sales\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Stats/Queries/MonthToDateSalesQuery.php
+
+		-
+			message: '#^Cannot call method format\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Services/Stats/Queries/MonthToDateSalesQuery.php
+
+		-
+			message: '#^Offset ''order_count'' on string on left side of \?\? does not exist\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: app/Services/Stats/Queries/MonthToDateSalesQuery.php
+
+		-
+			message: '#^Offset ''total_sales'' on string on left side of \?\? does not exist\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: app/Services/Stats/Queries/MonthToDateSalesQuery.php
 
 		-
 			message: '#^Access to an undefined property App\\Models\\Payment\:\:\$count\.$#'
 			identifier: property.notFound
 			count: 1
-			path: app/Services/TenantStatsRepository.php
+			path: app/Services/Stats/Queries/PaymentMethodBreakdownQuery.php
 
 		-
 			message: '#^Instanceof between App\\Enums\\PaymentMethod and App\\Enums\\PaymentMethod will always evaluate to true\.$#'
 			identifier: instanceof.alwaysTrue
 			count: 1
-			path: app/Services/TenantStatsRepository.php
-
-		-
-			message: '#^Method App\\Services\\TenantStatsRepository\:\:dailySalesCacheCursor\(\) return type has no value type specified in iterable type iterable\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/TenantStatsRepository.php
-
-		-
-			message: '#^Method App\\Services\\TenantStatsRepository\:\:findMissingDates\(\) has parameter \$cachedDates with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/TenantStatsRepository.php
-
-		-
-			message: '#^Method App\\Services\\TenantStatsRepository\:\:findMissingDates\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/TenantStatsRepository.php
-
-		-
-			message: '#^Method App\\Services\\TenantStatsRepository\:\:getCachedDayStats\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/TenantStatsRepository.php
-
-		-
-			message: '#^Method App\\Services\\TenantStatsRepository\:\:getDailyStatsForRange\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/TenantStatsRepository.php
-
-		-
-			message: '#^Method App\\Services\\TenantStatsRepository\:\:getDateRangeStats\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/TenantStatsRepository.php
-
-		-
-			message: '#^Method App\\Services\\TenantStatsRepository\:\:getDayStats\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/TenantStatsRepository.php
-
-		-
-			message: '#^Method App\\Services\\TenantStatsRepository\:\:getHourlyDistribution\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/TenantStatsRepository.php
-
-		-
-			message: '#^Method App\\Services\\TenantStatsRepository\:\:getMonthStats\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/TenantStatsRepository.php
-
-		-
-			message: '#^Method App\\Services\\TenantStatsRepository\:\:getMonthToDateStats\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/TenantStatsRepository.php
-
-		-
-			message: '#^Method App\\Services\\TenantStatsRepository\:\:getPaymentMethodStats\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/TenantStatsRepository.php
-
-		-
-			message: '#^Method App\\Services\\TenantStatsRepository\:\:getTopItems\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/TenantStatsRepository.php
-
-		-
-			message: '#^Method App\\Services\\TenantStatsRepository\:\:queryDailyStatsByDates\(\) has parameter \$dates with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/TenantStatsRepository.php
-
-		-
-			message: '#^Method App\\Services\\TenantStatsRepository\:\:queryDailyStatsByDates\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/TenantStatsRepository.php
-
-		-
-			message: '#^Method App\\Services\\TenantStatsRepository\:\:queryRealtimeHourlyDistribution\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/TenantStatsRepository.php
-
-		-
-			message: '#^Method App\\Services\\TenantStatsRepository\:\:queryRealtimeStats\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/TenantStatsRepository.php
-
-		-
-			message: '#^Method App\\Services\\TenantStatsRepository\:\:queryTotalStatsByDates\(\) has parameter \$dates with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/TenantStatsRepository.php
-
-		-
-			message: '#^Method App\\Services\\TenantStatsRepository\:\:queryTotalStatsByDates\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/TenantStatsRepository.php
+			path: app/Services/Stats/Queries/PaymentMethodBreakdownQuery.php
 
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$role\.$#'
