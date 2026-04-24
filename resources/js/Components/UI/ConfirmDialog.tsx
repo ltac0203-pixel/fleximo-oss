@@ -1,13 +1,12 @@
 import { ReactNode } from "react";
 import Modal from "@/Components/Modal";
 import Button from "@/Components/UI/Button";
+import { BaseModalProps } from "@/types/modal";
 
 type ConfirmTone = "default" | "danger";
 type ConfirmMaxWidth = "sm" | "md" | "lg" | "xl" | "2xl";
 
-interface ConfirmDialogProps {
-    show: boolean;
-    onClose: () => void;
+interface ConfirmDialogProps extends BaseModalProps {
     onConfirm: () => void;
     title: string;
     confirmLabel?: string;
