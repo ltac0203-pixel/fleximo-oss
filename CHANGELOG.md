@@ -20,6 +20,7 @@
 ### Changed
 
 - `TenantStatsRepository` を `app/Services/Stats/Queries/` 配下の 8 つの Query Object に分解するファサードに縮小（398 行 → 105 行）。`TenantDashboardService::getCustomerInsights` の生 Eloquent クエリも `CustomerInsightsQuery` に抽出。public シグネチャは完全維持
+- `TenantDashboardService` のキャッシュキー組み立てを `DashboardCacheKeys` に、TTL 判定を `StatsCacheResolver` に分離。`Cache::remember` 直接呼び出しをゼロ化し、キー 7 本とTTL は完全保持（ハードコード比較テストで検証）
 
 ### Fixed
 
