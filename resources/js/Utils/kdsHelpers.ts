@@ -71,11 +71,6 @@ export function getStatusButtonText(nextStatus: KdsOrderStatus | null): string {
     }
 }
 
-// 警告注文を視覚的に優先表示し、見落としによる提供遅延を減らす。
-export function getCardBorderClass(isWarning: boolean): string {
-    return isWarning ? "border-red-300 bg-red-50" : "border-slate-200 bg-white";
-}
-
 // 経過時間の危険度を即判別できるよう、色だけで状態を伝える。
 export function getElapsedTextClass(isWarning: boolean): string {
     return isWarning ? "text-red-600" : "text-slate-500";

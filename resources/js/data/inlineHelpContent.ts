@@ -8,5 +8,3 @@ export const inlineHelpContent = {
     "tenant-shop-id":
         "fincode 管理画面「ショップ情報」に表示されるショップ ID です（例: s_xxx）。テスト環境と本番環境で値が異なるのでご注意ください。",
 } as const;
-
-export type InlineHelpKey = keyof typeof inlineHelpContent;
