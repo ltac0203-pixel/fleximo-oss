@@ -33,40 +33,6 @@ class EnsureActiveRouteTenantTest extends TestCase
         ]);
     }
 
-    public function test_active_tenant_allows_access_to_tenant_show(): void
-    {
-        $response = $this->actingAs($this->customer, 'sanctum')
-            ->getJson("/api/tenants/{$this->activeTenant->id}");
-
-        $response->assertOk();
-    }
-
-    public function test_inactive_tenant_returns_404_for_tenant_show(): void
-    {
-        $response = $this->actingAs($this->customer, 'sanctum')
-            ->getJson("/api/tenants/{$this->inactiveTenant->id}");
-
-        $response->assertNotFound()
-            ->assertJson(['message' => 'テナントが見つかりません']);
-    }
-
-    public function test_active_tenant_allows_access_to_tenant_menu(): void
-    {
-        $response = $this->actingAs($this->customer, 'sanctum')
-            ->getJson("/api/tenants/{$this->activeTenant->id}/menu");
-
-        $response->assertOk();
-    }
-
-    public function test_inactive_tenant_returns_404_for_tenant_menu(): void
-    {
-        $response = $this->actingAs($this->customer, 'sanctum')
-            ->getJson("/api/tenants/{$this->inactiveTenant->id}/menu");
-
-        $response->assertNotFound()
-            ->assertJson(['message' => 'テナントが見つかりません']);
-    }
-
     public function test_active_tenant_allows_access_to_cards_index(): void
     {
         $response = $this->actingAs($this->customer, 'sanctum')
@@ -104,25 +70,16 @@ class EnsureActiveRouteTenantTest extends TestCase
             ->assertJson(['message' => 'テナントが見つかりません']);
     }
 
-    public function test_suspended_tenant_returns_404(): void
+    public function test_suspended_tenant_returns_404_for_cards_index(): void
     {
         $suspendedTenant = Tenant::factory()->suspended()->create([
             'fincode_shop_id' => 'shop_suspended',
         ]);
 
         $response = $this->actingAs($this->customer, 'sanctum')
-            ->getJson("/api/tenants/{$suspendedTenant->id}");
+            ->getJson("/api/customer/tenants/{$suspendedTenant->id}/cards");
 
         $response->assertNotFound()
             ->assertJson(['message' => 'テナントが見つかりません']);
-    }
-
-    public function test_tenant_index_still_accessible_without_middleware(): void
-    {
-        // テナント一覧はミドルウェアを通さないのでアクセス可能
-        $response = $this->actingAs($this->customer, 'sanctum')
-            ->getJson('/api/tenants');
-
-        $response->assertOk();
     }
 }

@@ -51,14 +51,6 @@ class DashboardAggregationPerformanceTest extends TestCase
         }
     }
 
-    public function test_summary_with_large_order_volume(): void
-    {
-        $this->assertQueryCountLessThan(30, function () {
-            $response = $this->actingAs($this->staff)->getJson('/api/tenant/dashboard/summary');
-            $response->assertStatus(200);
-        });
-    }
-
     public function test_hourly_distribution_with_large_volume(): void
     {
         $this->assertQueryCountLessThan(30, function () {

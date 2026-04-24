@@ -523,12 +523,6 @@ parameters:
 			path: app/Http/Requests/Tenant/DashboardSalesRequest.php
 
 		-
-			message: '#^Method App\\Http\\Requests\\Tenant\\DashboardSummaryRequest\:\:rules\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Http/Requests/Tenant/DashboardSummaryRequest.php
-
-		-
 			message: '#^Method App\\Http\\Requests\\Tenant\\DashboardTopItemsRequest\:\:rules\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
