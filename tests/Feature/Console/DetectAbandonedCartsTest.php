@@ -22,6 +22,22 @@ class DetectAbandonedCartsTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Carbon::today() 境界と subMinutes() の相互作用による時刻依存の揺らぎを避けるため、
+        // テスト実行時刻を日中に固定する (CI が JST 00:00 付近で走ると subMinutes(45) が前日に入り検出対象外になる)。
+        Carbon::setTestNow(Carbon::parse('2026-06-15 12:00:00'));
+    }
+
+    protected function tearDown(): void
+    {
+        Carbon::setTestNow();
+
+        parent::tearDown();
+    }
+
     private function createCartWithItems(Tenant $tenant, ?Carbon $updatedAt = null): Cart
     {
         $user = User::factory()->customer()->create();
