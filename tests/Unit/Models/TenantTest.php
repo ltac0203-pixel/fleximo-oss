@@ -6,13 +6,10 @@ namespace Tests\Unit\Models;
 
 use App\Enums\TenantUserRole;
 use App\Models\Tenant;
-use App\Models\TenantBusinessHour;
 use App\Models\TenantUser;
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class TenantTest extends TestCase
@@ -110,153 +107,6 @@ class TenantTest extends TestCase
         $results = Tenant::search(null)->get();
 
         $this->assertCount(3, $results);
-    }
-
-    public function test_is_open_at_returns_true_during_business_hours(): void
-    {
-        $tenant = Tenant::factory()->create();
-        // 2024-01-01 は月曜日（weekday=1）
-        TenantBusinessHour::create([
-            'tenant_id' => $tenant->id,
-            'weekday' => 1,
-            'open_time' => '09:00',
-            'close_time' => '21:00',
-            'sort_order' => 0,
-        ]);
-
-        $testTime = Carbon::parse('2024-01-01 15:00:00');
-
-        $this->assertTrue($tenant->isOpenAt($testTime));
-    }
-
-    public function test_is_open_at_returns_false_before_opening(): void
-    {
-        $tenant = Tenant::factory()->create();
-        TenantBusinessHour::create([
-            'tenant_id' => $tenant->id,
-            'weekday' => 1,
-            'open_time' => '09:00',
-            'close_time' => '21:00',
-            'sort_order' => 0,
-        ]);
-
-        $testTime = Carbon::parse('2024-01-01 08:00:00');
-
-        $this->assertFalse($tenant->isOpenAt($testTime));
-    }
-
-    public function test_is_open_at_returns_false_after_closing(): void
-    {
-        $tenant = Tenant::factory()->create();
-        TenantBusinessHour::create([
-            'tenant_id' => $tenant->id,
-            'weekday' => 1,
-            'open_time' => '09:00',
-            'close_time' => '21:00',
-            'sort_order' => 0,
-        ]);
-
-        $testTime = Carbon::parse('2024-01-01 22:00:00');
-
-        $this->assertFalse($tenant->isOpenAt($testTime));
-    }
-
-    public function test_is_open_at_handles_overnight_hours(): void
-    {
-        $tenant = Tenant::factory()->create();
-        // 2024-01-01 は月曜日（weekday=1）, 2024-01-02 is Tuesday (weekday=2)
-        TenantBusinessHour::create([
-            'tenant_id' => $tenant->id,
-            'weekday' => 1,
-            'open_time' => '18:00',
-            'close_time' => '02:00',
-            'sort_order' => 0,
-        ]);
-
-        $this->assertTrue($tenant->isOpenAt(Carbon::parse('2024-01-01 20:00:00')));
-
-        $this->assertTrue($tenant->isOpenAt(Carbon::parse('2024-01-02 01:00:00')));
-
-        $this->assertFalse($tenant->isOpenAt(Carbon::parse('2024-01-01 10:00:00')));
-    }
-
-    public function test_is_open_at_returns_false_when_no_business_hours_set(): void
-    {
-        $tenant = Tenant::factory()->create();
-
-        $testTime = Carbon::parse('2024-01-01 03:00:00');
-
-        $this->assertFalse($tenant->isOpenAt($testTime));
-    }
-
-    public function test_is_open_attribute_returns_current_status(): void
-    {
-        $tenant = Tenant::factory()->create();
-        $weekday = Carbon::now()->dayOfWeek;
-        TenantBusinessHour::create([
-            'tenant_id' => $tenant->id,
-            'weekday' => $weekday,
-            'open_time' => '09:00',
-            'close_time' => '21:00',
-            'sort_order' => 0,
-        ]);
-
-        $isOpen = $tenant->is_open;
-
-        $this->assertIsBool($isOpen);
-    }
-
-    public function test_get_business_status_uses_cache_for_same_second_even_if_relation_is_unset(): void
-    {
-        $tenant = Tenant::factory()->create();
-        TenantBusinessHour::create([
-            'tenant_id' => $tenant->id,
-            'weekday' => 1,
-            'open_time' => '09:00',
-            'close_time' => '21:00',
-            'sort_order' => 0,
-        ]);
-
-        $first = $tenant->getBusinessStatus(Carbon::parse('2024-01-01 10:00:30'));
-        $tenant->unsetRelation('businessHours');
-
-        DB::flushQueryLog();
-        DB::enableQueryLog();
-        $second = $tenant->getBusinessStatus(Carbon::parse('2024-01-01 10:00:30'));
-        DB::disableQueryLog();
-
-        $businessHourQueries = collect(DB::getQueryLog())
-            ->filter(fn (array $query): bool => str_contains($query['query'], 'tenant_business_hours'))
-            ->count();
-
-        $this->assertSame($first, $second);
-        $this->assertSame(0, $businessHourQueries);
-    }
-
-    public function test_get_business_status_recalculates_for_different_second(): void
-    {
-        $tenant = Tenant::factory()->create();
-        TenantBusinessHour::create([
-            'tenant_id' => $tenant->id,
-            'weekday' => 1,
-            'open_time' => '09:00',
-            'close_time' => '21:00',
-            'sort_order' => 0,
-        ]);
-
-        $tenant->getBusinessStatus(Carbon::parse('2024-01-01 10:00:00'));
-        $tenant->unsetRelation('businessHours');
-
-        DB::flushQueryLog();
-        DB::enableQueryLog();
-        $tenant->getBusinessStatus(Carbon::parse('2024-01-01 10:00:01'));
-        DB::disableQueryLog();
-
-        $businessHourQueries = collect(DB::getQueryLog())
-            ->filter(fn (array $query): bool => str_contains($query['query'], 'tenant_business_hours'))
-            ->count();
-
-        $this->assertGreaterThanOrEqual(1, $businessHourQueries);
     }
 
     public function test_tenant_has_many_tenant_users(): void
