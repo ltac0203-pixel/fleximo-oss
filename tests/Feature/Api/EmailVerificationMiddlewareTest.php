@@ -13,16 +13,6 @@ class EmailVerificationMiddlewareTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_unverified_customer_cannot_access_shared_tenants_api(): void
-    {
-        $user = User::factory()->unverified()->customer()->create();
-
-        $response = $this->actingAs($user, 'sanctum')
-            ->getJson('/api/tenants');
-
-        $response->assertStatus(403);
-    }
-
     public function test_unverified_customer_cannot_access_cart_api(): void
     {
         $user = User::factory()->unverified()->customer()->create();
@@ -50,7 +40,7 @@ class EmailVerificationMiddlewareTest extends TestCase
         ]);
 
         $response = $this->actingAs($user, 'sanctum')
-            ->getJson('/api/tenant/dashboard/summary');
+            ->getJson('/api/tenant/dashboard/sales');
 
         $response->assertStatus(403);
     }

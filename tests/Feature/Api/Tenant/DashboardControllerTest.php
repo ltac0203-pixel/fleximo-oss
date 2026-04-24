@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Api\Tenant;
 
-use App\Enums\MetricType;
 use App\Enums\TenantUserRole;
 use App\Enums\UserRole;
-use App\Models\AnalyticsCache;
 use App\Models\MenuItem;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -58,96 +56,6 @@ class DashboardControllerTest extends TestCase
         $this->customer = User::factory()->create([
             'role' => UserRole::Customer,
         ]);
-    }
-
-    public function test_admin_can_get_summary(): void
-    {
-
-        $today = Carbon::today()->format('Y-m-d');
-        Order::factory()
-            ->forTenant($this->tenant)
-            ->completed()
-            ->forBusinessDate($today)
-            ->count(3)
-            ->create(['total_amount' => 1000]);
-
-        $response = $this->actingAs($this->admin)
-            ->getJson('/api/tenant/dashboard/summary');
-
-        $response->assertStatus(200)
-            ->assertJsonStructure([
-                'data' => [
-                    'today' => ['sales', 'orders', 'average'],
-                    'yesterday' => ['sales', 'orders', 'average'],
-                    'this_month' => ['sales', 'orders', 'average'],
-                    'last_month' => ['sales', 'orders', 'average'],
-                    'comparison' => [
-                        'daily_change' => ['sales_percent', 'orders_percent'],
-                        'monthly_change' => ['sales_percent', 'orders_percent'],
-                    ],
-                ],
-            ]);
-
-        $this->assertEquals(3000, $response->json('data.today.sales'));
-        $this->assertEquals(3, $response->json('data.today.orders'));
-        $this->assertEquals(1000, $response->json('data.today.average'));
-    }
-
-    public function test_staff_can_get_summary(): void
-    {
-        $response = $this->actingAs($this->staff)
-            ->getJson('/api/tenant/dashboard/summary');
-
-        $response->assertStatus(200)
-            ->assertJsonStructure([
-                'data' => [
-                    'today',
-                    'yesterday',
-                    'this_month',
-                    'last_month',
-                    'comparison',
-                ],
-            ]);
-    }
-
-    public function test_can_get_summary_with_date_parameter(): void
-    {
-        $date = Carbon::today()->subDays(5)->format('Y-m-d');
-
-        $response = $this->actingAs($this->admin)
-            ->getJson("/api/tenant/dashboard/summary?date={$date}");
-
-        $response->assertStatus(200);
-    }
-
-    public function test_daily_comparison_is_calculated_correctly(): void
-    {
-        $today = Carbon::today()->format('Y-m-d');
-        $yesterday = Carbon::yesterday()->format('Y-m-d');
-
-        Order::factory()
-            ->forTenant($this->tenant)
-            ->completed()
-            ->forBusinessDate($today)
-            ->create(['total_amount' => 2000]);
-
-        AnalyticsCache::saveCache(
-            $this->tenant->id,
-            MetricType::DailySales,
-            Carbon::yesterday(),
-            [
-                'total_sales' => 1000,
-                'order_count' => 1,
-                'average_order_value' => 1000,
-            ]
-        );
-
-        $response = $this->actingAs($this->admin)
-            ->getJson('/api/tenant/dashboard/summary');
-
-        $response->assertStatus(200);
-
-        $this->assertEquals(100.0, $response->json('data.comparison.daily_change.sales_percent'));
     }
 
     public function test_admin_can_get_sales_data(): void
@@ -442,7 +350,7 @@ class DashboardControllerTest extends TestCase
 
     public function test_unauthenticated_user_cannot_access(): void
     {
-        $response = $this->getJson('/api/tenant/dashboard/summary');
+        $response = $this->getJson('/api/tenant/dashboard/hourly');
 
         $response->assertStatus(401);
     }
@@ -450,7 +358,7 @@ class DashboardControllerTest extends TestCase
     public function test_customer_cannot_access(): void
     {
         $response = $this->actingAs($this->customer)
-            ->getJson('/api/tenant/dashboard/summary');
+            ->getJson('/api/tenant/dashboard/hourly');
 
         $response->assertStatus(403);
     }
@@ -463,32 +371,6 @@ class DashboardControllerTest extends TestCase
             ->getJson("/api/tenant/dashboard/export/csv?start_date={$targetDate}&end_date={$targetDate}");
 
         $response->assertStatus(403);
-    }
-
-    public function test_does_not_include_other_tenant_data(): void
-    {
-        $today = Carbon::today()->format('Y-m-d');
-
-        Order::factory()
-            ->forTenant($this->tenant)
-            ->completed()
-            ->forBusinessDate($today)
-            ->create(['total_amount' => 1000]);
-
-        $otherTenant = Tenant::factory()->create();
-        Order::factory()
-            ->forTenant($otherTenant)
-            ->completed()
-            ->forBusinessDate($today)
-            ->create(['total_amount' => 5000]);
-
-        $response = $this->actingAs($this->admin)
-            ->getJson('/api/tenant/dashboard/summary');
-
-        $response->assertStatus(200);
-
-        $this->assertEquals(1000, $response->json('data.today.sales'));
-        $this->assertEquals(1, $response->json('data.today.orders'));
     }
 
     public function test_top_items_does_not_include_other_tenant_data(): void
