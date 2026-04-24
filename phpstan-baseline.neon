@@ -4807,24 +4807,6 @@ parameters:
 			path: app/Services/Stats/Queries/DailySalesQuery.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\Order\:\:\$date_key\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/Stats/Queries/DailySalesSeriesQuery.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Order\:\:\$order_count\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/Stats/Queries/DailySalesSeriesQuery.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Order\:\:\$total_sales\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/Stats/Queries/DailySalesSeriesQuery.php
-
-		-
 			message: '#^Cannot call method format\(\) on string\.$#'
 			identifier: method.nonObject
 			count: 1
@@ -4849,18 +4831,6 @@ parameters:
 			path: app/Services/Stats/Queries/DailySalesSeriesQuery.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\Order\:\:\$order_count\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/Stats/Queries/DateRangeSalesQuery.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Order\:\:\$total_sales\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/Stats/Queries/DateRangeSalesQuery.php
-
-		-
 			message: '#^Cannot call method format\(\) on string\.$#'
 			identifier: method.nonObject
 			count: 1
@@ -4877,18 +4847,6 @@ parameters:
 			identifier: nullCoalesce.offset
 			count: 1
 			path: app/Services/Stats/Queries/DateRangeSalesQuery.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Order\:\:\$order_count\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/Stats/Queries/MonthToDateSalesQuery.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Order\:\:\$total_sales\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/Stats/Queries/MonthToDateSalesQuery.php
 
 		-
 			message: '#^Cannot call method format\(\) on string\.$#'
