@@ -63,7 +63,7 @@ export default function OptionList({ optionGroupId, options, onOptionsChange, on
         await deleteOption(optionId);
     };
 
-    const formatPrice = (price: number) => {
+    const formatOptionPriceDelta = (price: number) => {
         if (price === 0) return "±0円";
         return price > 0 ? `+${price}円` : `${price}円`;
     };
@@ -72,7 +72,7 @@ export default function OptionList({ optionGroupId, options, onOptionsChange, on
         <div className="space-y-4">
             <h4 className="text-md font-medium text-ink">オプション一覧</h4>
 
-            {/* 既存オプション を明示し、実装意図の誤読を防ぐ。 */}
+            {/* 既存オプション */}
             <div className="space-y-2">
                 {options.length === 0 ? (
                     <p className="text-sm text-muted">オプションがありません</p>
@@ -139,7 +139,7 @@ export default function OptionList({ optionGroupId, options, onOptionsChange, on
                                 <>
                                     <div className="flex items-center gap-4">
                                         <span className="text-sm font-medium text-ink">{option.name}</span>
-                                        <span className="text-sm text-muted">{formatPrice(option.price)}</span>
+                                        <span className="text-sm text-muted">{formatOptionPriceDelta(option.price)}</span>
                                         {!option.is_active && <span className="text-xs text-muted-light">(無効)</span>}
                                     </div>
                                     <div className="flex gap-2">
@@ -180,7 +180,7 @@ export default function OptionList({ optionGroupId, options, onOptionsChange, on
                 <p className="mt-2 text-sm text-muted">このオプションを削除してもよろしいですか？</p>
             </ConfirmDialog>
 
-            {/* 新規オプション追加 を明示し、実装意図の誤読を防ぐ。 */}
+            {/* 新規オプション追加 */}
             <div className="border-t pt-4">
                 <h5 className="text-sm font-medium text-ink-light mb-2">新しいオプションを追加</h5>
                 <div className="flex items-center gap-2">

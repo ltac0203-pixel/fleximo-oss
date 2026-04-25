@@ -1,6 +1,5 @@
-import { api } from "@/api";
+import { api, buildQuery, ENDPOINTS } from "@/api";
 import type { ApiDataResponse } from "@/api";
-import { ENDPOINTS } from "@/api/endpoints";
 import { DateRange, getDateRangeParams } from "@/Components/Dashboard/DateRangeSelector";
 import useDashboardDataFetcher from "@/Hooks/useDashboardDataFetcher";
 import { CustomerInsights } from "@/types";
@@ -20,11 +19,9 @@ export function useCustomerInsightsData(): UseCustomerInsightsDataResult {
 
     const fetchCustomerInsights = useCallback(async (selectedRange: DateRange): Promise<CustomerInsights | null> => {
         const { start_date, end_date } = getDateRangeParams(selectedRange);
-        const params = new URLSearchParams({ start_date, end_date });
+        const url = `${ENDPOINTS.tenant.dashboard.customerInsights}${buildQuery({ start_date, end_date })}`;
 
-        const { data: result, error } = await api.cachedGet<ApiDataResponse<CustomerInsights>>(
-            `${ENDPOINTS.tenant.dashboard.customerInsights}?${params.toString()}`,
-        );
+        const { data: result, error } = await api.cachedGet<ApiDataResponse<CustomerInsights>>(url);
 
         if (error || !result) {
             throw error ?? "empty result";

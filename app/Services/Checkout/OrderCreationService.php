@@ -14,10 +14,12 @@ use App\Models\MenuItem;
 use App\Models\Option;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\OrderItemOption;
 use App\Services\OrderNumberGenerator;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\UniqueConstraintViolationException;
+use Illuminate\Support\Facades\DB;
 
 class OrderCreationService
 {
@@ -35,32 +37,15 @@ class OrderCreationService
         // N+1を防ぎ、以降のアイテム走査で追加クエリが発生しないようにする
         $cart->load(['items.menuItem', 'items.options.option']);
 
-        // 価格改ざん防止: メニューアイテムの現在価格をロック付きで再取得し、販売可能性を検証する
-        $lockedMenuItems = $this->verifyItemsWithLock($cart);
-
-        // 価格改ざん防止: オプションの現在価格もロック付きで再取得し、TOCTOU攻撃を防止する
-        $lockedOptions = $this->lockOptionsFromCart($cart);
-
         // 営業日を基準に表示用注文番号を付与する
         $businessDate = $this->orderNumberGenerator->getBusinessDate();
 
         // ユニーク制約競合時は再採番して再試行し、注文の外枠を確実に確保する
-        $order = $this->createOrderWithRetry($cart, $businessDate);
-
-        // メニュー変更に影響されないよう、注文時点の商品名・価格をスナップショットとして保存する
-        // ロック取得した最新のメニューアイテム・オプション情報を使用し、TOCTOU攻撃を防止する
-        $this->createOrderItems($order, $cart, $lockedMenuItems, $lockedOptions);
-
-        // アイテム作成後に合計を算出することで、オプション価格を含む正確な金額を保証する
-        $totalAmount = $this->calculateTotalAmount($order);
-        $order->total_amount = $totalAmount;
-        $order->save();
-        $order->refresh();
-
-        return $order;
+        return $this->createOrderWithRetry($cart, $businessDate);
     }
 
     // 注文の合計金額を計算する
+    // OrderItem::$subtotal アクセサが (price + options.sum(price)) * quantity を提供する
     public function calculateTotalAmount(Order $order): int
     {
         $order->load('items.options');
@@ -69,6 +54,10 @@ class OrderCreationService
     }
 
     // 注文番号の重複競合時に再採番して注文を作成する
+    // 各 attempt は単一トランザクションでロック取得→注文作成→アイテム作成→合計計算までを
+    // atomic に実行する。途中で例外が発生した場合はロールバックされ、Order が部分書き込みで残らない。
+    // また verifyItemsWithLock / lockOptionsFromCart の lockForUpdate がトランザクション内で
+    // 確実に効くよう、ロックもこのトランザクション内で取得する。
     private function createOrderWithRetry(Cart $cart, Carbon $businessDate): Order
     {
         $lastException = null;
@@ -77,7 +66,25 @@ class OrderCreationService
             $orderCode = $this->orderNumberGenerator->generate($cart->tenant_id, $businessDate);
 
             try {
-                return $this->createOrder($cart, $orderCode, $businessDate);
+                return DB::transaction(function () use ($cart, $orderCode, $businessDate) {
+                    // 価格改ざん防止: メニューアイテムの現在価格をロック付きで再取得し、販売可能性を検証する
+                    $lockedMenuItems = $this->verifyItemsWithLock($cart);
+
+                    // 価格改ざん防止: オプションの現在価格もロック付きで再取得し、TOCTOU攻撃を防止する
+                    $lockedOptions = $this->lockOptionsFromCart($cart);
+
+                    $order = $this->createOrder($cart, $orderCode, $businessDate);
+
+                    // メニュー変更に影響されないよう、注文時点の商品名・価格をスナップショットとして保存する
+                    $this->createOrderItems($order, $cart, $lockedMenuItems, $lockedOptions);
+
+                    // アイテム作成後に合計を算出することで、オプション価格を含む正確な金額を保証する
+                    $order->total_amount = $this->calculateTotalAmount($order);
+                    $order->save();
+                    $order->refresh();
+
+                    return $order;
+                });
             } catch (UniqueConstraintViolationException $e) {
                 if (! $this->isOrderCodeConstraint($e)) {
                     throw $e;
@@ -194,17 +201,41 @@ class OrderCreationService
      * verifyItemsWithLock / lockOptionsFromCart を通過済みのため lockedMenuItems / lockedOptions には
      * カート内の全 ID が必ず存在する不変条件を前提とする
      *
+     * options は OrderItemOption::insert() で 1 クエリにまとめ N+1 INSERT を回避する。
+     * Eloquent イベント（observer 等）は発火しないため、将来 OrderItemOption に
+     * observer を追加する場合は createMany ベースに戻すか、bulk insert と
+     * イベント再発火の両立を検討すること。
+     *
      * @param  Collection<int, MenuItem>  $lockedMenuItems
      * @param  Collection<int, Option>  $lockedOptions
      */
     private function createOrderItems(Order $order, Cart $cart, Collection $lockedMenuItems, Collection $lockedOptions): void
     {
+        $now = now();
+        $optionRows = [];
+
         /** @var CartItem $cartItem */
         foreach ($cart->items as $cartItem) {
             /** @var MenuItem $menuItem */
             $menuItem = $lockedMenuItems->get($cartItem->menu_item_id);
             $orderItem = $this->createOrderItem($order, $cartItem, $menuItem);
-            $this->createOrderItemOptions($orderItem, $cartItem, $lockedOptions);
+
+            foreach ($cartItem->options as $cartItemOption) {
+                /** @var Option $option */
+                $option = $lockedOptions->get($cartItemOption->option_id);
+                $optionRows[] = [
+                    'order_item_id' => $orderItem->id,
+                    'tenant_id' => $orderItem->tenant_id,
+                    'option_id' => $cartItemOption->option_id,
+                    'name' => $option->name,
+                    'price' => $option->price,
+                    'created_at' => $now,
+                ];
+            }
+        }
+
+        if (! empty($optionRows)) {
+            OrderItemOption::insert($optionRows);
         }
     }
 
@@ -220,29 +251,5 @@ class OrderCreationService
             'price' => $menuItem->price,
             'quantity' => $cartItem->quantity,
         ]);
-    }
-
-    // 注文アイテムオプションを作成する
-    // ロック取得した最新のOptionから名前・価格をスナップショットし、TOCTOU攻撃を防止する
-    // lockOptionsFromCart で事前検証済みのため lockedOptions には必ず該当 Option が存在する
-    private function createOrderItemOptions(OrderItem $orderItem, CartItem $cartItem, Collection $lockedOptions): void
-    {
-        if ($cartItem->options->isEmpty()) {
-            return;
-        }
-
-        $rows = $cartItem->options->map(function ($cartItemOption) use ($lockedOptions, $orderItem) {
-            /** @var Option $option */
-            $option = $lockedOptions->get($cartItemOption->option_id);
-
-            return [
-                'tenant_id' => $orderItem->tenant_id,
-                'option_id' => $cartItemOption->option_id,
-                'name' => $option->name,
-                'price' => $option->price,
-            ];
-        })->all();
-
-        $orderItem->options()->createMany($rows);
     }
 }

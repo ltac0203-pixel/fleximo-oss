@@ -11,7 +11,7 @@ interface Tenant {
     name: string;
     slug: string;
     address: string | null;
-    is_open: boolean;
+    is_open?: boolean;
     today_business_hours?: BusinessHourRange[];
 }
 
@@ -47,10 +47,10 @@ function TenantCard({
                         <h3 className="font-semibold text-slate-900">{tenant.name}</h3>
                         <span
                             className={`text-xs font-medium px-2 py-0.5 rounded-full ${
-                                tenant.is_open ? "bg-cyan-100 text-cyan-700" : "bg-slate-100 text-slate-600"
+                                tenant.is_open !== false ? "bg-cyan-100 text-cyan-700" : "bg-slate-100 text-slate-600"
                             }`}
                         >
-                            {tenant.is_open ? "営業中" : "営業時間外"}
+                            {tenant.is_open !== false ? "営業中" : "営業時間外"}
                         </span>
                     </div>
                     {tenant.address && <p className="text-sm text-slate-500 mt-1">{tenant.address}</p>}

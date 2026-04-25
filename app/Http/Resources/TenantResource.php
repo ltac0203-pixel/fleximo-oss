@@ -17,16 +17,22 @@ class TenantResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
-        $status = (new BusinessHoursSchedule($this->resource->businessHours))->statusAt();
-
-        return [
+        $base = [
             'id' => $this->id,
             'name' => $this->name,
             'slug' => $this->slug,
             'address' => $this->address,
-            'is_open' => $status->isOpen,
             'is_order_paused' => $this->is_order_paused,
-            'today_business_hours' => $status->todayBusinessHours,
         ];
+
+        // businessHours が eager load されている場合のみ営業状態を返す。
+        // 未 load 時に lazy loading が走るのを避け、リレーション load 責務を呼び出し元に明示する。
+        if ($this->resource->relationLoaded('businessHours')) {
+            $status = (new BusinessHoursSchedule($this->resource->businessHours))->statusAt();
+            $base['is_open'] = $status->isOpen;
+            $base['today_business_hours'] = $status->todayBusinessHours;
+        }
+
+        return $base;
     }
 }

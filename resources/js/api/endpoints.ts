@@ -1,8 +1,14 @@
 export const ENDPOINTS = {
     customer: {
         cart: "/api/customer/cart",
+        cartById: (cartId: number) => `/api/customer/cart/${cartId}`,
         cartItems: "/api/customer/cart/items",
         cartItem: (id: number) => `/api/customer/cart/items/${id}`,
+        checkout: "/api/customer/checkout",
+        payments: {
+            finalize: "/api/customer/payments/finalize",
+            threeDsCallback: "/api/customer/payments/3ds-callback",
+        },
         orders: {
             status: (orderId: number) => `/api/customer/orders/${orderId}/status`,
             reorder: (orderId: number) => `/api/customer/orders/${orderId}/reorder`,
@@ -32,6 +38,10 @@ export const ENDPOINTS = {
         orderPause: {
             status: "/api/tenant/order-pause/status",
             toggle: "/api/tenant/order-pause/toggle",
+        },
+        kds: {
+            orders: "/api/tenant/kds/orders",
+            orderStatus: (orderId: number) => `/api/tenant/kds/orders/${orderId}/status`,
         },
         dashboard: {
             sales: "/api/tenant/dashboard/sales",

@@ -1,14 +1,15 @@
 import AdminLayout from "@/Layouts/AdminLayout";
 import { Head, router } from "@inertiajs/react";
 import { PageProps, PaginatedData } from "@/types";
-import { decodeHtmlEntities } from "@/Utils/decodeHtmlEntities";
-import { getPaginationLinkBaseKey, withStableKeys } from "@/Utils/stableKeys";
 import { useState } from "react";
 import HelpButton from "@/Components/Common/Help/HelpButton";
 import HelpPanel from "@/Components/Common/Help/HelpPanel";
 import InlineHelp from "@/Components/Common/Help/InlineHelp";
 import { useHelpPanel } from "@/Hooks/useHelpPanel";
 import { adminHelpContent } from "@/data/adminHelpContent";
+import AdminPagination from "@/Components/UI/AdminPagination";
+import AdminSearchForm from "@/Components/UI/AdminSearchForm";
+import EmptyRow from "@/Components/UI/EmptyRow";
 import Badge from "@/Components/UI/Badge";
 
 interface TenantShopIdItem {
@@ -30,12 +31,8 @@ export default function Index({ tenants, searchQuery, flash }: TenantShopIdsInde
     const [editValue, setEditValue] = useState("");
     const [processing, setProcessing] = useState(false);
     const { showHelp, openHelp, closeHelp } = useHelpPanel();
-    const paginationLinks = withStableKeys(tenants.links, getPaginationLinkBaseKey);
 
-    const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        const formData = new FormData(e.currentTarget);
-        const search = formData.get("search") as string;
+    const handleSearch = (search: string) => {
         router.get(route("admin.tenant-shop-ids.index"), { search: search || undefined }, { preserveState: true });
     };
 
@@ -82,26 +79,16 @@ export default function Index({ tenants, searchQuery, flash }: TenantShopIdsInde
                 )}
                 {flash?.error && <div className="mb-4 rounded bg-red-50 p-4 text-sm text-red-700">{flash.error}</div>}
 
-                {/* 検索 を明示し、実装意図の誤読を防ぐ。 */}
+                {/* 検索 */}
                 <div className="mb-6 flex justify-end">
-                    <form onSubmit={handleSearch} className="flex gap-2">
-                        <input
-                            type="text"
-                            name="search"
-                            defaultValue={searchQuery || ""}
-                            placeholder="テナント名・メール・Shop IDで検索..."
-                            className="rounded-md border border-edge-strong px-3 py-2 text-sm focus:border-primary focus:outline-none"
-                        />
-                        <button
-                            type="submit"
-                            className="bg-slate-600 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700"
-                        >
-                            検索
-                        </button>
-                    </form>
+                    <AdminSearchForm
+                        defaultValue={searchQuery || ""}
+                        placeholder="テナント名・メール・Shop IDで検索..."
+                        onSubmit={handleSearch}
+                    />
                 </div>
 
-                {/* テーブル を明示し、実装意図の誤読を防ぐ。 */}
+                {/* テーブル */}
                 <div className="overflow-x-auto bg-white shadow">
                     <table className="min-w-full divide-y divide-edge">
                         <thead className="bg-surface">
@@ -128,11 +115,7 @@ export default function Index({ tenants, searchQuery, flash }: TenantShopIdsInde
                         </thead>
                         <tbody className="divide-y divide-edge bg-white">
                             {tenants.data.length === 0 ? (
-                                <tr>
-                                    <td colSpan={5} className="px-6 py-12 text-center text-muted">
-                                        テナントがありません
-                                    </td>
-                                </tr>
+                                <EmptyRow colSpan={5}>テナントがありません</EmptyRow>
                             ) : (
                                 tenants.data.map((tenant) => (
                                     <tr key={tenant.id} className="hover:bg-surface">
@@ -220,32 +203,8 @@ export default function Index({ tenants, searchQuery, flash }: TenantShopIdsInde
                     </table>
                 </div>
 
-                {/* ページネーション を明示し、実装意図の誤読を防ぐ。 */}
-                {tenants.last_page > 1 && (
-                    <div className="mt-6 flex items-center justify-between">
-                        <p className="text-sm text-ink-light">
-                            {tenants.from} - {tenants.to} / {tenants.total} 件
-                        </p>
-                        <div className="flex gap-2">
-                            {paginationLinks.map(({ item: link, key }) => (
-                                <button
-                                    key={key}
-                                    onClick={() => link.url && router.get(link.url, {}, { preserveState: true })}
-                                    disabled={!link.url}
-                                    className={`px-3 py-2 text-sm ${
-                                        link.active
-                                            ? "bg-slate-800 text-white"
-                                            : link.url
-                                              ? "bg-white text-ink-light hover:bg-surface border border-edge-strong"
-                                              : "bg-surface-dim text-muted-light cursor-not-allowed"
-                                    }`}
-                                >
-                                    {decodeHtmlEntities(link.label)}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-                )}
+                {/* ページネーション */}
+                <AdminPagination paginated={tenants} />
             </div>
 
             <HelpPanel open={showHelp} onClose={closeHelp} content={adminHelpContent["admin-tenant-shop-ids"]} />

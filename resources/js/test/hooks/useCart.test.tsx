@@ -11,9 +11,13 @@ const apiMock = vi.hoisted(() => ({
     delete: vi.fn(),
 }));
 
-vi.mock("@/api", () => ({
-    api: apiMock,
-}));
+vi.mock("@/api", async (importOriginal) => {
+    const actual = await importOriginal<typeof import("@/api")>();
+    return {
+        ...actual,
+        api: apiMock,
+    };
+});
 
 function createDeferred<T>() {
     let resolve!: (value: T) => void;

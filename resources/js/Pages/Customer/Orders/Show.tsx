@@ -40,7 +40,7 @@ export default function Show({ order }: OrderShowPageProps) {
             <div className="relative min-h-screen bg-white">
                 <GradientBackground />
 
-                {/* Fixed Header を明示し、実装意図の誤読を防ぐ。 */}
+                {/* Fixed Header */}
                 <header className="fixed top-0 left-0 right-0 z-30 bg-white border-b border-slate-200">
                     <div className="h-14 px-4 flex items-center justify-between max-w-lg lg:max-w-5xl mx-auto">
                         <Link href={route("order.orders.index")} className="text-slate-500 hover:text-slate-700">
@@ -58,7 +58,7 @@ export default function Show({ order }: OrderShowPageProps) {
                     </div>
                 </header>
 
-                {/* Main Content を明示し、実装意図の誤読を防ぐ。 */}
+                {/* Main Content */}
                 <OrderReadyNotifier
                     orderId={order.id}
                     orderCode={order.order_code}
@@ -67,7 +67,7 @@ export default function Show({ order }: OrderShowPageProps) {
                 >
                     {(polling) => (
                         <main className="pt-14 pb-8 max-w-lg lg:max-w-5xl mx-auto px-4">
-                            {/* Order Header を明示し、実装意図の誤読を防ぐ。 */}
+                            {/* Order Header */}
                             <div className="bg-white border border-slate-200 p-4 mt-4">
                                 <div className="flex justify-between items-start mb-3">
                                     <div>
@@ -140,12 +140,12 @@ export default function Show({ order }: OrderShowPageProps) {
                                 </div>
                             )}
 
-                            {/* Timeline を明示し、実装意図の誤読を防ぐ。 */}
+                            {/* Timeline */}
                             <div className="mt-4">
                                 <OrderTimeline order={order} />
                             </div>
 
-                            {/* Order Items を明示し、実装意図の誤読を防ぐ。 */}
+                            {/* Order Items */}
                             <div className="mt-4">
                                 <OrderItemList items={order.items} totalAmount={order.total_amount} />
                             </div>

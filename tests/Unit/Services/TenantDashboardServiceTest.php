@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Unit\Services;
 
 use App\Enums\SalesPeriod;
+use App\Enums\TopItemsPeriod;
 use App\Services\TenantDashboardService;
 use App\Services\TenantStatsRepository;
 use Carbon\Carbon;
@@ -148,7 +149,7 @@ class TenantDashboardServiceTest extends TestCase
     public function test_get_top_items_delegates_to_repository_and_formats_response(): void
     {
         $tenantId = 77;
-        $period = 'month';
+        $period = TopItemsPeriod::Month;
         $limit = 2;
         $expectedStartDate = Carbon::parse('2025-12-21');
 
@@ -193,14 +194,13 @@ class TenantDashboardServiceTest extends TestCase
         $tenantId = 88;
         $limit = 10;
         $expectedStartDates = [
-            'week' => Carbon::parse('2026-01-13'),
-            'month' => Carbon::parse('2025-12-21'),
-            'year' => Carbon::parse('2025-01-20'),
-            'unexpected' => Carbon::parse('2025-12-21'),
+            [TopItemsPeriod::Week, Carbon::parse('2026-01-13')],
+            [TopItemsPeriod::Month, Carbon::parse('2025-12-21')],
+            [TopItemsPeriod::Year, Carbon::parse('2025-01-20')],
         ];
 
         $this->mock(TenantStatsRepository::class, function (MockInterface $mock) use ($tenantId, $limit, $expectedStartDates) {
-            foreach ($expectedStartDates as $period => $expectedStartDate) {
+            foreach ($expectedStartDates as [$period, $expectedStartDate]) {
                 $mock->shouldReceive('getTopItems')
                     ->once()
                     ->withArgs(function (int $actualTenantId, Carbon $actualStartDate, int $actualLimit) use ($tenantId, $expectedStartDate, $limit): bool {
@@ -214,7 +214,7 @@ class TenantDashboardServiceTest extends TestCase
 
         $service = app(TenantDashboardService::class);
 
-        foreach (array_keys($expectedStartDates) as $period) {
+        foreach ($expectedStartDates as [$period, $_]) {
             $service->getTopItems($tenantId, $period, $limit);
         }
     }

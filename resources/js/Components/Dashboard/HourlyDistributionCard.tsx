@@ -7,21 +7,9 @@ import GeoSurface from "@/Components/GeoSurface";
 import DashboardAsyncState from "./DashboardAsyncState";
 import DashboardChartErrorBoundary from "./DashboardChartErrorBoundary";
 import useKeyboardChartNavigation from "./useKeyboardChartNavigation";
+import { parseNumericTooltipValue } from "./chartTooltipHelpers";
 
 type CustomTooltipProps = Partial<Pick<TooltipContentProps<number, string>, "active" | "payload" | "label">>;
-
-function parseNumericTooltipValue(value: unknown): number | null {
-    if (typeof value === "number") {
-        return value;
-    }
-
-    if (typeof value === "string") {
-        const parsed = Number(value);
-        return Number.isFinite(parsed) ? parsed : null;
-    }
-
-    return null;
-}
 
 function getMetricLabel(dataKey: string): string {
     return dataKey === "sales" ? "売上" : "注文数";

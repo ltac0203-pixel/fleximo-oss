@@ -1,5 +1,5 @@
 import { useCallback, useRef } from "react";
-import { api } from "@/api";
+import { api, ENDPOINTS } from "@/api";
 import { KdsOrder, KdsStatusUpdateTarget } from "@/types";
 import { normalizeErrorMessage } from "@/Utils/errorHelpers";
 import { logger } from "@/Utils/logger";
@@ -77,7 +77,7 @@ export function useKdsOrderActions({
                 const { data: updateResponse, error: updateError } = await api.patch<{
                     data: KdsApiOrder;
                     message?: string;
-                }>(`/api/tenant/kds/orders/${orderId}/status`, {
+                }>(ENDPOINTS.tenant.kds.orderStatus(orderId), {
                     status: newStatus,
                 });
 

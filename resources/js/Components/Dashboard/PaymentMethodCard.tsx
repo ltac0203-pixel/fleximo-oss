@@ -3,11 +3,11 @@ import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import type { TooltipContentProps, TooltipPayloadEntry } from "recharts";
 import { usePaymentMethodData } from "@/Hooks/usePaymentMethodData";
 import { PaymentMethodStatsItem } from "@/types";
-import { formatCurrency } from "@/Utils/formatPrice";
+import { formatCurrency, formatNumber } from "@/Utils/formatPrice";
 import GeoSurface from "@/Components/GeoSurface";
+import DashboardAsyncState from "./DashboardAsyncState";
 import DateRangeSelector from "./DateRangeSelector";
 import DashboardChartErrorBoundary from "./DashboardChartErrorBoundary";
-import Spinner from "./Spinner";
 import useKeyboardChartNavigation from "./useKeyboardChartNavigation";
 
 const METHOD_COLORS: Record<string, string> = {
@@ -18,11 +18,6 @@ const METHOD_PATTERNS: Record<string, string> = {
     card: "斜線",
     paypay: "ドット",
 };
-const numberFormatter = new Intl.NumberFormat("ja-JP");
-
-function formatNumber(value: number): string {
-    return numberFormatter.format(value);
-}
 
 function getPatternLabel(method: string): string {
     return METHOD_PATTERNS[method] ?? "パターン";
@@ -87,15 +82,12 @@ export default function PaymentMethodCard() {
                 <DateRangeSelector selected={range} onChange={onRangeChange} />
             </div>
 
-            {loading ? (
-                <div className="h-64 flex items-center justify-center">
-                    <Spinner />
-                </div>
-            ) : fetchError ? (
-                <div className="h-64 flex items-center justify-center text-red-500">データの取得に失敗しました</div>
-            ) : chartData.length === 0 ? (
-                <div className="h-64 flex items-center justify-center text-muted">データがありません</div>
-            ) : (
+            <DashboardAsyncState
+                loading={loading}
+                fetchError={fetchError}
+                isEmpty={chartData.length === 0}
+                heightClassName="h-64"
+            >
                 <div className="flex flex-col lg:flex-row gap-4">
                     <div className="flex-1">
                         <DashboardChartErrorBoundary heightClassName="h-56">
@@ -206,7 +198,7 @@ export default function PaymentMethodCard() {
                         ))}
                     </div>
                 </div>
-            )}
+            </DashboardAsyncState>
         </GeoSurface>
     );
 }

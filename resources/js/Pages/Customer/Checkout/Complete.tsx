@@ -1,67 +1,12 @@
-import { CheckoutCompleteProps, OrderStatusValue } from "@/types";
+import { CheckoutCompleteProps } from "@/types";
 import { Head, Link } from "@inertiajs/react";
 import StatusBadge from "@/Components/Customer/Orders/StatusBadge";
 import OrderTimeline from "@/Components/Customer/Orders/OrderTimeline";
 import OrderItemList from "@/Components/Customer/Orders/OrderItemList";
 import OrderReadyNotifier from "@/Components/Customer/Orders/OrderReadyNotifier";
 import GradientBackground from "@/Components/GradientBackground";
+import { getOrderStatusSummary, type StatusSummaryTone } from "@/constants/orderStatusSummary";
 import { formatPrice } from "@/Utils/formatPrice";
-
-type StatusSummaryTone = "info" | "success" | "warning" | "danger";
-
-interface StatusSummary {
-    headline: string;
-    nextAction: string;
-    tone: StatusSummaryTone;
-}
-
-const statusSummaries: Record<OrderStatusValue, StatusSummary> = {
-    pending_payment: {
-        headline: "現在、お支払い確認中です",
-        nextAction: "決済完了後に注文受付へ進みます。",
-        tone: "warning",
-    },
-    paid: {
-        headline: "現在、注文を受け付けました",
-        nextAction: "店舗で確認後、調理に進みます。",
-        tone: "info",
-    },
-    accepted: {
-        headline: "現在、店舗で注文内容を確認中です",
-        nextAction: "確認が完了次第、商品の準備を開始します。",
-        tone: "info",
-    },
-    in_progress: {
-        headline: "現在、商品を準備中です",
-        nextAction: "準備ができ次第、この画面でお知らせします。",
-        tone: "info",
-    },
-    ready: {
-        headline: "現在、商品の準備ができています",
-        nextAction: "カウンターで注文番号をお伝えください。",
-        tone: "success",
-    },
-    completed: {
-        headline: "商品の受け取りが完了しました",
-        nextAction: "ご利用ありがとうございました。",
-        tone: "success",
-    },
-    cancelled: {
-        headline: "この注文はキャンセルされました",
-        nextAction: "詳細は店舗へお問い合わせください。",
-        tone: "danger",
-    },
-    payment_failed: {
-        headline: "決済に失敗しました",
-        nextAction: "支払い方法を確認のうえ、再度お試しください。",
-        tone: "danger",
-    },
-    refunded: {
-        headline: "この注文は返金済みです",
-        nextAction: "返金状況の詳細はご利用明細をご確認ください。",
-        tone: "danger",
-    },
-};
 
 const summaryToneStyles: Record<
     StatusSummaryTone,
@@ -93,16 +38,6 @@ const summaryToneStyles: Record<
     },
 };
 
-function getStatusSummary(status: OrderStatusValue, statusLabel: string): StatusSummary {
-    return (
-        statusSummaries[status] ?? {
-            headline: `現在のステータス: ${statusLabel}`,
-            nextAction: "注文状況をご確認ください。",
-            tone: "info",
-        }
-    );
-}
-
 export default function CheckoutComplete({ order }: CheckoutCompleteProps) {
     const formatDateTime = (dateString: string) => {
         return new Date(dateString).toLocaleString("ja-JP", {
@@ -119,14 +54,14 @@ export default function CheckoutComplete({ order }: CheckoutCompleteProps) {
 
             <div className="relative min-h-screen bg-white">
                 <GradientBackground />
-                {/* ヘッダー を明示し、実装意図の誤読を防ぐ。 */}
+                {/* ヘッダー */}
                 <header className="fixed top-0 left-0 right-0 z-30 bg-white border-b border-slate-200 ">
                     <div className="h-14 px-4 flex items-center justify-center max-w-lg lg:max-w-5xl mx-auto">
                         <h1 className="text-lg font-semibold text-slate-900">注文完了</h1>
                     </div>
                 </header>
 
-                {/* メインコンテンツ を明示し、実装意図の誤読を防ぐ。 */}
+                {/* メインコンテンツ */}
                 <OrderReadyNotifier
                     orderId={order.id}
                     orderCode={order.order_code}
@@ -134,12 +69,12 @@ export default function CheckoutComplete({ order }: CheckoutCompleteProps) {
                     initialStatusLabel={order.status_label}
                 >
                     {(polling) => {
-                        const statusSummary = getStatusSummary(polling.status, polling.statusLabel);
+                        const statusSummary = getOrderStatusSummary(polling.status, polling.statusLabel);
                         const toneStyles = summaryToneStyles[statusSummary.tone];
 
                         return (
                             <main className="relative z-10 pt-14 pb-32 max-w-lg lg:max-w-5xl mx-auto px-4">
-                                {/* 成功アイコン を明示し、実装意図の誤読を防ぐ。 */}
+                                {/* 成功アイコン */}
                                 <div className="flex flex-col items-center py-8">
                                     <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-4">
                                         <svg
@@ -164,7 +99,7 @@ export default function CheckoutComplete({ order }: CheckoutCompleteProps) {
                                     </p>
                                 </div>
 
-                                {/* 注文番号 を明示し、実装意図の誤読を防ぐ。 */}
+                                {/* 注文番号 */}
                                 <div className="bg-white border border-slate-200 p-5 mb-4 text-center">
                                     <p className="text-sm font-medium text-slate-600 mb-2">注文番号</p>
                                     <p className="text-4xl font-extrabold tracking-wide text-sky-600">
@@ -172,7 +107,7 @@ export default function CheckoutComplete({ order }: CheckoutCompleteProps) {
                                     </p>
                                 </div>
 
-                                {/* 注文状況要約 を明示し、実装意図の誤読を防ぐ。 */}
+                                {/* 注文状況要約 */}
                                 <div className={`p-4 mb-4 ${toneStyles.container}`}>
                                     <div className="flex items-center justify-between gap-3 mb-3">
                                         <span className={`text-sm font-medium ${toneStyles.label}`}>
@@ -191,7 +126,7 @@ export default function CheckoutComplete({ order }: CheckoutCompleteProps) {
                                         {statusSummary.nextAction}
                                     </p>
                                 </div>
-                                {/* 注文詳細 を明示し、実装意図の誤読を防ぐ。 */}
+                                {/* 注文詳細 */}
                                 <div className="bg-white border border-slate-200 p-4 mb-4">
                                     <h3 className="text-base font-semibold text-slate-900">注文詳細</h3>
                                     <div className="space-y-3 pt-4">
@@ -222,17 +157,17 @@ export default function CheckoutComplete({ order }: CheckoutCompleteProps) {
                                     </div>
                                 </div>
 
-                                {/* 注文商品一覧 を明示し、実装意図の誤読を防ぐ。 */}
+                                {/* 注文商品一覧 */}
                                 <div className="mb-4">
                                     <OrderItemList items={order.items} totalAmount={order.total_amount} />
                                 </div>
 
-                                {/* 注文ステータス を明示し、実装意図の誤読を防ぐ。 */}
+                                {/* 注文ステータス */}
                                 <div className="mb-4">
                                     <OrderTimeline order={order} />
                                 </div>
 
-                                {/* 案内メッセージ を明示し、実装意図の誤読を防ぐ。 */}
+                                {/* 案内メッセージ */}
                                 {polling.isReady ? (
                                     <div className="bg-green-50 p-4 mb-4">
                                         <div className="flex items-start gap-3">
@@ -289,7 +224,7 @@ export default function CheckoutComplete({ order }: CheckoutCompleteProps) {
                     }}
                 </OrderReadyNotifier>
 
-                {/* フッター を明示し、実装意図の誤読を防ぐ。 */}
+                {/* フッター */}
                 <div className="fixed bottom-0 left-0 right-0 z-30 bg-white border-t p-4">
                     <div className="max-w-lg lg:max-w-5xl mx-auto">
                         <Link

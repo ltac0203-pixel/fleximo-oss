@@ -13,11 +13,13 @@ use App\Models\MenuItem;
 use App\Models\Option;
 use App\Models\OptionGroup;
 use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Services\Checkout\OrderCreationService;
 use App\Services\OrderNumberGenerator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Mockery;
 use Mockery\MockInterface;
 use Tests\TestCase;
@@ -269,6 +271,105 @@ class OrderCreationServiceTest extends TestCase
         ]);
     }
 
+    // 複数 item × 複数 option を 1 注文に投入したとき、order_item_options への
+    // INSERT が item 数や option 数に依存せず 1 クエリに集約されることを検証する
+    public function test_create_from_cart_bulk_inserts_order_item_options_in_single_query(): void
+    {
+        $tenant = Tenant::factory()->create();
+        $user = User::factory()->customer()->create();
+
+        $menuItem1 = MenuItem::factory()->create(['tenant_id' => $tenant->id, 'price' => 500]);
+        $menuItem2 = MenuItem::factory()->create(['tenant_id' => $tenant->id, 'price' => 800]);
+
+        $optionGroup = OptionGroup::factory()->create(['tenant_id' => $tenant->id]);
+        $optionA = Option::factory()->create([
+            'option_group_id' => $optionGroup->id,
+            'name' => 'オプションA',
+            'price' => 100,
+        ]);
+        $optionB = Option::factory()->create([
+            'option_group_id' => $optionGroup->id,
+            'name' => 'オプションB',
+            'price' => 200,
+        ]);
+
+        $cart = Cart::factory()->create([
+            'user_id' => $user->id,
+            'tenant_id' => $tenant->id,
+        ]);
+
+        $cartItem1 = CartItem::factory()->create([
+            'cart_id' => $cart->id,
+            'tenant_id' => $tenant->id,
+            'menu_item_id' => $menuItem1->id,
+            'quantity' => 1,
+        ]);
+        CartItemOption::factory()->create([
+            'cart_item_id' => $cartItem1->id,
+            'tenant_id' => $tenant->id,
+            'option_id' => $optionA->id,
+        ]);
+        CartItemOption::factory()->create([
+            'cart_item_id' => $cartItem1->id,
+            'tenant_id' => $tenant->id,
+            'option_id' => $optionB->id,
+        ]);
+
+        $cartItem2 = CartItem::factory()->create([
+            'cart_id' => $cart->id,
+            'tenant_id' => $tenant->id,
+            'menu_item_id' => $menuItem2->id,
+            'quantity' => 1,
+        ]);
+        CartItemOption::factory()->create([
+            'cart_item_id' => $cartItem2->id,
+            'tenant_id' => $tenant->id,
+            'option_id' => $optionA->id,
+        ]);
+
+        $businessDate = now()->startOfDay();
+        $this->mockOrderNumberGenerator
+            ->shouldReceive('getBusinessDate')
+            ->once()
+            ->andReturn($businessDate);
+        $this->mockOrderNumberGenerator
+            ->shouldReceive('generate')
+            ->once()
+            ->andReturn('B001');
+
+        DB::enableQueryLog();
+        $order = $this->service->createFromCart($cart);
+        $queries = DB::getQueryLog();
+        DB::disableQueryLog();
+
+        $orderItemOptionInserts = collect($queries)
+            ->filter(fn ($q) => str_contains(strtolower($q['query']), 'insert into')
+                && str_contains($q['query'], 'order_item_options'))
+            ->count();
+
+        $this->assertSame(
+            1,
+            $orderItemOptionInserts,
+            'order_item_options への INSERT は 1 クエリにまとめる必要があります（option 数に依存させない）'
+        );
+
+        // calculateTotalAmount で items.options は eager load されるが
+        // 直後の $order->refresh() が最上位 relation だけを再ロードする仕様で
+        // sub-relation は外れるため、検証のために明示的に再ロードする
+        $order->load('items.options');
+
+        $this->assertEquals(3, $order->items->sum(fn ($item) => $item->options->count()));
+        $this->assertEquals(500 + 100 + 200 + 800 + 100, $order->total_amount);
+
+        // tenant_id と option_id のスナップショット整合
+        foreach ($order->items as $orderItem) {
+            foreach ($orderItem->options as $orderItemOption) {
+                $this->assertSame($tenant->id, $orderItemOption->tenant_id);
+                $this->assertContains($orderItemOption->option_id, [$optionA->id, $optionB->id]);
+            }
+        }
+    }
+
     public function test_create_from_cart_throws_when_order_code_duplicate_retries_exhausted(): void
     {
         $tenant = Tenant::factory()->create();
@@ -311,5 +412,59 @@ class OrderCreationServiceTest extends TestCase
         $this->expectException(OrderNumberGenerationException::class);
 
         $this->service->createFromCart($cart);
+    }
+
+    public function test_create_from_cart_rolls_back_when_item_creation_fails(): void
+    {
+        // OrderItem 作成中に Exception が発生した場合、トランザクションがロールバックされ
+        // Order レコードが部分書き込みで残らないことを検証する。
+        $tenant = Tenant::factory()->create();
+        $user = User::factory()->customer()->create();
+        $menuItem = MenuItem::factory()->create([
+            'tenant_id' => $tenant->id,
+            'price' => 500,
+        ]);
+        $cart = Cart::factory()->create([
+            'user_id' => $user->id,
+            'tenant_id' => $tenant->id,
+        ]);
+        CartItem::factory()->create([
+            'cart_id' => $cart->id,
+            'tenant_id' => $tenant->id,
+            'menu_item_id' => $menuItem->id,
+            'quantity' => 1,
+        ]);
+
+        $businessDate = now()->startOfDay();
+        $this->mockOrderNumberGenerator
+            ->shouldReceive('getBusinessDate')
+            ->once()
+            ->andReturn($businessDate);
+        $this->mockOrderNumberGenerator
+            ->shouldReceive('generate')
+            ->once()
+            ->with($tenant->id, $businessDate)
+            ->andReturn('A001');
+
+        $orderCountBefore = Order::count();
+
+        // OrderItem の保存時に意図的に Exception を発生させる
+        OrderItem::saving(function () {
+            throw new \RuntimeException('Forced failure for rollback test');
+        });
+
+        $caught = null;
+        try {
+            $this->service->createFromCart($cart);
+        } catch (\RuntimeException $e) {
+            $caught = $e;
+        } finally {
+            OrderItem::flushEventListeners();
+        }
+
+        $this->assertNotNull($caught, 'Expected RuntimeException to be thrown');
+
+        // ロールバックにより Order レコードが残っていないこと
+        $this->assertSame($orderCountBefore, Order::count());
     }
 }

@@ -14,7 +14,7 @@ export default function PriceCalculator({ basePrice, selectedOptions, quantity }
 
     return (
         <div className="space-y-2">
-            {/* 単価の内訳 を明示し、実装意図の誤読を防ぐ。 */}
+            {/* 単価の内訳 */}
             {selectedOptions.length > 0 && (
                 <div className="text-sm text-muted space-y-1">
                     <div className="flex justify-between">
@@ -34,7 +34,7 @@ export default function PriceCalculator({ basePrice, selectedOptions, quantity }
                 </div>
             )}
 
-            {/* 合計金額 を明示し、実装意図の誤読を防ぐ。 */}
+            {/* 合計金額 */}
             <div className="flex justify-between items-center pt-2">
                 <span className="text-ink-light">
                     {quantity > 1 ? `${formatPrice(unitPrice)} × ${quantity}` : "合計"}

@@ -1,3 +1,4 @@
+import { isCancelledOrderStatus, isPaymentFailedOrderStatus } from "@/constants/orderStatus";
 import { OrderDetail, OrderStatusValue } from "@/types";
 
 interface OrderTimelineProps {
@@ -47,8 +48,8 @@ function getStepStatus(
 }
 
 export default function OrderTimeline({ order }: OrderTimelineProps) {
-    const isCancelled = order.status === "cancelled" || order.status === "refunded";
-    const isPaymentFailed = order.status === "payment_failed";
+    const isCancelled = isCancelledOrderStatus(order.status);
+    const isPaymentFailed = isPaymentFailedOrderStatus(order.status);
 
     if (isPaymentFailed) {
         return (

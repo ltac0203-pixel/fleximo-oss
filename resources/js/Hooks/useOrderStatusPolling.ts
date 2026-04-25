@@ -1,8 +1,9 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useCallback, useRef, useState } from "react";
 import { api } from "@/api";
 import { ENDPOINTS } from "@/api/endpoints";
 import { OrderStatusValue } from "@/types";
 import { useLatest } from "./useLatest";
+import { usePollingTimer, type PollResult } from "./usePollingTimer";
 
 interface OrderStatusResponse {
     data: {
@@ -40,7 +41,6 @@ interface OrderPollingState {
 }
 
 const DEFAULT_POLLING_INTERVAL = 10000;
-const MAX_BACKOFF_INTERVAL = 60000;
 
 // 終端状態またはキャンセルされた注文はポーリング不要
 function shouldStopPolling(status: OrderStatusValue, isTerminal: boolean): boolean {
@@ -68,43 +68,23 @@ export function useOrderStatusPolling({
 
     const [orderState, setOrderState] = useState<OrderPollingState>(initialOrderState);
 
-    const isActiveRef = useRef(true);
-    const timerIdRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-    const errorCountRef = useRef(0);
-    const currentIntervalRef = useRef(intervalMs);
-    const hasNotifiedReadyRef = useRef(false);
-    const isTabVisible = useRef(true);
     const orderStateRef = useRef<OrderPollingState>(initialOrderState);
+    const hasNotifiedReadyRef = useRef(false);
 
     const onStatusChangeRef = useLatest(onStatusChange);
     const onReadyRef = useLatest(onReady);
-
-    const fetchOrdersRef = useRef<(() => Promise<void>) | null>(null);
-    const scheduleNextPollRef = useRef<(() => void) | null>(null);
 
     const updateOrderState = useCallback((nextState: OrderPollingState) => {
         orderStateRef.current = nextState;
         setOrderState(nextState);
     }, []);
 
-    const calculateBackoffInterval = useCallback(
-        (errorCount: number): number => {
-            const backoffInterval = intervalMs * Math.pow(2, errorCount);
-            return Math.min(backoffInterval, MAX_BACKOFF_INTERVAL);
-        },
-        [intervalMs],
-    );
-
-    const fetchStatus = useCallback(async () => {
-        if (!isActiveRef.current) return;
-
+    const fetcher = useCallback(async (): Promise<PollResult> => {
         try {
             const endpoint = ENDPOINTS.customer.orders.status(orderId);
             const { data: response, error } = await api.get<OrderStatusResponse>(endpoint, {
                 suppressGlobalLoading: true,
             });
-
-            if (!isActiveRef.current) return;
 
             if (error || !response) {
                 throw new Error(error ?? "ステータスの取得に失敗しました");
@@ -132,96 +112,20 @@ export function useOrderStatusPolling({
                 onReadyRef.current?.();
             }
 
-            // 終端状態ならポーリング停止
-            if (shouldStopPolling(nextOrderState.status, nextOrderState.isTerminal)) {
-                return;
-            }
-
-            // エラーカウントリセット
-            errorCountRef.current = 0;
-            currentIntervalRef.current = intervalMs;
+            return {
+                shouldContinue: !shouldStopPolling(nextOrderState.status, nextOrderState.isTerminal),
+            };
         } catch {
-            if (!isActiveRef.current) return;
-
-            errorCountRef.current += 1;
-            currentIntervalRef.current = calculateBackoffInterval(errorCountRef.current);
+            return { shouldContinue: true, errored: true };
         }
-    }, [orderId, intervalMs, calculateBackoffInterval, onStatusChangeRef, onReadyRef, updateOrderState]);
+    }, [orderId, updateOrderState, onStatusChangeRef, onReadyRef]);
 
-    fetchOrdersRef.current = fetchStatus;
-
-    const scheduleNextPoll = useCallback(() => {
-        if (!isActiveRef.current) return;
-        if (!isTabVisible.current) return;
-
-        if (timerIdRef.current) {
-            clearTimeout(timerIdRef.current);
-            timerIdRef.current = null;
-        }
-
-        timerIdRef.current = setTimeout(() => {
-            if (!isActiveRef.current) return;
-
-            void fetchOrdersRef.current?.().finally(() => {
-                if (!isActiveRef.current) return;
-
-                // 終端状態なら次のポーリングをスケジュールしない
-                const currentOrderState = orderStateRef.current;
-                if (shouldStopPolling(currentOrderState.status, currentOrderState.isTerminal)) return;
-
-                scheduleNextPollRef.current?.();
-            });
-        }, currentIntervalRef.current);
-    }, []);
-
-    scheduleNextPollRef.current = scheduleNextPoll;
-
-    // ポーリング開始
-    useEffect(() => {
-        if (!enabled || shouldStopPolling(initialStatus, false)) return;
-
-        isActiveRef.current = true;
-
-        void fetchOrdersRef.current?.().finally(() => {
-            if (!isActiveRef.current) return;
-            scheduleNextPollRef.current?.();
-        });
-
-        return () => {
-            isActiveRef.current = false;
-            if (timerIdRef.current) {
-                clearTimeout(timerIdRef.current);
-                timerIdRef.current = null;
-            }
-        };
-    }, [enabled, initialStatus]);
-
-    // タブ可視状態の監視
-    useEffect(() => {
-        if (!enabled) return;
-
-        const handleVisibilityChange = () => {
-            const isVisible = document.visibilityState === "visible";
-            isTabVisible.current = isVisible;
-
-            if (isVisible) {
-                void fetchOrdersRef.current?.().finally(() => {
-                    if (!isActiveRef.current) return;
-                    scheduleNextPollRef.current?.();
-                });
-            } else {
-                if (timerIdRef.current) {
-                    clearTimeout(timerIdRef.current);
-                    timerIdRef.current = null;
-                }
-            }
-        };
-
-        document.addEventListener("visibilitychange", handleVisibilityChange);
-        return () => {
-            document.removeEventListener("visibilitychange", handleVisibilityChange);
-        };
-    }, [enabled]);
+    usePollingTimer({
+        fetcher,
+        baseIntervalMs: intervalMs,
+        enabled: enabled && !shouldStopPolling(initialStatus, false),
+        pauseWhenHidden: true,
+    });
 
     return {
         status: orderState.status,

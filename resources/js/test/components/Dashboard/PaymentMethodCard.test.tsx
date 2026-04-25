@@ -1,7 +1,10 @@
 const apiMock = vi.hoisted(() => ({
     cachedGet: vi.fn(),
 }));
-vi.mock("@/api", () => ({ api: apiMock }));
+vi.mock("@/api", async (importOriginal) => {
+    const actual = await importOriginal<typeof import("@/api")>();
+    return { ...actual, api: apiMock };
+});
 vi.mock("recharts", () => import("../../helpers/chartMock"));
 
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";

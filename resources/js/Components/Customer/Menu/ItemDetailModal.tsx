@@ -1,6 +1,7 @@
 import Modal from "@/Components/Modal";
 import { useItemDetailForm } from "@/Hooks/useItemDetailForm";
 import { BaseModalProps, CartItemData, CustomerMenuItem } from "@/types";
+import { formatPrice } from "@/Utils/formatPrice";
 import AllergenBadge from "./AllergenBadge";
 import NutritionTable from "./NutritionTable";
 import OptionSelector from "./OptionSelector";
@@ -30,7 +31,7 @@ export default function ItemDetailModal({ show, item, onClose, onAddToCart, isLo
     return (
         <Modal show={show} onClose={onClose} maxWidth="md" variant="bottom-sheet">
             <div className="max-h-[90dvh] flex flex-col">
-                {/* Header を明示し、実装意図の誤読を防ぐ。 */}
+                {/* Header */}
                 <div className="flex items-center justify-between p-4 border-b">
                     <h2 className="text-lg font-semibold text-ink">{item.name}</h2>
                     <button
@@ -49,7 +50,7 @@ export default function ItemDetailModal({ show, item, onClose, onAddToCart, isLo
                     </button>
                 </div>
 
-                {/* Scrollable Content を明示し、実装意図の誤読を防ぐ。 */}
+                {/* Scrollable Content */}
                 <div className="flex-1 overflow-y-auto p-4">
                     {item.description && <p className="text-ink-light mb-4">{item.description}</p>}
 
@@ -65,7 +66,7 @@ export default function ItemDetailModal({ show, item, onClose, onAddToCart, isLo
                     )}
 
                     <div className="mb-4 pb-4 border-b">
-                        <span className="text-lg font-semibold text-sky-700">¥{item.price.toLocaleString()}</span>
+                        <span className="text-lg font-semibold text-sky-700">{formatPrice(item.price)}</span>
                     </div>
 
                     {item.nutrition_info && (
@@ -88,7 +89,7 @@ export default function ItemDetailModal({ show, item, onClose, onAddToCart, isLo
                     <PriceCalculator basePrice={item.price} selectedOptions={selectedOptions} quantity={quantity} />
                 </div>
 
-                {/* Footer を明示し、実装意図の誤読を防ぐ。 */}
+                {/* Footer */}
                 <div className="p-4 border-t bg-sky-50/50">
                     <button
                         onClick={handleAddToCart}

@@ -1,4 +1,4 @@
-import { api } from "@/api";
+import { api, buildQuery, ENDPOINTS } from "@/api";
 import type { ApiDataResponse } from "@/api";
 import useDashboardDataFetcher from "@/Hooks/useDashboardDataFetcher";
 import { HourlyData } from "@/types";
@@ -27,11 +27,9 @@ export function useHourlyDistributionData(): UseHourlyDistributionDataResult {
     const [selectedDate, setSelectedDate] = useState(maxDate);
 
     const fetchHourlyData = useCallback(async (date: string): Promise<HourlyData[]> => {
-        const params = new URLSearchParams({ date });
+        const url = `${ENDPOINTS.tenant.dashboard.hourly}${buildQuery({ date })}`;
 
-        const { data: result, error } = await api.cachedGet<ApiDataResponse<HourlyData[]>>(
-            `/api/tenant/dashboard/hourly?${params.toString()}`,
-        );
+        const { data: result, error } = await api.cachedGet<ApiDataResponse<HourlyData[]>>(url);
 
         if (error || !result) {
             throw error ?? "empty result";

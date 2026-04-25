@@ -1,6 +1,6 @@
 import Modal from "@/Components/Modal";
 import Button from "@/Components/UI/Button";
-import { api } from "@/api";
+import { api, ENDPOINTS } from "@/api";
 import { useApiFormSubmission } from "@/Hooks/useApiFormSubmission";
 import { FormModalProps } from "@/types";
 import { router } from "@inertiajs/react";
@@ -26,7 +26,7 @@ export default function CreateCategoryModal({ show, onClose, onSuccess }: Create
     const handleSubmit: FormEventHandler = (e: FormEvent) => {
         e.preventDefault();
         void submit(
-            () => api.post<unknown, { errors?: FormErrors }>("/api/tenant/menu/categories", formData),
+            () => api.post<unknown, { errors?: FormErrors }>(ENDPOINTS.tenant.menu.categories, formData),
             {
                 logMessage: "カテゴリ追加に失敗",
                 onSuccess: () => {

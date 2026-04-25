@@ -1,3 +1,4 @@
+import { ENDPOINTS } from "@/api";
 import PageHeader from "@/Components/PageHeader";
 import Button from "@/Components/UI/Button";
 import AvailabilityBadge from "@/Components/Tenant/Menu/AvailabilityBadge";
@@ -137,7 +138,7 @@ export default function Index({ optionGroups }: OptionGroupsIndexProps) {
                     targetName={selectedGroup?.name}
                     message={`「${selectedGroup?.name}」を削除してもよろしいですか？`}
                     warningMessage="このグループに含まれる全てのオプションも削除されます。この操作は取り消せません。"
-                    apiEndpoint={`/api/tenant/option-groups/${selectedGroup?.id}`}
+                    apiEndpoint={ENDPOINTS.tenant.optionGroup(selectedGroup?.id ?? 0)}
                     reloadOnly={["optionGroups"]}
                     successMessage="オプショングループを削除しました"
                     onClose={closeDeleteModal}

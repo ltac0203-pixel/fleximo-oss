@@ -8,11 +8,15 @@ const useFincodeMock = vi.hoisted(() => vi.fn());
 const createTokenMock = vi.hoisted(() => vi.fn());
 const routerVisitMock = vi.hoisted(() => vi.fn());
 
-vi.mock("@/api", () => ({
-    api: {
-        post: apiPostMock,
-    },
-}));
+vi.mock("@/api", async (importOriginal) => {
+    const actual = await importOriginal<typeof import("@/api")>();
+    return {
+        ...actual,
+        api: {
+            post: apiPostMock,
+        },
+    };
+});
 
 vi.mock("@/Hooks/useFincode", () => ({
     useFincode: useFincodeMock,

@@ -1,6 +1,6 @@
-import InputError from "@/Components/InputError";
-import InputLabel from "@/Components/InputLabel";
+import AuthHeader from "@/Components/UI/AuthHeader";
 import Button from "@/Components/UI/Button";
+import FormField from "@/Components/UI/FormField";
 import TextInput from "@/Components/TextInput";
 import GuestLayout from "@/Layouts/GuestLayout";
 import { Head, useForm } from "@inertiajs/react";
@@ -23,22 +23,14 @@ export default function ConfirmPassword() {
         <GuestLayout>
             <Head title="パスワード確認" />
 
-            <div className="mb-6">
-                <div className="flex items-center gap-2">
-                    <div className="h-px w-8 bg-sky-400" />
-                    <p className="text-xs font-medium uppercase tracking-widest text-sky-600">パスワード確認</p>
-                </div>
-                <h2 className="mt-2 text-2xl font-bold text-ink">パスワード確認</h2>
-            </div>
+            <AuthHeader eyebrow="パスワード確認" title="パスワード確認" />
 
             <div className="mb-4 text-sm text-ink-light">
                 このページはセキュアなエリアです。続行するにはパスワードを確認してください。
             </div>
 
             <form onSubmit={submit}>
-                <div className="mt-4">
-                    <InputLabel htmlFor="password" value="パスワード" />
-
+                <FormField label="パスワード" htmlFor="password" error={errors.password} className="mt-4">
                     <TextInput
                         id="password"
                         type="password"
@@ -50,9 +42,7 @@ export default function ConfirmPassword() {
                         isFocused={true}
                         onChange={(e) => setData("password", e.target.value)}
                     />
-
-                    <InputError id="password-error" message={errors.password} className="mt-2" />
-                </div>
+                </FormField>
 
                 <div className="mt-4 flex items-center justify-end">
                     <Button

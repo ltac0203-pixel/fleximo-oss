@@ -1,4 +1,4 @@
-import { api } from "@/api";
+import { api, ENDPOINTS } from "@/api";
 import InputError from "@/Components/InputError";
 import Modal from "@/Components/Modal";
 import Button from "@/Components/UI/Button";
@@ -34,7 +34,7 @@ export default function CreateStaffModal({ show, onClose, onSuccess }: CreateSta
     const handleSubmit: FormEventHandler = (e: FormEvent) => {
         e.preventDefault();
         void submit(
-            () => api.post<unknown, { errors?: FormErrors }>("/api/tenant/staff", formData),
+            () => api.post<unknown, { errors?: FormErrors }>(ENDPOINTS.tenant.staff, formData),
             {
                 logMessage: "スタッフ追加に失敗",
                 onSuccess: () => {

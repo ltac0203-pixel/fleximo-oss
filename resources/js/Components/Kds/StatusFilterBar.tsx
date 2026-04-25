@@ -39,7 +39,7 @@ export default function StatusFilterBar({ activeStatuses, orderCounts, onToggle 
                                 isActive ? meta.dotClass : "bg-edge-strong"
                             }`}
                         />
-                        <span>{meta.label}</span>
+                        <span>{meta.kdsHeading}</span>
                         <span
                             className={`
                                 ml-auto min-w-[1.5rem] text-center px-1.5 py-0.5 rounded-full text-xs font-bold

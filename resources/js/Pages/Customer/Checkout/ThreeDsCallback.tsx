@@ -1,4 +1,4 @@
-import { api } from "@/api";
+import { api, ENDPOINTS } from "@/api";
 import { ThreeDsCallbackApiResponse, ThreeDsCallbackProps } from "@/types";
 import { logger } from "@/Utils/logger";
 import ProcessingStatus from "@/Components/Loading/ProcessingStatus";
@@ -24,7 +24,7 @@ export default function ThreeDsCallback({ payment, param, event }: ThreeDsCallba
             try {
                 // ブラウザ復帰後に確定処理を一本化し、3DS後の状態不整合を防ぐ。
                 const { data: response, error: callbackError } = await api.post<ThreeDsCallbackApiResponse>(
-                    "/api/customer/payments/3ds-callback",
+                    ENDPOINTS.customer.payments.threeDsCallback,
                     {
                         payment_id: payment.id,
                         param: param,

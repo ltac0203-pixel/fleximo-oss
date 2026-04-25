@@ -6,7 +6,7 @@ import { FormData, FormErrors } from "@/Components/Tenant/Menu/ItemForm/types";
 import { useApiFormSubmission } from "@/Hooks/useApiFormSubmission";
 import { useActiveToggle } from "@/Hooks/useActiveToggle";
 import { useHelpPanel } from "@/Hooks/useHelpPanel";
-import { api } from "@/api";
+import { api, ENDPOINTS } from "@/api";
 import TenantLayout from "@/Layouts/TenantLayout";
 import { MenuItemEditProps } from "@/types";
 import { Head, router } from "@inertiajs/react";
@@ -46,7 +46,7 @@ export default function Edit({ tenant, item, categories, optionGroups }: MenuIte
     const submitItem = async () => {
         await submit(
             () =>
-                api.patch<unknown, { errors?: FormErrors }>(`/api/tenant/menu/items/${item.id}`, {
+                api.patch<unknown, { errors?: FormErrors }>(ENDPOINTS.tenant.menu.item(item.id), {
                     ...formData,
                     allergen_note: formData.allergen_note || null,
                     nutrition_info: Object.values(formData.nutrition_info).some((v) => v !== "")

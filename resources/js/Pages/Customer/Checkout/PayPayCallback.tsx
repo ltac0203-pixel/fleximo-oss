@@ -1,4 +1,4 @@
-import { api } from "@/api";
+import { api, ENDPOINTS } from "@/api";
 import { FinalizePaymentApiResponse, PayPayCallbackProps } from "@/types";
 import { logger } from "@/Utils/logger";
 import ProcessingStatus from "@/Components/Loading/ProcessingStatus";
@@ -49,13 +49,13 @@ export default function PayPayCallback({ payment, success }: PayPayCallbackProps
             }
 
             try {
-                // 戻り先で確定APIを必ず実行し、外部決済との整合をサーバー正本で確定する。 を明示し、実装意図の誤読を防ぐ。
+                // 戻り先で確定APIを必ず実行し、外部決済との整合をサーバー正本で確定する。
                 const {
                     data: response,
                     error: finalizeError,
                     status: finalizeStatus,
                 } = await api.post<FinalizePaymentApiResponse>(
-                    "/api/customer/payments/finalize",
+                    ENDPOINTS.customer.payments.finalize,
                     {
                         payment_id: payment.id,
                     },

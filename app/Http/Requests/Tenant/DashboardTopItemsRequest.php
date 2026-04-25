@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Tenant;
 
+use App\Enums\TopItemsPeriod;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rule;
 
 class DashboardTopItemsRequest extends FormRequest
 {
@@ -17,7 +19,7 @@ class DashboardTopItemsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'period' => ['nullable', 'string', 'in:week,month,year'],
+            'period' => ['nullable', Rule::enum(TopItemsPeriod::class)],
             'limit' => ['nullable', 'integer', 'min:1', 'max:50'],
         ];
     }
@@ -25,7 +27,7 @@ class DashboardTopItemsRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'period.in' => '期間はweek、month、yearのいずれかを指定してください。',
+            'period.enum' => '期間はweek、month、yearのいずれかを指定してください。',
             'limit.integer' => '件数は整数で指定してください。',
             'limit.min' => '件数は1以上を指定してください。',
             'limit.max' => '件数は50以下を指定してください。',
@@ -33,9 +35,13 @@ class DashboardTopItemsRequest extends FormRequest
     }
 
     // バリデーション済みの期間タイプを取得（デフォルト: month）
-    public function getPeriod(): string
+    public function getPeriod(): TopItemsPeriod
     {
-        return $this->validated('period') ?? 'month';
+        $value = $this->validated('period');
+
+        return $value !== null
+            ? TopItemsPeriod::from($value)
+            : TopItemsPeriod::Month;
     }
 
     // バリデーション済みの件数上限を取得（デフォルト: 10）

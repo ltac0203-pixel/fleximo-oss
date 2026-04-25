@@ -6,7 +6,7 @@ import OptionGroupForm, { FormData, FormErrors } from "@/Components/Tenant/Menu/
 import OptionList from "@/Components/Tenant/Menu/OptionList";
 import { useApiFormSubmission } from "@/Hooks/useApiFormSubmission";
 import { useHelpPanel } from "@/Hooks/useHelpPanel";
-import { api } from "@/api";
+import { api, ENDPOINTS } from "@/api";
 import TenantLayout from "@/Layouts/TenantLayout";
 import { OptionGroupEditProps } from "@/types";
 import { Head, router } from "@inertiajs/react";
@@ -28,7 +28,7 @@ export default function Edit({ optionGroup }: OptionGroupEditProps) {
 
     const submitOptionGroup = async () => {
         await submit(
-            () => api.patch<unknown, { errors?: FormErrors }>(`/api/tenant/option-groups/${optionGroup.id}`, formData),
+            () => api.patch<unknown, { errors?: FormErrors }>(ENDPOINTS.tenant.optionGroup(optionGroup.id), formData),
             {
                 logMessage: "Option group update failed",
                 logContext: {

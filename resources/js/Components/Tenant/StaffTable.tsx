@@ -73,7 +73,7 @@ export default function StaffTable({ staff, onEdit, onDelete }: StaffTableProps)
 
     return (
         <>
-            {/* モバイルカードビュー を明示し、実装意図の誤読を防ぐ。 */}
+            {/* モバイルカードビュー */}
             <div className="md:hidden space-y-3">
                 {sortedStaff.map((member) => (
                     <div key={member.id} className="border border-edge rounded-lg p-4 bg-white">
@@ -126,7 +126,7 @@ export default function StaffTable({ staff, onEdit, onDelete }: StaffTableProps)
                 ))}
             </div>
 
-            {/* デスクトップテーブルビュー を明示し、実装意図の誤読を防ぐ。 */}
+            {/* デスクトップテーブルビュー */}
             <div className="hidden md:block overflow-x-auto border border-edge">
                 <table className="min-w-full divide-y divide-edge">
                     <thead className="bg-surface">

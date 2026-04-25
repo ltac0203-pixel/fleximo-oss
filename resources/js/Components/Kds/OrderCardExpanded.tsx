@@ -31,7 +31,7 @@ export default function OrderCardExpanded({ order, onClose, onStatusUpdate }: Or
                 className="w-full max-w-md mx-4 bg-white border border-edge overflow-hidden"
                 onClick={(e) => e.stopPropagation()}
             >
-                {/* ヘッダー を明示し、実装意図の誤読を防ぐ。 */}
+                {/* ヘッダー */}
                 <div className="flex items-center justify-between p-4 border-b border-edge">
                     <div className="flex items-center gap-4">
                         <span className="text-2xl font-bold text-ink font-mono">{order.order_code}</span>
@@ -53,7 +53,7 @@ export default function OrderCardExpanded({ order, onClose, onStatusUpdate }: Or
                     </button>
                 </div>
 
-                {/* 商品リスト を明示し、実装意図の誤読を防ぐ。 */}
+                {/* 商品リスト */}
                 <div className="p-4 max-h-[60vh] overflow-y-auto">
                     <div className="space-y-3">
                         {order.items.map((item) => (
@@ -72,7 +72,7 @@ export default function OrderCardExpanded({ order, onClose, onStatusUpdate }: Or
                     </div>
                 </div>
 
-                {/* アクションエリア を明示し、実装意図の誤読を防ぐ。 */}
+                {/* アクションエリア */}
                 <div className="p-4 border-t border-edge space-y-2">
                     {onStatusUpdate && order.status !== "ready" && order.status !== "accepted" && (
                         <StatusActionButton currentStatus={order.status} onStatusUpdate={handleStatusUpdate} />

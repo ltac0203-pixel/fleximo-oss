@@ -1,6 +1,6 @@
 import Modal from "@/Components/Modal";
 import Button from "@/Components/UI/Button";
-import { api } from "@/api";
+import { api, ENDPOINTS } from "@/api";
 import { useApiFormSubmission } from "@/Hooks/useApiFormSubmission";
 import { FormModalProps, MenuCategory } from "@/types";
 import { router } from "@inertiajs/react";
@@ -39,7 +39,7 @@ export default function EditCategoryModal({ show, category, onClose, onSuccess }
         if (!category) return;
 
         void submit(
-            () => api.patch<unknown, { errors?: FormErrors }>(`/api/tenant/menu/categories/${category.id}`, formData),
+            () => api.patch<unknown, { errors?: FormErrors }>(ENDPOINTS.tenant.menu.category(category.id), formData),
             {
                 logMessage: "カテゴリ更新に失敗",
                 onSuccess: () => {

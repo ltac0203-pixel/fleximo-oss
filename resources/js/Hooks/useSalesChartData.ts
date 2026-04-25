@@ -1,4 +1,4 @@
-import { api } from "@/api";
+import { api, buildQuery, ENDPOINTS } from "@/api";
 import type { ApiDataResponse } from "@/api";
 import useDashboardDataFetcher from "@/Hooks/useDashboardDataFetcher";
 import { SalesData, SalesPeriod } from "@/types";
@@ -67,15 +67,13 @@ export function useSalesChartData(initialData: SalesData[]): UseSalesChartDataRe
 
     const fetchSalesData = useCallback(async (selectedPeriod: SalesPeriod): Promise<SalesData[]> => {
         const { startDate, endDate } = resolveDateRange(selectedPeriod);
-        const params = new URLSearchParams({
+        const url = `${ENDPOINTS.tenant.dashboard.sales}${buildQuery({
             period: selectedPeriod,
             start_date: startDate,
             end_date: endDate,
-        });
+        })}`;
 
-        const { data: result, error } = await api.cachedGet<ApiDataResponse<SalesData[]>>(
-            `/api/tenant/dashboard/sales?${params.toString()}`,
-        );
+        const { data: result, error } = await api.cachedGet<ApiDataResponse<SalesData[]>>(url);
 
         if (error || !result) {
             throw error ?? "empty result";

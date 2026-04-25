@@ -8,11 +8,15 @@ const routerVisitMock = vi.hoisted(() => vi.fn());
 const loggerErrorMock = vi.hoisted(() => vi.fn());
 const loggerWarnMock = vi.hoisted(() => vi.fn());
 
-vi.mock("@/api", () => ({
-    api: {
-        post: apiPostMock,
-    },
-}));
+vi.mock("@/api", async (importOriginal) => {
+    const actual = await importOriginal<typeof import("@/api")>();
+    return {
+        ...actual,
+        api: {
+            post: apiPostMock,
+        },
+    };
+});
 
 vi.mock("@inertiajs/react", () => ({
     Head: () => null,

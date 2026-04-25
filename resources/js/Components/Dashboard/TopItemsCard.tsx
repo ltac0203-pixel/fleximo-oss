@@ -1,11 +1,8 @@
 import { TOP_ITEMS_PERIOD_OPTIONS, useTopItemsData } from "@/Hooks/useTopItemsData";
-import { formatCurrency } from "@/Utils/formatPrice";
+import { formatCurrency, formatNumber } from "@/Utils/formatPrice";
 import GeoSurface from "@/Components/GeoSurface";
+import SegmentedControl from "@/Components/UI/SegmentedControl";
 import DashboardAsyncState from "./DashboardAsyncState";
-
-function formatNumber(value: number): string {
-    return new Intl.NumberFormat("ja-JP").format(value);
-}
 
 export default function TopItemsCard() {
     const { period, items, loading, fetchError, onPeriodChange } = useTopItemsData();
@@ -14,21 +11,11 @@ export default function TopItemsCard() {
         <GeoSurface topAccent elevated className="p-4">
             <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-medium text-ink">人気商品</h3>
-                <div className="geo-surface inline-flex gap-1 p-1">
-                    {TOP_ITEMS_PERIOD_OPTIONS.map((p) => (
-                        <button
-                            key={p.value}
-                            onClick={() => onPeriodChange(p.value)}
-                            className={`border px-3 py-1 text-sm transition ${
-                                period === p.value
-                                    ? "bg-sky-600 text-white border-sky-600 shadow-geo-sky"
-                                    : "bg-white text-ink-light border-edge-strong hover:bg-surface hover:border-primary-light"
-                            }`}
-                        >
-                            {p.label}
-                        </button>
-                    ))}
-                </div>
+                <SegmentedControl
+                    options={TOP_ITEMS_PERIOD_OPTIONS}
+                    selected={period}
+                    onChange={onPeriodChange}
+                />
             </div>
 
             <DashboardAsyncState

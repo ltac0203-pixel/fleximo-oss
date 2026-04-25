@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Unit\Services\Dashboard;
 
 use App\Enums\SalesPeriod;
+use App\Enums\TopItemsPeriod;
 use App\Services\Dashboard\DashboardCacheKeys;
 use Carbon\Carbon;
 use PHPUnit\Framework\TestCase;
@@ -49,11 +50,11 @@ class DashboardCacheKeysTest extends TestCase
     {
         $this->assertSame(
             'tenant_dashboard:3:top_items:week:10',
-            DashboardCacheKeys::topItems(3, 'week', 10)
+            DashboardCacheKeys::topItems(3, TopItemsPeriod::Week, 10)
         );
         $this->assertSame(
             'tenant_dashboard:3:top_items:month:5',
-            DashboardCacheKeys::topItems(3, 'month', 5)
+            DashboardCacheKeys::topItems(3, TopItemsPeriod::Month, 5)
         );
     }
 

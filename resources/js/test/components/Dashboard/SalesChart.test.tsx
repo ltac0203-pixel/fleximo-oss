@@ -5,7 +5,10 @@ const loggerMock = vi.hoisted(() => ({
     error: vi.fn(),
     exception: vi.fn(),
 }));
-vi.mock("@/api", () => ({ api: apiMock }));
+vi.mock("@/api", async (importOriginal) => {
+    const actual = await importOriginal<typeof import("@/api")>();
+    return { ...actual, api: apiMock };
+});
 vi.mock("@/Utils/logger", () => ({ logger: loggerMock }));
 vi.mock("recharts", () => import("../../helpers/chartMock"));
 
