@@ -12,6 +12,7 @@ import {
     mergeOrders,
     shouldIgnoreIncomingOrder,
 } from "./kdsOrderHelpers";
+import { usePollingTimer, type PollResult } from "./usePollingTimer";
 
 interface UseKdsPollingParams {
     initialServerTime?: string;
@@ -31,6 +32,8 @@ export interface UseKdsPollingReturn {
     refresh: () => Promise<void>;
 }
 
+const FULL_REFRESH_INTERVAL = 30;
+
 export function useKdsPolling({
     initialServerTime,
     pollingInterval,
@@ -43,6 +46,8 @@ export function useKdsPolling({
     // デプロイ後も頻度を調整できるよう、props未指定時は環境変数を既定値として扱う。
     const intervalMs =
         pollingInterval ?? Number(import.meta.env.VITE_KDS_POLLING_INTERVAL_MS ?? DEFAULT_POLLING_INTERVAL);
+    const maxBackoffMs = Number(import.meta.env.VITE_KDS_POLLING_BACKOFF_MAX_MS ?? 60000);
+    const pauseWhenHidden = import.meta.env.VITE_KDS_POLLING_PAUSE_WHEN_HIDDEN === "true";
     const activeRef = isActiveRef;
 
     const [pollingState, setPollingState] = useState<PollingState>("idle");
@@ -57,48 +62,24 @@ export function useKdsPolling({
     // initialServerTime がある場合は初期データをInertia経由で取得済みなので、差分フェッチから開始する。
     const isFirstFetch = useRef(!initialServerTime);
 
-    // 非表示タブへの無駄なポーリングを止めるため可視状態を保持する。
-    const isTabVisible = useRef(true);
-
-    // 再帰setTimeoutを安全に停止できるよう、タイマーIDを保持する。
-    const timerIdRef = useRef<NodeJS.Timeout | null>(null);
-
     // 定期フルリフレッシュのため、ポーリング回数をカウントする。
     const pollCountRef = useRef(0);
-    const FULL_REFRESH_INTERVAL = 30;
 
-    // 一時障害時の過剰リトライを避けるため、連続失敗回数を保持する。
-    const errorCountRef = useRef(0);
+    // 同一エラーで何度も通知しないよう、復旧まで通知済みフラグを保持する。
     const hasNotifiedPollingErrorRef = useRef(false);
 
-    // バックオフで変化した間隔を次回スケジュールへ反映する。
-    const currentIntervalRef = useRef(intervalMs);
+    const pruneExpiredPendingStatusUpdates = useCallback(
+        (now: number) => {
+            const pendingUpdates = pendingStatusUpdatesRef.current;
 
-    // タイマー実行時にも最新ロジックを呼べるよう関数参照を固定する。
-    const fetchOrdersRef = useRef<(() => Promise<void>) | null>(null);
-    const scheduleNextPollRef = useRef<(() => void) | null>(null);
-
-    // 設定変更後の新しい間隔を即座に使えるよう、最新値を参照化する。
-    const intervalMsRef = useLatest(intervalMs);
-
-    // 回復前に再試行を打ちすぎないため、失敗回数に応じて待機時間を伸ばす。
-    const calculateBackoffInterval = useCallback((errorCount: number, baseInterval: number): number => {
-        const maxBackoff = Number(import.meta.env.VITE_KDS_POLLING_BACKOFF_MAX_MS ?? 60000);
-
-        // 指数関数で伸ばして短時間の連続失敗時にAPI集中を防ぐ。
-        const backoffInterval = baseInterval * Math.pow(2, errorCount);
-        return Math.min(backoffInterval, maxBackoff);
-    }, []);
-
-    const pruneExpiredPendingStatusUpdates = useCallback((now: number) => {
-        const pendingUpdates = pendingStatusUpdatesRef.current;
-
-        for (const [orderId, pendingUpdate] of pendingUpdates.entries()) {
-            if (pendingUpdate.expiresAt <= now) {
-                pendingUpdates.delete(orderId);
+            for (const [orderId, pendingUpdate] of pendingUpdates.entries()) {
+                if (pendingUpdate.expiresAt <= now) {
+                    pendingUpdates.delete(orderId);
+                }
             }
-        }
-    }, [pendingStatusUpdatesRef]);
+        },
+        [pendingStatusUpdatesRef],
+    );
 
     const guardIncomingOrdersWithPendingUpdates = useCallback(
         (incoming: KdsApiOrder[]): { guardedIncoming: KdsApiOrder[]; ignoredStaleIncoming: boolean } => {
@@ -202,12 +183,8 @@ export function useKdsPolling({
                 setLastServerTime(serverTime);
             }
 
-            // 一度成功したらバックオフを解除して通常間隔へ戻す。
-            if (errorCountRef.current > 0) {
-                setPollingState("idle");
-            }
-            errorCountRef.current = 0;
-            currentIntervalRef.current = intervalMsRef.current;
+            // 一度成功したらバックオフ済みステートを通常に戻し、再通知を許可する。
+            setPollingState("idle");
             hasNotifiedPollingErrorRef.current = false;
 
             setLastUpdated(new Date());
@@ -218,13 +195,9 @@ export function useKdsPolling({
 
             // 一時障害を前提に詳細を記録し、次回リトライ判断に使えるようにする。
             logger.error("KDS order polling failed", error, {
-                intervalMs: intervalMsRef.current,
+                intervalMs,
                 lastServerTime: lastServerTimeRef.current,
             });
-
-            // 連続失敗ほど待機時間を延ばし、障害中のリクエスト集中を避ける。
-            errorCountRef.current += 1;
-            currentIntervalRef.current = calculateBackoffInterval(errorCountRef.current, intervalMsRef.current);
 
             if (!hasNotifiedPollingErrorRef.current) {
                 const fallbackMessage = "注文の取得に失敗しました";
@@ -237,122 +210,53 @@ export function useKdsPolling({
             }
 
             setPollingState("error");
+            // 上位の usePollingTimer にバックオフを判断させるため例外を再送出する。
+            throw error;
         }
     }, [
         activeRef,
         setOrders,
-        calculateBackoffInterval,
         guardIncomingOrdersWithPendingUpdates,
-        intervalMsRef,
+        intervalMs,
         onNewOrderRef,
         onPollingErrorRef,
     ]);
 
-    // タイマーから古いクロージャを呼ばないよう、参照先を都度更新する。
-    fetchOrdersRef.current = fetchOrders;
-
-    // fetch完了後に次回を予約し、通信遅延時のリクエスト重複を防ぐ。
-    const scheduleNextPoll = useCallback(() => {
-        if (!activeRef.current) {
-            return;
+    // KDS は終端のない永続ループ。エラー時は usePollingTimer 側でバックオフが切り替わる。
+    const fetcher = useCallback(async (): Promise<PollResult> => {
+        try {
+            await fetchOrders();
+            return { shouldContinue: true };
+        } catch {
+            return { shouldContinue: true, errored: true };
         }
+    }, [fetchOrders]);
 
-        const pauseWhenHidden = import.meta.env.VITE_KDS_POLLING_PAUSE_WHEN_HIDDEN === "true";
-
-        // 操作者が見ていない間はポーリングを止めてリソースを節約する。
-        if (pauseWhenHidden && !isTabVisible.current) {
-            return;
-        }
-
-        // 多重タイマーで同時実行しないよう前回予約を必ず破棄する。
-        if (timerIdRef.current) {
-            clearTimeout(timerIdRef.current);
-            timerIdRef.current = null;
-        }
-
-        timerIdRef.current = setTimeout(() => {
-            if (!activeRef.current) {
-                return;
-            }
-
-            void fetchOrdersRef.current?.().finally(() => {
-                if (!activeRef.current) {
-                    return;
-                }
-                scheduleNextPollRef.current?.();
-            });
-        }, currentIntervalRef.current);
-    }, [activeRef]);
-
-    // finally節から最新スケジューラを呼べるよう参照を同期する。
-    scheduleNextPollRef.current = scheduleNextPoll;
-
-    // 表示直後に古い注文を見せないため、初回は待たずに同期を走らせる。
-    useEffect(() => {
-        activeRef.current = true;
-
-        void fetchOrdersRef.current?.().finally(() => {
-            if (!activeRef.current) {
-                return;
-            }
-            scheduleNextPollRef.current?.();
-        });
-
-        // アンマウント後の不要なタイマー発火を防ぐ。
-        return () => {
-            activeRef.current = false;
-            if (timerIdRef.current) {
-                clearTimeout(timerIdRef.current);
-                timerIdRef.current = null;
-            }
-        };
-    }, [activeRef]);
-
-    // 復帰直後に差分を取り込めるよう、可視状態とポーリングを連動させる。
-    useEffect(() => {
-        const pauseWhenHidden = import.meta.env.VITE_KDS_POLLING_PAUSE_WHEN_HIDDEN === "true";
-
-        if (!pauseWhenHidden) return;
-
-        const handleVisibilityChange = () => {
-            const isVisible = document.visibilityState === "visible";
-            isTabVisible.current = isVisible;
-
-            if (isVisible) {
-                // 非表示中の更新を取りこぼさないよう、復帰時は即時同期する。
-                void fetchOrdersRef.current?.().finally(() => {
-                    if (!activeRef.current) {
-                        return;
-                    }
-                    scheduleNextPollRef.current?.();
-                });
-            } else {
-                // バックグラウンドで無駄な実行を続けないためタイマーを止める。
-                if (timerIdRef.current) {
-                    clearTimeout(timerIdRef.current);
-                    timerIdRef.current = null;
-                }
-            }
-        };
-
-        document.addEventListener("visibilitychange", handleVisibilityChange);
-        return () => {
-            document.removeEventListener("visibilitychange", handleVisibilityChange);
-        };
-    }, [activeRef]);
+    const { refresh: timerRefresh } = usePollingTimer({
+        fetcher,
+        baseIntervalMs: intervalMs,
+        maxIntervalMs: maxBackoffMs,
+        enabled: true,
+        pauseWhenHidden,
+    });
 
     // 初期データ表示時にも更新時刻を示せるよう初期化しておく。
     useEffect(() => {
         setLastUpdated(new Date());
     }, []);
 
-    // 手動再試行時はバックオフを解除し、操作意図を優先して即時再取得する。
-    const refresh = useCallback(async () => {
-        errorCountRef.current = 0;
-        currentIntervalRef.current = intervalMsRef.current;
+    // アンマウント後の遅延 fetcher 完了から `setOrders` や `onPollingError` が呼ばれないよう、
+    // 親側の isActiveRef をライフサイクルに同期させる。
+    useEffect(() => {
+        activeRef.current = true;
+        return () => {
+            activeRef.current = false;
+        };
+    }, [activeRef]);
 
-        await fetchOrders();
-    }, [fetchOrders, intervalMsRef]);
+    const refresh = useCallback(async () => {
+        await timerRefresh();
+    }, [timerRefresh]);
 
     return {
         pollingState,
