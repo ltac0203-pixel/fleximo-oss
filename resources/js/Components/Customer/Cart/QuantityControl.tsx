@@ -1,4 +1,4 @@
-const MAX_ITEM_QUANTITY = 99;
+import { MAX_ITEM_QUANTITY } from "@/constants/quantity";
 
 interface QuantityControlProps {
     quantity: number;
