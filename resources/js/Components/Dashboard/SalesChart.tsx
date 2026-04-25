@@ -9,6 +9,7 @@ import DashboardAsyncState from "./DashboardAsyncState";
 import DashboardChartErrorBoundary from "./DashboardChartErrorBoundary";
 import PeriodSelector from "./PeriodSelector";
 import useKeyboardChartNavigation from "./useKeyboardChartNavigation";
+import { parseNumericTooltipValue } from "./chartTooltipHelpers";
 
 /** Y軸の売上表示を千円単位にする除数 */
 const CURRENCY_SCALE_DIVISOR = 1000;
@@ -18,19 +19,6 @@ interface SalesChartProps {
 }
 
 type CustomTooltipProps = Partial<Pick<TooltipContentProps<number, string>, "active" | "payload" | "label">>;
-
-function parseNumericTooltipValue(value: unknown): number | null {
-    if (typeof value === "number") {
-        return value;
-    }
-
-    if (typeof value === "string") {
-        const parsed = Number(value);
-        return Number.isFinite(parsed) ? parsed : null;
-    }
-
-    return null;
-}
 
 function getSeriesStyleLabel(name: string): string {
     return name === "売上" ? "実線" : "破線";
