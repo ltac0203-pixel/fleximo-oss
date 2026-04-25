@@ -71,33 +71,4 @@ class SessionServiceTest extends TestCase
         $this->assertDatabaseHas('sessions', ['id' => $otherUserSessionId]);
     }
 
-    public function test_delete_all_sessions_removes_all_user_sessions(): void
-    {
-        $user = User::factory()->create();
-        $sessionId1 = 'session-1-'.Str::random(10);
-        $sessionId2 = 'session-2-'.Str::random(10);
-
-        $this->insertSession($user->id, $sessionId1);
-        $this->insertSession($user->id, $sessionId2);
-
-        $deleted = $this->sessionService->deleteAllSessions($user->id);
-
-        $this->assertSame(2, $deleted);
-        $this->assertDatabaseMissing('sessions', ['user_id' => $user->id]);
-    }
-
-    public function test_delete_all_sessions_does_not_affect_other_users(): void
-    {
-        $user = User::factory()->create();
-        $otherUser = User::factory()->create();
-        $otherUserSessionId = 'other-user-session-'.Str::random(10);
-
-        $this->insertSession($user->id, 'user-session-'.Str::random(10));
-        $this->insertSession($otherUser->id, $otherUserSessionId);
-
-        $this->sessionService->deleteAllSessions($user->id);
-
-        $this->assertDatabaseMissing('sessions', ['user_id' => $user->id]);
-        $this->assertDatabaseHas('sessions', ['id' => $otherUserSessionId]);
-    }
 }

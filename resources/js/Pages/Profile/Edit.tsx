@@ -2,7 +2,6 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { PageProps } from "@/types";
 import { Head } from "@inertiajs/react";
 import LogoutForm from "./Partials/DeleteUserForm";
-import UpdatePasswordForm from "./Partials/UpdatePasswordForm";
 import UpdateProfileInformationForm from "./Partials/UpdateProfileInformationForm";
 
 export default function Edit({ mustVerifyEmail, status }: PageProps<{ mustVerifyEmail: boolean; status?: string }>) {
@@ -20,10 +19,6 @@ export default function Edit({ mustVerifyEmail, status }: PageProps<{ mustVerify
                             status={status}
                             className="max-w-xl"
                         />
-                    </div>
-
-                    <div className="bg-white p-4 border border-slate-200 sm:p-8">
-                        <UpdatePasswordForm className="max-w-xl" />
                     </div>
 
                     <div className="bg-white p-4 border border-slate-200 sm:p-8">
