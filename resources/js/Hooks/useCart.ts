@@ -1,6 +1,7 @@
 import { useCartStore } from "@/stores/cartStore";
 import { Cart } from "@/types";
 import { useEffect, useRef } from "react";
+import { useShallow } from "zustand/react/shallow";
 
 interface UseCartOptions {
     autoFetch?: boolean;
@@ -27,16 +28,23 @@ interface UseCartReturn {
 export function useCart(options?: UseCartOptions): UseCartReturn {
     const { autoFetch = true } = options ?? {};
 
-    const carts = useCartStore((s) => s.carts);
-    const isLoading = useCartStore((s) => s.isLoading);
-    const error = useCartStore((s) => s.error);
-    const fetchCarts = useCartStore((s) => s.fetchCarts);
-    const addToCart = useCartStore((s) => s.addToCart);
-    const updateQuantity = useCartStore((s) => s.updateQuantity);
-    const removeItem = useCartStore((s) => s.removeItem);
-    const clearCart = useCartStore((s) => s.clearCart);
-    const getTotalItemCount = useCartStore((s) => s.getTotalItemCount);
-    const getGrandTotal = useCartStore((s) => s.getGrandTotal);
+    // 浅い等価チェックで複数フィールドを 1 購読にまとめ、selector 登録回数を削減する。
+    const { carts, isLoading, error } = useCartStore(
+        useShallow((s) => ({ carts: s.carts, isLoading: s.isLoading, error: s.error })),
+    );
+    // actions は store 生成時に固定された不変参照のため、useShallow で 1 購読にまとめる。
+    const { fetchCarts, addToCart, updateQuantity, removeItem, clearCart, getTotalItemCount, getGrandTotal } =
+        useCartStore(
+            useShallow((s) => ({
+                fetchCarts: s.fetchCarts,
+                addToCart: s.addToCart,
+                updateQuantity: s.updateQuantity,
+                removeItem: s.removeItem,
+                clearCart: s.clearCart,
+                getTotalItemCount: s.getTotalItemCount,
+                getGrandTotal: s.getGrandTotal,
+            })),
+        );
 
     const didFetchRef = useRef(false);
     useEffect(() => {
