@@ -1,3 +1,5 @@
+import { MAX_ITEM_QUANTITY } from "@/constants/quantity";
+
 interface QuantitySelectorProps {
     value: number;
     onChange: (quantity: number) => void;
@@ -5,7 +7,12 @@ interface QuantitySelectorProps {
     max?: number;
 }
 
-export default function QuantitySelector({ value, onChange, min = 1, max = 99 }: QuantitySelectorProps) {
+export default function QuantitySelector({
+    value,
+    onChange,
+    min = 1,
+    max = MAX_ITEM_QUANTITY,
+}: QuantitySelectorProps) {
     const canDecrement = value > min;
     const canIncrement = value < max;
 

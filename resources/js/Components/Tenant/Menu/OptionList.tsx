@@ -63,7 +63,7 @@ export default function OptionList({ optionGroupId, options, onOptionsChange, on
         await deleteOption(optionId);
     };
 
-    const formatPrice = (price: number) => {
+    const formatOptionPriceDelta = (price: number) => {
         if (price === 0) return "±0円";
         return price > 0 ? `+${price}円` : `${price}円`;
     };
@@ -139,7 +139,7 @@ export default function OptionList({ optionGroupId, options, onOptionsChange, on
                                 <>
                                     <div className="flex items-center gap-4">
                                         <span className="text-sm font-medium text-ink">{option.name}</span>
-                                        <span className="text-sm text-muted">{formatPrice(option.price)}</span>
+                                        <span className="text-sm text-muted">{formatOptionPriceDelta(option.price)}</span>
                                         {!option.is_active && <span className="text-xs text-muted-light">(無効)</span>}
                                     </div>
                                     <div className="flex gap-2">

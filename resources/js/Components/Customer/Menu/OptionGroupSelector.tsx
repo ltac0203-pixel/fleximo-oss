@@ -9,7 +9,7 @@ interface OptionGroupSelectorProps {
 export default function OptionGroupSelector({ group, selectedOptions, onChange }: OptionGroupSelectorProps) {
     const isSingleSelect = group.max_select === 1;
 
-    const formatPrice = (price: number) => {
+    const formatOptionPriceTag = (price: number) => {
         if (price === 0) return "";
         return `+¥${price.toLocaleString()}`;
     };
@@ -97,7 +97,7 @@ export default function OptionGroupSelector({ group, selectedOptions, onChange }
                                     <span className="text-ink">{option.name}</span>
                                 </div>
                                 {option.price > 0 && (
-                                    <span className="text-sm text-muted">{formatPrice(option.price)}</span>
+                                    <span className="text-sm text-muted">{formatOptionPriceTag(option.price)}</span>
                                 )}
                             </label>
                         );
@@ -127,7 +127,7 @@ export default function OptionGroupSelector({ group, selectedOptions, onChange }
                                 <span className="text-ink">{option.name}</span>
                             </div>
                             {option.price > 0 && (
-                                <span className="text-sm text-muted">{formatPrice(option.price)}</span>
+                                <span className="text-sm text-muted">{formatOptionPriceTag(option.price)}</span>
                             )}
                         </label>
                     );
