@@ -1,8 +1,14 @@
 import type { PageProps } from "./common";
+import type { OrderStatusValue } from "./order";
 
-export type KdsOrderStatus = "paid" | "accepted" | "in_progress" | "ready";
+// バックエンド `OrderStatus::isKdsVisible()` と一致する KDS 表示対象ステータス。
+// 包含関係 `OrderStatusValue ⊃ KdsStatusUpdateTarget ⊃ KdsOrderStatus` を型で表現する。
+export type KdsOrderStatus = Extract<OrderStatusValue, "paid" | "accepted" | "in_progress" | "ready">;
 
-export type KdsStatusUpdateTarget = KdsOrderStatus | "completed" | "cancelled";
+export type KdsStatusUpdateTarget = Extract<
+    OrderStatusValue,
+    "paid" | "accepted" | "in_progress" | "ready" | "completed" | "cancelled"
+>;
 
 export type PollingState = "idle" | "polling" | "error";
 
@@ -19,7 +25,9 @@ export interface KdsOrderItem {
 }
 
 export interface KdsStatusMeta {
-    label: string;
+    // KDS 画面のバッジに表示する UX 用見出し。`paid` は「新規注文」など、
+    // 意味ラベル (`ORDER_STATUS_LABELS`) と分けて UI 文脈に最適化する。
+    kdsHeading: string;
     dotClass: string;
     cardBorderClass: string;
     badgeBgClass: string;

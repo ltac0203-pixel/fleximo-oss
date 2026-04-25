@@ -3,6 +3,7 @@ import {
     KdsOrderStatus,
     KdsStatusUpdateTarget,
 } from "@/types";
+import { ORDER_STATUS_LABELS } from "@/constants/orderStatus";
 
 export type KdsOrderApiStatus = KdsOrderStatus | "completed" | "cancelled";
 export type KdsApiOrder = Omit<KdsOrder, "status"> & { status: KdsOrderApiStatus };
@@ -21,14 +22,16 @@ export function isActiveKdsOrder(order: KdsApiOrder): order is KdsOrder {
     return isActiveKdsOrderStatus(order.status);
 }
 
-// UIの文言をAPIレスポンスから独立させ、文言変更時の表示崩れを防ぐ。
+// 楽観的更新時の `status_label` を意味側ラベルから引いて、API レスポンスから独立させる。
+// `KDS_STATUS_META.kdsHeading` (UI 用) ではなく `ORDER_STATUS_LABELS` (意味用) を採用するのは
+// レスポンスの `status_label` がバックエンド `OrderStatus::label()` と整合する場所だから。
 export const STATUS_LABELS: Record<KdsStatusUpdateTarget, string> = {
-    paid: "決済完了",
-    accepted: "受付済み",
-    in_progress: "調理中",
-    ready: "準備完了",
-    completed: "完了",
-    cancelled: "キャンセル",
+    paid: ORDER_STATUS_LABELS.paid,
+    accepted: ORDER_STATUS_LABELS.accepted,
+    in_progress: ORDER_STATUS_LABELS.in_progress,
+    ready: ORDER_STATUS_LABELS.ready,
+    completed: ORDER_STATUS_LABELS.completed,
+    cancelled: ORDER_STATUS_LABELS.cancelled,
 };
 
 // 運用時に「鮮度」と「API負荷」のバランスを調整できるよう既定値を固定する。
