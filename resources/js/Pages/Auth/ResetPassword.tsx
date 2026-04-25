@@ -1,6 +1,6 @@
-import InputError from "@/Components/InputError";
-import InputLabel from "@/Components/InputLabel";
+import AuthHeader from "@/Components/UI/AuthHeader";
 import Button from "@/Components/UI/Button";
+import FormField from "@/Components/UI/FormField";
 import TextInput from "@/Components/TextInput";
 import GuestLayout from "@/Layouts/GuestLayout";
 import { PageProps } from "@/types";
@@ -32,18 +32,10 @@ export default function ResetPassword({ token, email }: ResetPasswordProps) {
         <GuestLayout>
             <Head title="パスワードの再設定" />
 
-            <div className="mb-6">
-                <div className="flex items-center gap-2">
-                    <div className="h-px w-8 bg-sky-400" />
-                    <p className="text-xs font-medium uppercase tracking-widest text-sky-600">新しいパスワード</p>
-                </div>
-                <h2 className="mt-2 text-2xl font-bold text-ink">新しいパスワードを設定</h2>
-            </div>
+            <AuthHeader eyebrow="新しいパスワード" title="新しいパスワードを設定" />
 
             <form onSubmit={submit}>
-                <div>
-                    <InputLabel htmlFor="email" value="メールアドレス" />
-
+                <FormField label="メールアドレス" htmlFor="email" error={errors.email}>
                     <TextInput
                         id="email"
                         type="email"
@@ -55,13 +47,9 @@ export default function ResetPassword({ token, email }: ResetPasswordProps) {
                         autoComplete="username"
                         onChange={(e) => setData("email", e.target.value)}
                     />
+                </FormField>
 
-                    <InputError id="email-error" message={errors.email} className="mt-2" />
-                </div>
-
-                <div className="mt-4">
-                    <InputLabel htmlFor="password" value="新しいパスワード" />
-
+                <FormField label="新しいパスワード" htmlFor="password" error={errors.password} className="mt-4">
                     <TextInput
                         id="password"
                         type="password"
@@ -74,13 +62,14 @@ export default function ResetPassword({ token, email }: ResetPasswordProps) {
                         isFocused={true}
                         onChange={(e) => setData("password", e.target.value)}
                     />
+                </FormField>
 
-                    <InputError id="password-error" message={errors.password} className="mt-2" />
-                </div>
-
-                <div className="mt-4">
-                    <InputLabel htmlFor="password_confirmation" value="パスワード（確認）" />
-
+                <FormField
+                    label="パスワード（確認）"
+                    htmlFor="password_confirmation"
+                    error={errors.password_confirmation}
+                    className="mt-4"
+                >
                     <TextInput
                         id="password_confirmation"
                         type="password"
@@ -92,13 +81,7 @@ export default function ResetPassword({ token, email }: ResetPasswordProps) {
                         autoComplete="new-password"
                         onChange={(e) => setData("password_confirmation", e.target.value)}
                     />
-
-                    <InputError
-                        id="password_confirmation-error"
-                        message={errors.password_confirmation}
-                        className="mt-2"
-                    />
-                </div>
+                </FormField>
 
                 <div className="mt-4 flex items-center justify-end">
                     <Button

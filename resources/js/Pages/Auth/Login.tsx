@@ -1,7 +1,7 @@
 import Checkbox from "@/Components/Checkbox";
-import InputError from "@/Components/InputError";
-import InputLabel from "@/Components/InputLabel";
+import AuthHeader from "@/Components/UI/AuthHeader";
 import Button from "@/Components/UI/Button";
+import FormField from "@/Components/UI/FormField";
 import TextInput from "@/Components/TextInput";
 import GuestLayout from "@/Layouts/GuestLayout";
 import { PageProps } from "@/types";
@@ -32,19 +32,12 @@ export default function Login({ status, canResetPassword }: { status?: string; c
         <GuestLayout>
             <Head title="ログイン" />
 
-            <div className="mb-6">
-                <Link
-                    href={route("home")}
-                    className="mb-3 inline-flex rounded-md text-sm text-ink-light underline hover:text-ink focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-                >
-                    認証ページトップに戻る
-                </Link>
-                <div className="flex items-center gap-2">
-                    <div className="h-px w-8 bg-sky-400" />
-                    <p className="text-xs font-medium uppercase tracking-widest text-sky-600">ログイン</p>
-                </div>
-                <h2 className="mt-2 text-2xl font-bold text-ink">ログイン</h2>
-            </div>
+            <AuthHeader
+                eyebrow="ログイン"
+                title="ログイン"
+                backHref={route("home")}
+                backLabel="認証ページトップに戻る"
+            />
 
             {status && (
                 <div className="mb-4 border border-green-200 bg-green-50 p-3 text-sm font-medium text-green-700">
@@ -65,9 +58,7 @@ export default function Login({ status, canResetPassword }: { status?: string; c
             )}
 
             <form onSubmit={submit}>
-                <div>
-                    <InputLabel htmlFor="email" value="メールアドレス" />
-
+                <FormField label="メールアドレス" htmlFor="email" error={errors.email}>
                     <TextInput
                         id="email"
                         type="email"
@@ -80,13 +71,9 @@ export default function Login({ status, canResetPassword }: { status?: string; c
                         isFocused={true}
                         onChange={(e) => setData("email", e.target.value)}
                     />
+                </FormField>
 
-                    <InputError id="email-error" message={errors.email} className="mt-2" />
-                </div>
-
-                <div className="mt-4">
-                    <InputLabel htmlFor="password" value="パスワード" />
-
+                <FormField label="パスワード" htmlFor="password" error={errors.password} className="mt-4">
                     <TextInput
                         id="password"
                         type="password"
@@ -98,9 +85,7 @@ export default function Login({ status, canResetPassword }: { status?: string; c
                         autoComplete="current-password"
                         onChange={(e) => setData("password", e.target.value)}
                     />
-
-                    <InputError id="password-error" message={errors.password} className="mt-2" />
-                </div>
+                </FormField>
 
                 <div className="mt-4 block">
                     <label className="flex items-center">

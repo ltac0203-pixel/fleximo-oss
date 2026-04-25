@@ -1,5 +1,6 @@
-import InputError from "@/Components/InputError";
+import AuthHeader from "@/Components/UI/AuthHeader";
 import Button from "@/Components/UI/Button";
+import FormField from "@/Components/UI/FormField";
 import TextInput from "@/Components/TextInput";
 import GuestLayout from "@/Layouts/GuestLayout";
 import { PageProps } from "@/types";
@@ -25,13 +26,7 @@ export default function ForgotPassword({ status }: ForgotPasswordProps) {
         <GuestLayout>
             <Head title="パスワード再設定" />
 
-            <div className="mb-6">
-                <div className="flex items-center gap-2">
-                    <div className="h-px w-8 bg-sky-400" />
-                    <p className="text-xs font-medium uppercase tracking-widest text-sky-600">パスワード再設定</p>
-                </div>
-                <h2 className="mt-2 text-2xl font-bold text-ink">パスワード再設定</h2>
-            </div>
+            <AuthHeader eyebrow="パスワード再設定" title="パスワード再設定" />
 
             <div className="mb-4 text-sm text-ink-light">
                 パスワードを忘れてしまいましたか？問題ありません。メールアドレスを入力すると、パスワード再設定用のリンクをお送りします。
@@ -44,19 +39,20 @@ export default function ForgotPassword({ status }: ForgotPasswordProps) {
             )}
 
             <form onSubmit={submit}>
-                <TextInput
-                    id="email"
-                    type="email"
-                    name="email"
-                    value={data.email}
-                    aria-invalid={!!errors.email}
-                    aria-describedby={errors.email ? "email-error" : undefined}
-                    className="mt-1 block w-full"
-                    isFocused={true}
-                    onChange={(e) => setData("email", e.target.value)}
-                />
-
-                <InputError id="email-error" message={errors.email} className="mt-2" />
+                <FormField label="メールアドレス" htmlFor="email" error={errors.email}>
+                    <TextInput
+                        id="email"
+                        type="email"
+                        name="email"
+                        value={data.email}
+                        aria-invalid={!!errors.email}
+                        aria-describedby={errors.email ? "email-error" : undefined}
+                        className="mt-1 block w-full"
+                        autoComplete="username"
+                        isFocused={true}
+                        onChange={(e) => setData("email", e.target.value)}
+                    />
+                </FormField>
 
                 <div className="mt-4 flex items-center justify-between">
                     <Link

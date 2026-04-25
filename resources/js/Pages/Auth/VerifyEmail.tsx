@@ -1,3 +1,4 @@
+import AuthHeader from "@/Components/UI/AuthHeader";
 import Button from "@/Components/UI/Button";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { PageProps } from "@/types";
@@ -22,13 +23,7 @@ export default function VerifyEmail({ status }: VerifyEmailProps) {
             <Head title="メール認証" />
 
             <div className="mx-auto max-w-2xl px-4 py-6">
-                <div className="mb-6">
-                    <div className="flex items-center gap-2">
-                        <div className="h-px w-8 bg-sky-400" />
-                        <p className="text-xs font-medium uppercase tracking-widest text-sky-600">メール認証</p>
-                    </div>
-                    <h2 className="mt-2 text-2xl font-bold text-ink">メール認証</h2>
-                </div>
+                <AuthHeader eyebrow="メール認証" title="メール認証" />
 
                 <div className="mb-4 text-sm text-ink-light">
                     ご登録ありがとうございます。ご利用を開始する前に、先ほどお送りしたメール内のリンクをクリックしてメールアドレスを確認してください。メールが届いていない場合は再送します。

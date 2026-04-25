@@ -1,7 +1,7 @@
 import Checkbox from "@/Components/Checkbox";
-import InputError from "@/Components/InputError";
-import InputLabel from "@/Components/InputLabel";
+import AuthHeader from "@/Components/UI/AuthHeader";
 import Button from "@/Components/UI/Button";
+import FormField from "@/Components/UI/FormField";
 import TextInput from "@/Components/TextInput";
 import GuestLayout from "@/Layouts/GuestLayout";
 import { PageProps } from "@/types";
@@ -33,18 +33,12 @@ export default function BusinessLogin({ status, canResetPassword }: { status?: s
         <GuestLayout>
             <Head title="事業者ログイン" />
 
-            <div className="mb-6">
-                <Link
-                    href={route("home")}
-                    className="mb-3 inline-flex rounded-md text-sm text-ink-light underline hover:text-ink focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-                >
-                    認証ページトップに戻る
-                </Link>
-                <h2 className="text-2xl font-bold text-ink">事業者ログイン</h2>
-                <p className="mt-2 text-sm text-ink-light">
-                    テナント管理者・スタッフおよびシステム管理者の方専用のログインページです
-                </p>
-            </div>
+            <AuthHeader
+                title="事業者ログイン"
+                description="テナント管理者・スタッフおよびシステム管理者の方専用のログインページです"
+                backHref={route("home")}
+                backLabel="認証ページトップに戻る"
+            />
 
             {status && <div className="mb-4 text-sm font-medium text-green-600">{status}</div>}
 
@@ -61,9 +55,7 @@ export default function BusinessLogin({ status, canResetPassword }: { status?: s
             )}
 
             <form onSubmit={submit}>
-                <div>
-                    <InputLabel htmlFor="email" value="メールアドレス" />
-
+                <FormField label="メールアドレス" htmlFor="email" error={errors.email}>
                     <TextInput
                         id="email"
                         type="email"
@@ -76,13 +68,9 @@ export default function BusinessLogin({ status, canResetPassword }: { status?: s
                         isFocused={true}
                         onChange={(e) => setData("email", e.target.value)}
                     />
+                </FormField>
 
-                    <InputError id="email-error" message={errors.email} className="mt-2" />
-                </div>
-
-                <div className="mt-4">
-                    <InputLabel htmlFor="password" value="パスワード" />
-
+                <FormField label="パスワード" htmlFor="password" error={errors.password} className="mt-4">
                     <TextInput
                         id="password"
                         type="password"
@@ -94,9 +82,7 @@ export default function BusinessLogin({ status, canResetPassword }: { status?: s
                         autoComplete="current-password"
                         onChange={(e) => setData("password", e.target.value)}
                     />
-
-                    <InputError id="password-error" message={errors.password} className="mt-2" />
-                </div>
+                </FormField>
 
                 <div className="mt-4 block">
                     <label className="flex items-center">
