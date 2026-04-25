@@ -1,6 +1,6 @@
-import InputError from "@/Components/InputError";
-import InputLabel from "@/Components/InputLabel";
+import AuthHeader from "@/Components/UI/AuthHeader";
 import Button from "@/Components/UI/Button";
+import FormField from "@/Components/UI/FormField";
 import TextInput from "@/Components/TextInput";
 import GuestLayout from "@/Layouts/GuestLayout";
 import { Head, Link, useForm } from "@inertiajs/react";
@@ -26,18 +26,10 @@ export default function Register() {
         <GuestLayout>
             <Head title="新規登録" />
 
-            <div className="mb-6">
-                <div className="flex items-center gap-2">
-                    <div className="h-px w-8 bg-sky-400" />
-                    <p className="text-xs font-medium uppercase tracking-widest text-sky-600">新規登録</p>
-                </div>
-                <h2 className="mt-2 text-2xl font-bold text-ink">新規登録</h2>
-            </div>
+            <AuthHeader eyebrow="新規登録" title="新規登録" />
 
             <form onSubmit={submit}>
-                <div>
-                    <InputLabel htmlFor="name" value="お名前" />
-
+                <FormField label="お名前" htmlFor="name" error={errors.name}>
                     <TextInput
                         id="name"
                         name="name"
@@ -51,13 +43,9 @@ export default function Register() {
                         onChange={(e) => setData("name", e.target.value)}
                         required
                     />
+                </FormField>
 
-                    <InputError id="name-error" message={errors.name} className="mt-2" />
-                </div>
-
-                <div className="mt-4">
-                    <InputLabel htmlFor="email" value="メールアドレス" />
-
+                <FormField label="メールアドレス" htmlFor="email" error={errors.email} className="mt-4">
                     <TextInput
                         id="email"
                         type="email"
@@ -71,13 +59,9 @@ export default function Register() {
                         onChange={(e) => setData("email", e.target.value)}
                         required
                     />
+                </FormField>
 
-                    <InputError id="email-error" message={errors.email} className="mt-2" />
-                </div>
-
-                <div className="mt-4">
-                    <InputLabel htmlFor="password" value="パスワード" />
-
+                <FormField label="パスワード" htmlFor="password" error={errors.password} className="mt-4">
                     <TextInput
                         id="password"
                         type="password"
@@ -91,13 +75,14 @@ export default function Register() {
                         onChange={(e) => setData("password", e.target.value)}
                         required
                     />
+                </FormField>
 
-                    <InputError id="password-error" message={errors.password} className="mt-2" />
-                </div>
-
-                <div className="mt-4">
-                    <InputLabel htmlFor="password_confirmation" value="パスワード（確認）" />
-
+                <FormField
+                    label="パスワード（確認）"
+                    htmlFor="password_confirmation"
+                    error={errors.password_confirmation}
+                    className="mt-4"
+                >
                     <TextInput
                         id="password_confirmation"
                         type="password"
@@ -111,13 +96,7 @@ export default function Register() {
                         onChange={(e) => setData("password_confirmation", e.target.value)}
                         required
                     />
-
-                    <InputError
-                        id="password_confirmation-error"
-                        message={errors.password_confirmation}
-                        className="mt-2"
-                    />
-                </div>
+                </FormField>
 
                 <div className="mt-4 flex items-center justify-end">
                     <Link
