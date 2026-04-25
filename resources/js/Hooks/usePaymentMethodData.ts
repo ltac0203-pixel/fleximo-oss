@@ -1,6 +1,5 @@
-import { api } from "@/api";
+import { api, buildQuery, ENDPOINTS } from "@/api";
 import type { ApiDataResponse } from "@/api";
-import { ENDPOINTS } from "@/api/endpoints";
 import { DateRange, getDateRangeParams } from "@/Components/Dashboard/DateRangeSelector";
 import useDashboardDataFetcher from "@/Hooks/useDashboardDataFetcher";
 import { PaymentMethodStats, PaymentMethodStatsItem } from "@/types";
@@ -40,11 +39,9 @@ export function usePaymentMethodData(): UsePaymentMethodDataResult {
 
     const fetchPaymentMethods = useCallback(async (selectedRange: DateRange): Promise<PaymentMethodStats> => {
         const { start_date, end_date } = getDateRangeParams(selectedRange);
-        const params = new URLSearchParams({ start_date, end_date });
+        const url = `${ENDPOINTS.tenant.dashboard.paymentMethods}${buildQuery({ start_date, end_date })}`;
 
-        const { data: result, error } = await api.cachedGet<ApiDataResponse<PaymentMethodStatsResponse | null>>(
-            `${ENDPOINTS.tenant.dashboard.paymentMethods}?${params.toString()}`,
-        );
+        const { data: result, error } = await api.cachedGet<ApiDataResponse<PaymentMethodStatsResponse | null>>(url);
 
         if (error || !result) {
             throw error ?? "empty result";
