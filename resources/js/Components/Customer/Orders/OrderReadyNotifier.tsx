@@ -2,6 +2,7 @@ import { ReactNode, useEffect, useRef } from "react";
 import { useOrderStatusPolling } from "@/Hooks/useOrderStatusPolling";
 import { useBrowserNotification } from "@/Hooks/useBrowserNotification";
 import { useNotificationSound } from "@/Hooks/useNotificationSound";
+import { isPollingInactiveOrderStatus } from "@/constants/orderStatus";
 import { OrderStatusValue } from "@/types";
 
 interface PollingState {
@@ -20,11 +21,6 @@ interface OrderReadyNotifierProps {
     children: (polling: PollingState) => ReactNode;
 }
 
-// ポーリング不要な状態かどうかを判定する
-function isInactiveStatus(status: OrderStatusValue): boolean {
-    return ["completed", "cancelled", "payment_failed", "refunded"].includes(status);
-}
-
 export default function OrderReadyNotifier({
     orderId,
     orderCode,
@@ -38,7 +34,7 @@ export default function OrderReadyNotifier({
 
     // マウント時にブラウザ通知の許可をリクエスト
     useEffect(() => {
-        if (!isInactiveStatus(initialStatus)) {
+        if (!isPollingInactiveOrderStatus(initialStatus)) {
             void requestPermission();
         }
     }, [initialStatus, requestPermission]);
@@ -47,7 +43,7 @@ export default function OrderReadyNotifier({
         orderId,
         initialStatus,
         initialStatusLabel,
-        enabled: !isInactiveStatus(initialStatus),
+        enabled: !isPollingInactiveOrderStatus(initialStatus),
         onReady: () => {
             if (hasNotifiedRef.current) return;
             hasNotifiedRef.current = true;

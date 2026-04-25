@@ -1,67 +1,12 @@
-import { CheckoutCompleteProps, OrderStatusValue } from "@/types";
+import { CheckoutCompleteProps } from "@/types";
 import { Head, Link } from "@inertiajs/react";
 import StatusBadge from "@/Components/Customer/Orders/StatusBadge";
 import OrderTimeline from "@/Components/Customer/Orders/OrderTimeline";
 import OrderItemList from "@/Components/Customer/Orders/OrderItemList";
 import OrderReadyNotifier from "@/Components/Customer/Orders/OrderReadyNotifier";
 import GradientBackground from "@/Components/GradientBackground";
+import { getOrderStatusSummary, type StatusSummaryTone } from "@/constants/orderStatusSummary";
 import { formatPrice } from "@/Utils/formatPrice";
-
-type StatusSummaryTone = "info" | "success" | "warning" | "danger";
-
-interface StatusSummary {
-    headline: string;
-    nextAction: string;
-    tone: StatusSummaryTone;
-}
-
-const statusSummaries: Record<OrderStatusValue, StatusSummary> = {
-    pending_payment: {
-        headline: "現在、お支払い確認中です",
-        nextAction: "決済完了後に注文受付へ進みます。",
-        tone: "warning",
-    },
-    paid: {
-        headline: "現在、注文を受け付けました",
-        nextAction: "店舗で確認後、調理に進みます。",
-        tone: "info",
-    },
-    accepted: {
-        headline: "現在、店舗で注文内容を確認中です",
-        nextAction: "確認が完了次第、商品の準備を開始します。",
-        tone: "info",
-    },
-    in_progress: {
-        headline: "現在、商品を準備中です",
-        nextAction: "準備ができ次第、この画面でお知らせします。",
-        tone: "info",
-    },
-    ready: {
-        headline: "現在、商品の準備ができています",
-        nextAction: "カウンターで注文番号をお伝えください。",
-        tone: "success",
-    },
-    completed: {
-        headline: "商品の受け取りが完了しました",
-        nextAction: "ご利用ありがとうございました。",
-        tone: "success",
-    },
-    cancelled: {
-        headline: "この注文はキャンセルされました",
-        nextAction: "詳細は店舗へお問い合わせください。",
-        tone: "danger",
-    },
-    payment_failed: {
-        headline: "決済に失敗しました",
-        nextAction: "支払い方法を確認のうえ、再度お試しください。",
-        tone: "danger",
-    },
-    refunded: {
-        headline: "この注文は返金済みです",
-        nextAction: "返金状況の詳細はご利用明細をご確認ください。",
-        tone: "danger",
-    },
-};
 
 const summaryToneStyles: Record<
     StatusSummaryTone,
@@ -92,16 +37,6 @@ const summaryToneStyles: Record<
         label: "text-red-700",
     },
 };
-
-function getStatusSummary(status: OrderStatusValue, statusLabel: string): StatusSummary {
-    return (
-        statusSummaries[status] ?? {
-            headline: `現在のステータス: ${statusLabel}`,
-            nextAction: "注文状況をご確認ください。",
-            tone: "info",
-        }
-    );
-}
 
 export default function CheckoutComplete({ order }: CheckoutCompleteProps) {
     const formatDateTime = (dateString: string) => {
@@ -134,7 +69,7 @@ export default function CheckoutComplete({ order }: CheckoutCompleteProps) {
                     initialStatusLabel={order.status_label}
                 >
                     {(polling) => {
-                        const statusSummary = getStatusSummary(polling.status, polling.statusLabel);
+                        const statusSummary = getOrderStatusSummary(polling.status, polling.statusLabel);
                         const toneStyles = summaryToneStyles[statusSummary.tone];
 
                         return (
