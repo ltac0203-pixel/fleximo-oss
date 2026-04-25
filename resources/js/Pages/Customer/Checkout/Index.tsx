@@ -7,6 +7,7 @@ import ErrorFallback from "@/Components/ErrorFallback";
 import GeoSurface from "@/Components/GeoSurface";
 import GradientBackground from "@/Components/GradientBackground";
 import Spinner from "@/Components/Loading/Spinner";
+import BackButton from "@/Components/UI/BackButton";
 import { useCheckout } from "@/Hooks/useCheckout";
 import { CheckoutIndexProps } from "@/types";
 import { formatPrice } from "@/Utils/formatPrice";
@@ -44,16 +45,7 @@ export default function CheckoutIndex({ cart, fincodePublicKey, isProduction, sa
                 {/* ヘッダー */}
                 <header className="safe-top fixed top-0 left-0 right-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur-sm">
                     <div className="h-14 px-4 flex items-center justify-between max-w-lg lg:max-w-5xl mx-auto">
-                        <button onClick={() => window.history.back()} className="text-slate-500 hover:text-slate-700">
-                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M15 19l-7-7 7-7"
-                                />
-                            </svg>
-                        </button>
+                        <BackButton className="text-slate-500 hover:text-slate-700" />
                         <h1 className="text-lg font-semibold text-slate-900">お支払い</h1>
                         <div className="w-6" />
                     </div>
