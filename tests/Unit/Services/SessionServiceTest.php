@@ -70,5 +70,4 @@ class SessionServiceTest extends TestCase
         $this->assertDatabaseHas('sessions', ['id' => $currentSessionId]);
         $this->assertDatabaseHas('sessions', ['id' => $otherUserSessionId]);
     }
-
 }
