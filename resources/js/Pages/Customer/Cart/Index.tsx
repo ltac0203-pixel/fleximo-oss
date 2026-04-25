@@ -6,6 +6,7 @@ import ToastContainer from "@/Components/UI/ToastContainer";
 import { useCart } from "@/Hooks/useCart";
 import { useToast } from "@/Hooks/useToast";
 import { CartPageProps, PageProps } from "@/types";
+import BackButton from "@/Components/UI/BackButton";
 import ConfirmDialog from "@/Components/UI/ConfirmDialog";
 import { formatPrice } from "@/Utils/formatPrice";
 import { Head, router, usePage } from "@inertiajs/react";
@@ -70,20 +71,7 @@ export default function CartIndex(_props: CartPageProps) {
                 {/* ヘッダー */}
                 <header className="safe-top fixed top-0 left-0 right-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur-sm">
                     <div className="mx-auto flex h-14 max-w-lg items-center justify-between px-4 lg:max-w-5xl">
-                        <button
-                            onClick={() => window.history.back()}
-                            className="text-slate-500 hover:text-sky-700"
-                            aria-label="前のページに戻る"
-                        >
-                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M15 19l-7-7 7-7"
-                                />
-                            </svg>
-                        </button>
+                        <BackButton />
                         <h1 className="text-lg font-semibold text-slate-900">カート</h1>
                         <div className="w-6" />
                     </div>
@@ -130,12 +118,12 @@ export default function CartIndex(_props: CartPageProps) {
                                     />
                                 </svg>
                                 <p className="text-center text-slate-600">カートに商品がありません</p>
-                                <button
-                                    onClick={() => window.history.back()}
+                                <BackButton
+                                    variant="text"
                                     className="mt-5 border border-sky-600 bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow-geo-sky hover:border-sky-700 hover:bg-sky-700"
                                 >
                                     メニュー選択ページに戻る
-                                </button>
+                                </BackButton>
                             </div>
                         </div>
                     )}
