@@ -7,6 +7,7 @@ import { useCart } from "@/Hooks/useCart";
 import { useToast } from "@/Hooks/useToast";
 import { CartPageProps, PageProps } from "@/types";
 import ConfirmDialog from "@/Components/UI/ConfirmDialog";
+import { formatPrice } from "@/Utils/formatPrice";
 import { Head, router, usePage } from "@inertiajs/react";
 import { useState, useCallback } from "react";
 
@@ -146,7 +147,7 @@ export default function CartIndex(_props: CartPageProps) {
                                 <div className="flex items-center justify-between gap-3">
                                     <p className="text-sm font-medium text-slate-700">現在のカート内容</p>
                                     <p className="text-sm font-semibold text-sky-700">
-                                        {totalItemCount}点 / {grandTotal.toLocaleString()}円
+                                        {totalItemCount}点 / {formatPrice(grandTotal)}
                                     </p>
                                 </div>
                             </div>

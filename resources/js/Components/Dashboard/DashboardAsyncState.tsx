@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import Spinner from "./Spinner";
+import Spinner from "@/Components/Loading/Spinner";
 
 interface DashboardAsyncStateProps {
     loading: boolean;
@@ -21,7 +21,7 @@ export default function DashboardAsyncState({
     if (loading) {
         return (
             <div className={`${heightClassName} flex items-center justify-center`}>
-                <Spinner />
+                <Spinner variant="muted" />
             </div>
         );
     }

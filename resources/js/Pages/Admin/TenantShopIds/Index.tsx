@@ -82,7 +82,7 @@ export default function Index({ tenants, searchQuery, flash }: TenantShopIdsInde
                 )}
                 {flash?.error && <div className="mb-4 rounded bg-red-50 p-4 text-sm text-red-700">{flash.error}</div>}
 
-                {/* 検索 を明示し、実装意図の誤読を防ぐ。 */}
+                {/* 検索 */}
                 <div className="mb-6 flex justify-end">
                     <form onSubmit={handleSearch} className="flex gap-2">
                         <input
@@ -101,7 +101,7 @@ export default function Index({ tenants, searchQuery, flash }: TenantShopIdsInde
                     </form>
                 </div>
 
-                {/* テーブル を明示し、実装意図の誤読を防ぐ。 */}
+                {/* テーブル */}
                 <div className="overflow-x-auto bg-white shadow">
                     <table className="min-w-full divide-y divide-edge">
                         <thead className="bg-surface">
@@ -220,7 +220,7 @@ export default function Index({ tenants, searchQuery, flash }: TenantShopIdsInde
                     </table>
                 </div>
 
-                {/* ページネーション を明示し、実装意図の誤読を防ぐ。 */}
+                {/* ページネーション */}
                 {tenants.last_page > 1 && (
                     <div className="mt-6 flex items-center justify-between">
                         <p className="text-sm text-ink-light">

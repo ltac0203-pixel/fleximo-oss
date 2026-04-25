@@ -1,6 +1,7 @@
 import { Cart } from "@/types";
 import CartItemCard from "./CartItemCard";
 import TenantStatusBadge from "@/Components/Customer/Common/TenantStatusBadge";
+import { formatPrice } from "@/Utils/formatPrice";
 
 interface CartSectionProps {
     cart: Cart;
@@ -75,7 +76,7 @@ export default function CartSection({
                     {/* テナント小計 */}
                     <div className="geo-divider mt-4 flex items-center justify-between pt-3 text-sm">
                         <span className="text-ink-light">小計（{cart.item_count}点）</span>
-                        <span className="font-semibold text-ink">{cart.total.toLocaleString()}円</span>
+                        <span className="font-semibold text-ink">{formatPrice(cart.total)}</span>
                     </div>
                 </>
             ) : (

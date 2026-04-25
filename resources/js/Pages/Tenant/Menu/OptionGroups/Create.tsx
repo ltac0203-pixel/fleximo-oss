@@ -35,7 +35,7 @@ export default function Create(_props: OptionGroupCreateProps) {
                         return;
                     }
 
-                    // 作成直後に詳細編集へ送って、連続して選択肢を登録できる導線にする。 を明示し、実装意図の誤読を防ぐ。
+                    // 作成直後に詳細編集へ送って、連続して選択肢を登録できる導線にする。
                     router.visit(
                         route("tenant.menu.option-groups.edit", {
                             optionGroup: response.data.data.id,

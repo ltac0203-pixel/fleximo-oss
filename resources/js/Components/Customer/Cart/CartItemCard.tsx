@@ -34,7 +34,7 @@ export default function CartItemCard({ item, onUpdateQuantity, onRemove, disable
             }`}
         >
             <div className="flex items-start gap-2 sm:gap-3">
-                {/* 商品情報 を明示し、実装意図の誤読を防ぐ。 */}
+                {/* 商品情報 */}
                 <div className="flex-1 min-w-0">
                     <h3 className="line-clamp-2 text-sm font-semibold text-ink sm:text-base">{item.menu_item.name}</h3>
                     {item.menu_item.description && (
@@ -49,7 +49,7 @@ export default function CartItemCard({ item, onUpdateQuantity, onRemove, disable
                     </div>
                 </div>
 
-                {/* 数量コントロール を明示し、実装意図の誤読を防ぐ。 */}
+                {/* 数量コントロール */}
                 <div className="flex-shrink-0">
                     <QuantityControl
                         quantity={item.quantity}
@@ -61,7 +61,7 @@ export default function CartItemCard({ item, onUpdateQuantity, onRemove, disable
                 </div>
             </div>
 
-            {/* 売り切れ表示 を明示し、実装意図の誤読を防ぐ。 */}
+            {/* 売り切れ表示 */}
             {item.menu_item.is_sold_out && (
                 <div className="mt-2 border border-rose-200 bg-rose-50/80 px-2 py-1 text-xs text-rose-700">
                     この商品は売り切れです

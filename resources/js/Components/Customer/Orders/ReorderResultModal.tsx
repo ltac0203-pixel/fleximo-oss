@@ -2,14 +2,11 @@ import Modal from "@/Components/Modal";
 import { router } from "@inertiajs/react";
 import { ReorderAddedItem, ReorderResponse, ReorderSkippedItem } from "@/types";
 import { withStableKeys } from "@/Utils/stableKeys";
+import { formatCurrency } from "@/Utils/formatPrice";
 
 interface ReorderResultModalProps {
     result: ReorderResponse | null;
     onClose: () => void;
-}
-
-function formatPrice(price: number): string {
-    return `¥${price.toLocaleString()}`;
 }
 
 type ReorderAddedOption = ReorderAddedItem["options_added"][number];
@@ -79,14 +76,14 @@ export default function ReorderResultModal({ result, onClose }: ReorderResultMod
                                                 {item.price_changed ? (
                                                     <>
                                                         <span className="line-through text-muted-light mr-1">
-                                                            {formatPrice(item.original_unit_price)}
+                                                            {formatCurrency(item.original_unit_price)}
                                                         </span>
                                                         <span className="text-orange-600 font-medium">
-                                                            {formatPrice(item.current_unit_price)}
+                                                            {formatCurrency(item.current_unit_price)}
                                                         </span>
                                                     </>
                                                 ) : (
-                                                    formatPrice(item.current_unit_price)
+                                                    formatCurrency(item.current_unit_price)
                                                 )}
                                             </span>
                                         </div>
@@ -103,14 +100,14 @@ export default function ReorderResultModal({ result, onClose }: ReorderResultMod
                                                                 {opt.price_changed ? (
                                                                     <>
                                                                         <span className="line-through mr-1">
-                                                                            {formatPrice(opt.original_price)}
+                                                                            {formatCurrency(opt.original_price)}
                                                                         </span>
                                                                         <span className="text-orange-600">
-                                                                            {formatPrice(opt.current_price)}
+                                                                            {formatCurrency(opt.current_price)}
                                                                         </span>
                                                                     </>
                                                                 ) : (
-                                                                    formatPrice(opt.current_price)
+                                                                    formatCurrency(opt.current_price)
                                                                 )}
                                                             </span>
                                                         </div>

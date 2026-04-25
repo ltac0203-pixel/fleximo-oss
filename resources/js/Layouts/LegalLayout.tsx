@@ -18,7 +18,7 @@ export default function LegalLayout({ children, title, lastUpdated }: LegalLayou
             <SkipToContentLink />
             <GradientBackground />
 
-            {/* ヘッダー を明示し、実装意図の誤読を防ぐ。 */}
+            {/* ヘッダー */}
             <header className="relative border-b border-slate-200 bg-white">
                 <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between">
@@ -32,20 +32,20 @@ export default function LegalLayout({ children, title, lastUpdated }: LegalLayou
                 </div>
             </header>
 
-            {/* メインコンテンツ を明示し、実装意図の誤読を防ぐ。 */}
+            {/* メインコンテンツ */}
             <main id={MAIN_CONTENT_ID} tabIndex={-1} className="relative py-12">
                 <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
                     <div className="border border-slate-200 bg-white p-8 sm:p-12">
-                        {/* タイトル を明示し、実装意図の誤読を防ぐ。 */}
+                        {/* タイトル */}
                         <div className="mb-8 border-b border-slate-200 pb-6">
                             <h1 className="text-3xl font-bold text-slate-900 sm:text-4xl">{title}</h1>
                             <p className="mt-2 text-sm text-slate-500">最終更新日: {lastUpdated}</p>
                         </div>
 
-                        {/* コンテンツ を明示し、実装意図の誤読を防ぐ。 */}
+                        {/* コンテンツ */}
                         <div className="space-y-8">{children}</div>
 
-                        {/* ページ間ナビゲーション を明示し、実装意図の誤読を防ぐ。 */}
+                        {/* ページ間ナビゲーション */}
                         <div className="mt-12 border-t border-slate-200 pt-8">
                             <LegalNav />
                         </div>
@@ -53,7 +53,7 @@ export default function LegalLayout({ children, title, lastUpdated }: LegalLayou
                 </div>
             </main>
 
-            {/* フッター を明示し、実装意図の誤読を防ぐ。 */}
+            {/* フッター */}
             <footer className="relative border-t border-slate-200 bg-white">
                 <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
                     <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">

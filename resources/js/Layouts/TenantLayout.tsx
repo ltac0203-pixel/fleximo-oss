@@ -28,10 +28,10 @@ export default function TenantLayout({ title, children }: PropsWithChildren<{ ti
         <div className="relative min-h-screen bg-surface">
             <GradientBackground variant="dashboard" />
             <SkipToContentLink />
-            {/* Header を明示し、実装意図の誤読を防ぐ。 */}
+            {/* Header */}
             <header className="fixed top-0 left-0 right-0 z-20 h-14 border-b border-edge bg-white/95 backdrop-blur-sm">
                 <div className="h-full px-4 flex items-center gap-3">
-                    {/* サイドバートグル（デスクトップ） を明示し、実装意図の誤読を防ぐ。 */}
+                    {/* サイドバートグル（デスクトップ） */}
                     <button
                         onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
                         className="hidden md:flex p-2 text-muted-light hover:text-muted hover:bg-surface-dim"
@@ -47,7 +47,7 @@ export default function TenantLayout({ title, children }: PropsWithChildren<{ ti
                         </svg>
                     </button>
 
-                    {/* ハンバーガーメニュー（モバイル） を明示し、実装意図の誤読を防ぐ。 */}
+                    {/* ハンバーガーメニュー（モバイル） */}
                     <button
                         onClick={() => setShowingMobileSidebar(!showingMobileSidebar)}
                         className="md:hidden p-2 text-muted-light hover:text-muted hover:bg-surface-dim"
@@ -70,7 +70,7 @@ export default function TenantLayout({ title, children }: PropsWithChildren<{ ti
                         </svg>
                     </button>
 
-                    {/* テナント名 & ページタイトル を明示し、実装意図の誤読を防ぐ。 */}
+                    {/* テナント名 & ページタイトル */}
                     <div className="flex items-center gap-2 min-w-0 flex-1">
                         <span className="text-sm font-medium text-muted truncate">{tenant.name}</span>
                         {title && (
@@ -81,7 +81,7 @@ export default function TenantLayout({ title, children }: PropsWithChildren<{ ti
                         )}
                     </div>
 
-                    {/* ユーザードロップダウン を明示し、実装意図の誤読を防ぐ。 */}
+                    {/* ユーザードロップダウン */}
                     <Dropdown>
                         <Dropdown.Trigger>
                             <button className="flex items-center text-sm font-medium text-muted hover:text-ink-light">
@@ -184,7 +184,7 @@ export default function TenantLayout({ title, children }: PropsWithChildren<{ ti
                 onClose={() => setShowingMobileSidebar(false)}
             />
 
-            {/* Main Content を明示し、実装意図の誤読を防ぐ。 */}
+            {/* Main Content */}
             <main
                 id={MAIN_CONTENT_ID}
                 tabIndex={-1}

@@ -41,7 +41,7 @@ export default function CheckoutIndex({ cart, fincodePublicKey, isProduction, sa
 
             <div className="relative min-h-screen bg-white">
                 <GradientBackground variant="customer" />
-                {/* ヘッダー を明示し、実装意図の誤読を防ぐ。 */}
+                {/* ヘッダー */}
                 <header className="safe-top fixed top-0 left-0 right-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur-sm">
                     <div className="h-14 px-4 flex items-center justify-between max-w-lg lg:max-w-5xl mx-auto">
                         <button onClick={() => window.history.back()} className="text-slate-500 hover:text-slate-700">
@@ -59,10 +59,10 @@ export default function CheckoutIndex({ cart, fincodePublicKey, isProduction, sa
                     </div>
                 </header>
 
-                {/* メインコンテンツ を明示し、実装意図の誤読を防ぐ。 */}
+                {/* メインコンテンツ */}
                 <main className="relative pt-14 pb-32 max-w-lg lg:max-w-5xl mx-auto px-4 geo-fade-in">
                     <div className="space-y-4 pt-4">
-                        {/* エラー表示 を明示し、実装意図の誤読を防ぐ。 */}
+                        {/* エラー表示 */}
                         {error && (
                             <GeoSurface className="border-red-200 bg-red-50 p-4">
                                 <div className="flex items-center gap-2">
@@ -84,10 +84,10 @@ export default function CheckoutIndex({ cart, fincodePublicKey, isProduction, sa
                             </GeoSurface>
                         )}
 
-                        {/* 注文内容サマリー を明示し、実装意図の誤読を防ぐ。 */}
+                        {/* 注文内容サマリー */}
                         <OrderSummary cart={cart} />
 
-                        {/* 決済方法選択 を明示し、実装意図の誤読を防ぐ。 */}
+                        {/* 決済方法選択 */}
                         <PaymentMethodSelector
                             selected={paymentMethod}
                             onChange={setPaymentMethod}
@@ -149,7 +149,7 @@ export default function CheckoutIndex({ cart, fincodePublicKey, isProduction, sa
                     </div>
                 </main>
 
-                {/* フッター（確定ボタン） を明示し、実装意図の誤読を防ぐ。 */}
+                {/* フッター（確定ボタン） */}
                 <div className="safe-bottom fixed bottom-0 left-0 right-0 z-30 border-t border-slate-200 bg-white/95 p-4 backdrop-blur-sm">
                     <div className="max-w-lg lg:max-w-5xl mx-auto">
                         <button

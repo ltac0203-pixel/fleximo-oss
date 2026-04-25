@@ -49,7 +49,7 @@ export default function PayPayCallback({ payment, success }: PayPayCallbackProps
             }
 
             try {
-                // 戻り先で確定APIを必ず実行し、外部決済との整合をサーバー正本で確定する。 を明示し、実装意図の誤読を防ぐ。
+                // 戻り先で確定APIを必ず実行し、外部決済との整合をサーバー正本で確定する。
                 const {
                     data: response,
                     error: finalizeError,

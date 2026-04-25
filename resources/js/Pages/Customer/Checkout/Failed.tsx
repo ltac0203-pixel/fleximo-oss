@@ -7,16 +7,16 @@ export default function CheckoutFailed({ order, errorMessage }: CheckoutFailedPr
             <Head title="決済失敗" />
 
             <div className="min-h-screen bg-white">
-                {/* ヘッダー を明示し、実装意図の誤読を防ぐ。 */}
+                {/* ヘッダー */}
                 <header className="fixed top-0 left-0 right-0 z-30 bg-white border-b border-slate-200 ">
                     <div className="h-14 px-4 flex items-center justify-center max-w-lg lg:max-w-5xl mx-auto">
                         <h1 className="text-lg font-semibold text-slate-900">決済失敗</h1>
                     </div>
                 </header>
 
-                {/* メインコンテンツ を明示し、実装意図の誤読を防ぐ。 */}
+                {/* メインコンテンツ */}
                 <main className="pt-14 pb-32 max-w-lg lg:max-w-5xl mx-auto px-4">
-                    {/* 失敗アイコン を明示し、実装意図の誤読を防ぐ。 */}
+                    {/* 失敗アイコン */}
                     <div className="flex flex-col items-center py-8">
                         <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mb-4">
                             <svg
@@ -39,7 +39,7 @@ export default function CheckoutFailed({ order, errorMessage }: CheckoutFailedPr
                         </p>
                     </div>
 
-                    {/* エラー詳細 を明示し、実装意図の誤読を防ぐ。 */}
+                    {/* エラー詳細 */}
                     <div className="bg-red-50  p-4 mb-4">
                         <div className="flex items-start gap-3">
                             <svg
@@ -67,7 +67,7 @@ export default function CheckoutFailed({ order, errorMessage }: CheckoutFailedPr
                         </div>
                     </div>
 
-                    {/* 注文情報（存在する場合） を明示し、実装意図の誤読を防ぐ。 */}
+                    {/* 注文情報（存在する場合） */}
                     {order && (
                         <div className="bg-white  border p-4 mb-4">
                             <h3 className="font-semibold text-slate-900 mb-3">注文情報</h3>
@@ -84,7 +84,7 @@ export default function CheckoutFailed({ order, errorMessage }: CheckoutFailedPr
                         </div>
                     )}
 
-                    {/* ヘルプ情報 を明示し、実装意図の誤読を防ぐ。 */}
+                    {/* ヘルプ情報 */}
                     <div className="bg-slate-100  p-4">
                         <div className="flex items-start gap-3">
                             <svg

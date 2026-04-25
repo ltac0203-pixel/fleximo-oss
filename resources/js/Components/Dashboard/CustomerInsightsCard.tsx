@@ -1,11 +1,8 @@
 import { useCustomerInsightsData } from "@/Hooks/useCustomerInsightsData";
+import { formatNumber } from "@/Utils/formatPrice";
 import GeoSurface from "@/Components/GeoSurface";
+import Spinner from "@/Components/Loading/Spinner";
 import DateRangeSelector from "./DateRangeSelector";
-import Spinner from "./Spinner";
-
-function formatNumber(value: number): string {
-    return new Intl.NumberFormat("ja-JP").format(value);
-}
 
 export default function CustomerInsightsCard() {
     const { range, data, loading, fetchError, onRangeChange } = useCustomerInsightsData();
@@ -22,7 +19,7 @@ export default function CustomerInsightsCard() {
 
             {loading ? (
                 <div className="h-32 flex items-center justify-center">
-                    <Spinner />
+                    <Spinner variant="muted" />
                 </div>
             ) : fetchError ? (
                 <div className="h-32 flex items-center justify-center text-red-500">データの取得に失敗しました</div>

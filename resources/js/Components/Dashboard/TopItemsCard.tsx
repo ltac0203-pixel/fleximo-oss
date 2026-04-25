@@ -1,11 +1,7 @@
 import { TOP_ITEMS_PERIOD_OPTIONS, useTopItemsData } from "@/Hooks/useTopItemsData";
-import { formatCurrency } from "@/Utils/formatPrice";
+import { formatCurrency, formatNumber } from "@/Utils/formatPrice";
 import GeoSurface from "@/Components/GeoSurface";
 import DashboardAsyncState from "./DashboardAsyncState";
-
-function formatNumber(value: number): string {
-    return new Intl.NumberFormat("ja-JP").format(value);
-}
 
 export default function TopItemsCard() {
     const { period, items, loading, fetchError, onPeriodChange } = useTopItemsData();

@@ -1,5 +1,5 @@
 import { DashboardSummary } from "@/types";
-import { formatPrice } from "@/Utils/formatPrice";
+import { formatNumber, formatPrice } from "@/Utils/formatPrice";
 import SummaryCard from "./SummaryCard";
 
 interface SummaryCardsProps {
@@ -7,10 +7,6 @@ interface SummaryCardsProps {
 }
 
 const SUMMARY_SKELETON_KEYS = ["today-sales", "today-orders", "month-sales", "month-orders"] as const;
-
-function formatNumber(value: number): string {
-    return new Intl.NumberFormat("ja-JP").format(value);
-}
 
 export default function SummaryCards({ summary }: SummaryCardsProps) {
     if (!summary || !summary.today || !summary.this_month || !summary.comparison) {

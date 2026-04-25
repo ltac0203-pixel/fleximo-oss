@@ -35,14 +35,14 @@ export default function CustomerLayout({
 
             <FixedHeader tenant={tenant} rightAction={headerRightAction} />
 
-            {/* Sticky Header (Category Tabs) を明示し、実装意図の誤読を防ぐ。 */}
+            {/* Sticky Header (Category Tabs) */}
             {stickyHeader && (
                 <div className="fixed top-14 left-0 right-0 z-20 border-b border-slate-200 bg-white/95 backdrop-blur-sm">
                     <div className="max-w-lg lg:max-w-5xl mx-auto">{stickyHeader}</div>
                 </div>
             )}
 
-            {/* Main Content を明示し、実装意図の誤読を防ぐ。 */}
+            {/* Main Content */}
             <main
                 id={MAIN_CONTENT_ID}
                 tabIndex={-1}
@@ -51,7 +51,7 @@ export default function CustomerLayout({
                 <ErrorBoundary fallback={ErrorFallback}>{children}</ErrorBoundary>
             </main>
 
-            {/* Fixed Cart Button を明示し、実装意図の誤読を防ぐ。 */}
+            {/* Fixed Cart Button */}
             {showCartButton && (
                 <div className="safe-bottom fixed bottom-0 left-0 right-0 z-30 border-t border-slate-200 bg-white/95 p-4 backdrop-blur-sm">
                     <div className="max-w-lg lg:max-w-5xl mx-auto">
