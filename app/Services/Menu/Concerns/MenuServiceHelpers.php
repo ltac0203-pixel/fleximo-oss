@@ -6,8 +6,8 @@ namespace App\Services\Menu\Concerns;
 
 use App\Enums\AuditAction;
 use App\Services\AuditLogger;
+use App\Support\MenuCacheKeys;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -61,16 +61,7 @@ trait MenuServiceHelpers
     // メニューキャッシュの無効化
     public function invalidateMenuCache(int $tenantId): void
     {
-        try {
-            Cache::forget("tenant:{$tenantId}:menu");
-            Cache::forget("tenant:{$tenantId}:categories");
-            Cache::forget("tenant:{$tenantId}:option_groups");
-        } catch (\Throwable $e) {
-            Log::warning('メニューキャッシュの無効化に失敗しました', [
-                'tenant_id' => $tenantId,
-                'error' => $e->getMessage(),
-            ]);
-        }
+        MenuCacheKeys::invalidate($tenantId);
     }
 
     // 監査ログを安全に記録する（失敗してもメイン処理を中断しない）

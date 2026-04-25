@@ -15,7 +15,7 @@ use App\Models\Scopes\TenantScope;
 use App\Models\Tenant;
 use App\Models\WebhookLog;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\QueryException;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -72,17 +72,10 @@ class WebhookService
             );
 
             return ['log' => $log, 'is_duplicate' => ! $log->wasRecentlyCreated];
-        } catch (QueryException $e) {
-            $driverErrorCode = (int) ($e->errorInfo[1] ?? 0);
-            $isDuplicate = $driverErrorCode === 1062 || str_contains(strtolower($e->getMessage()), 'unique');
+        } catch (UniqueConstraintViolationException) {
+            $log = WebhookLog::where($uniqueAttributes)->first();
 
-            if ($isDuplicate) {
-                $log = WebhookLog::where($uniqueAttributes)->first();
-
-                return ['log' => $log, 'is_duplicate' => true];
-            }
-
-            throw $e;
+            return ['log' => $log, 'is_duplicate' => true];
         }
     }
 

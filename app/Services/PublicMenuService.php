@@ -7,6 +7,7 @@ namespace App\Services;
 use App\Models\MenuCategory;
 use App\Models\MenuItem;
 use App\Models\Tenant;
+use App\Support\MenuCacheKeys;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 
@@ -21,9 +22,7 @@ class PublicMenuService
 
     public function getMenu(Tenant $tenant): array
     {
-        $cacheKey = "tenant:{$tenant->id}:menu";
-
-        $cachedData = Cache::remember($cacheKey, self::CACHE_TTL, function () use ($tenant) {
+        $cachedData = Cache::remember(MenuCacheKeys::menu($tenant->id), self::CACHE_TTL, function () use ($tenant) {
             return $this->buildMenuData($tenant);
         });
 
@@ -35,10 +34,9 @@ class PublicMenuService
         return $this->stripInternalFlags($cachedData);
     }
 
-    // メニューキャッシュを無効化する
     public function invalidateCache(int $tenantId): void
     {
-        Cache::forget("tenant:{$tenantId}:menu");
+        MenuCacheKeys::invalidate($tenantId);
     }
 
     // メニューデータを構築する

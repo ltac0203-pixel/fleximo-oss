@@ -229,12 +229,12 @@ class Order extends Model
 
     public function scopeWithCustomerList(Builder $query): Builder
     {
-        return $query->with(['tenant:id,name']);
+        return $query->with(['tenant:id,name', 'tenant.businessHours']);
     }
 
     public function scopeWithCustomerDetail(Builder $query): Builder
     {
-        return $query->with(['tenant:id,name,address', 'items.options', 'payment']);
+        return $query->with(['tenant:id,name,address', 'tenant.businessHours', 'items.options', 'payment']);
     }
 
     public function scopeWithKdsDetails(Builder $query): Builder
