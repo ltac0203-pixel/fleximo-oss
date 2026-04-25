@@ -413,6 +413,39 @@ class PublicMenuServiceTest extends TestCase
         $this->assertArrayNotHasKey('needs_recalc', $result['categories'][0]['items'][0]);
     }
 
+    // OpenAPI components.schemas.PublicOptionGroup / PublicOption と
+    // 出力構造を厳密に一致させ、ドリフトを早期検知する
+    public function test_option_group_output_matches_public_openapi_schema(): void
+    {
+        $category = MenuCategory::factory()->create([
+            'tenant_id' => $this->tenant->id,
+        ]);
+        $item = MenuItem::factory()->create([
+            'tenant_id' => $this->tenant->id,
+        ]);
+        $item->categories()->attach($category->id);
+
+        $optionGroup = OptionGroup::factory()->create([
+            'tenant_id' => $this->tenant->id,
+        ]);
+        Option::factory()->create(['option_group_id' => $optionGroup->id]);
+        $item->optionGroups()->attach($optionGroup->id);
+
+        $result = $this->publicMenuService->getMenu($this->tenant);
+
+        $optionGroupData = $result['categories'][0]['items'][0]['option_groups'][0];
+        $this->assertSame(
+            ['id', 'name', 'required', 'min_select', 'max_select', 'options'],
+            array_keys($optionGroupData)
+        );
+
+        $optionData = $optionGroupData['options'][0];
+        $this->assertSame(
+            ['id', 'name', 'price'],
+            array_keys($optionData)
+        );
+    }
+
     public function test_categories_are_ordered_by_sort_order(): void
     {
         $category1 = MenuCategory::factory()->create([

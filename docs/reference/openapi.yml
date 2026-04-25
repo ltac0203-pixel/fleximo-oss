@@ -3124,7 +3124,7 @@ components:
 
     PublicOption:
       type: object
-      description: 公開メニュー用オプション（PublicOptionResource）
+      description: 公開メニュー用オプション（PublicMenuService::getMenu の出力構造）
       required:
         - id
         - name
@@ -3140,7 +3140,7 @@ components:
 
     PublicOptionGroup:
       type: object
-      description: 公開メニュー用オプショングループ（PublicOptionGroupResource）
+      description: 公開メニュー用オプショングループ（PublicMenuService::getMenu の出力構造）
       required:
         - id
         - name
@@ -3165,7 +3165,7 @@ components:
 
     PublicMenuItem:
       type: object
-      description: 公開メニュー用商品（PublicMenuItemResource）
+      description: 公開メニュー用商品（PublicMenuService::getMenu の出力構造）
       required:
         - id
         - name

@@ -135,6 +135,8 @@ class PublicMenuService
         ];
     }
 
+    // 出力構造は OpenAPI components.schemas.PublicOptionGroup / PublicOption と
+    // 厳密に一致させること（公開メニュー API の互換性維持のため）
     private function formatOptionGroup($optionGroup): array
     {
         return [
