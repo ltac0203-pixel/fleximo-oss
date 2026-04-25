@@ -10,7 +10,6 @@ use App\Http\Requests\Auth\LoginRequest;
 use App\Services\SessionService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -23,7 +22,6 @@ class BusinessLoginController extends Controller
     public function create(): Response
     {
         return Inertia::render('Auth/BusinessLogin', [
-            'canResetPassword' => Route::has('password.request'),
             'status' => session('status'),
         ]);
     }

@@ -45,7 +45,6 @@ class SuspiciousLoginNotification extends Notification implements ShouldQueue
         }
 
         return $mail
-            ->line('この操作に心当たりがない場合は、直ちにパスワードを変更してください。')
-            ->action('パスワードをリセットする', url(route('password.request')));
+            ->line('この操作に心当たりがない場合は、直ちに管理者へお問い合わせください。');
     }
 }

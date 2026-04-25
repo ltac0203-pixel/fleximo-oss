@@ -7,7 +7,6 @@ namespace App\Models;
 use App\Enums\AccountStatus;
 use App\Enums\UserRole;
 use App\Models\Scopes\TenantScope;
-use App\Notifications\ResetPasswordNotification;
 use App\Services\TenantContext;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -135,11 +134,6 @@ class User extends Authenticatable implements MustVerifyEmail
     public function shouldShowOnboarding(): bool
     {
         return $this->onboarding_completed_at === null;
-    }
-
-    public function sendPasswordResetNotification($token): void
-    {
-        $this->notify(new ResetPasswordNotification($token));
     }
 
     // 認証直後の認可や共有データが TenantContext を参照するため、ユーザー割当から先に同期する。

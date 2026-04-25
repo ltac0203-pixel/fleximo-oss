@@ -439,18 +439,6 @@ CREATE TABLE `order_number_sequences` (
 -- --------------------------------------------------------
 
 --
--- テーブルの構造 `password_reset_tokens`
---
-
-CREATE TABLE `password_reset_tokens` (
-  `email` varchar(255) NOT NULL,
-  `token` varchar(255) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
 -- テーブルの構造 `payments`
 --
 
@@ -881,12 +869,6 @@ ALTER TABLE `order_item_options`
 ALTER TABLE `order_number_sequences`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `order_number_sequences_unique` (`tenant_id`,`business_date`);
-
---
--- テーブルのインデックス `password_reset_tokens`
---
-ALTER TABLE `password_reset_tokens`
-  ADD PRIMARY KEY (`email`);
 
 --
 -- テーブルのインデックス `payments`

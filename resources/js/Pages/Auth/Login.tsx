@@ -8,7 +8,7 @@ import { PageProps } from "@/types";
 import { Head, Link, useForm, usePage } from "@inertiajs/react";
 import { FormEventHandler } from "react";
 
-export default function Login({ status, canResetPassword }: { status?: string; canResetPassword: boolean }) {
+export default function Login({ status }: { status?: string }) {
     const { businessLoginUrl } = usePage<
         PageProps & {
             businessLoginUrl?: string;
@@ -99,18 +99,8 @@ export default function Login({ status, canResetPassword }: { status?: string; c
                 </div>
 
                 <div className="mt-4 flex items-center justify-end">
-                    {canResetPassword && (
-                        <Link
-                            href={route("password.request")}
-                            className="rounded-md text-sm text-ink-light underline hover:text-ink focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-                        >
-                            パスワードをお忘れですか？
-                        </Link>
-                    )}
-
                     <Button
                         variant="primary"
-                        className="ms-4"
                         disabled={processing}
                         isBusy={processing}
                     >
