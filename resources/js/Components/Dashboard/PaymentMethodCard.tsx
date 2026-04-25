@@ -5,9 +5,9 @@ import { usePaymentMethodData } from "@/Hooks/usePaymentMethodData";
 import { PaymentMethodStatsItem } from "@/types";
 import { formatCurrency, formatNumber } from "@/Utils/formatPrice";
 import GeoSurface from "@/Components/GeoSurface";
+import DashboardAsyncState from "./DashboardAsyncState";
 import DateRangeSelector from "./DateRangeSelector";
 import DashboardChartErrorBoundary from "./DashboardChartErrorBoundary";
-import Spinner from "@/Components/Loading/Spinner";
 import useKeyboardChartNavigation from "./useKeyboardChartNavigation";
 
 const METHOD_COLORS: Record<string, string> = {
@@ -82,15 +82,12 @@ export default function PaymentMethodCard() {
                 <DateRangeSelector selected={range} onChange={onRangeChange} />
             </div>
 
-            {loading ? (
-                <div className="h-64 flex items-center justify-center">
-                    <Spinner variant="muted" />
-                </div>
-            ) : fetchError ? (
-                <div className="h-64 flex items-center justify-center text-red-500">データの取得に失敗しました</div>
-            ) : chartData.length === 0 ? (
-                <div className="h-64 flex items-center justify-center text-muted">データがありません</div>
-            ) : (
+            <DashboardAsyncState
+                loading={loading}
+                fetchError={fetchError}
+                isEmpty={chartData.length === 0}
+                heightClassName="h-64"
+            >
                 <div className="flex flex-col lg:flex-row gap-4">
                     <div className="flex-1">
                         <DashboardChartErrorBoundary heightClassName="h-56">
@@ -201,7 +198,7 @@ export default function PaymentMethodCard() {
                         ))}
                     </div>
                 </div>
-            )}
+            </DashboardAsyncState>
         </GeoSurface>
     );
 }

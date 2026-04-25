@@ -3,6 +3,7 @@ import { KdsOrder, KdsStatusUpdateTarget } from "@/types";
 import { KDS_STATUS_META } from "@/Utils/kdsHelpers";
 import { useKdsStatusUpdateHandlers } from "@/Hooks/useKdsStatusUpdateHandlers";
 import { useLongPress } from "@/Hooks/useLongPress";
+import ConfirmDialog from "@/Components/UI/ConfirmDialog";
 import StatusBadge from "./StatusBadge";
 import ElapsedTime from "./ElapsedTime";
 import OrderItemRow from "./OrderItemRow";
@@ -97,42 +98,20 @@ export default memo(function KdsGridCard({ order, onStatusUpdate }: KdsGridCardP
                 {/* アクションボタン */}
                 <div className="px-4 pb-3">
                     {order.status === "paid" && (
-                        isConfirmingReject ? (
-                            <div className="space-y-2">
-                                <p className="text-sm text-red-600 font-medium text-center">
-                                    この注文を却下しますか？
-                                </p>
-                                <div className="flex gap-2">
-                                    <button
-                                        onClick={handleRejectCancel}
-                                        className="flex-1 py-2 text-sm font-medium text-ink-light bg-white border border-edge-strong hover:bg-surface"
-                                    >
-                                        戻る
-                                    </button>
-                                    <button
-                                        onClick={handleRejectConfirm}
-                                        className="flex-1 py-2 text-sm font-medium text-white bg-red-600 border border-red-500 hover:bg-red-700"
-                                    >
-                                        却下する
-                                    </button>
-                                </div>
-                            </div>
-                        ) : (
-                            <div className="flex gap-2">
-                                <button
-                                    onClick={handleRejectClick}
-                                    className="flex-1 py-2 text-sm font-medium text-red-600 bg-white border border-red-400 hover:bg-red-50"
-                                >
-                                    却下
-                                </button>
-                                <button
-                                    onClick={handleAccept}
-                                    className="flex-1 py-2 text-sm font-medium text-white bg-emerald-600 border border-emerald-500 hover:bg-emerald-700"
-                                >
-                                    受付
-                                </button>
-                            </div>
-                        )
+                        <div className="flex gap-2">
+                            <button
+                                onClick={handleRejectClick}
+                                className="flex-1 py-2 text-sm font-medium text-red-600 bg-white border border-red-400 hover:bg-red-50"
+                            >
+                                却下
+                            </button>
+                            <button
+                                onClick={handleAccept}
+                                className="flex-1 py-2 text-sm font-medium text-white bg-emerald-600 border border-emerald-500 hover:bg-emerald-700"
+                            >
+                                受付
+                            </button>
+                        </div>
                     )}
 
                     {order.status === "accepted" && (
@@ -156,6 +135,20 @@ export default memo(function KdsGridCard({ order, onStatusUpdate }: KdsGridCardP
                     onStatusUpdate={onStatusUpdate}
                 />
             )}
+
+            <ConfirmDialog
+                show={isConfirmingReject}
+                onClose={handleRejectCancel}
+                onConfirm={handleRejectConfirm}
+                title="この注文を却下しますか？"
+                confirmLabel="却下する"
+                cancelLabel="戻る"
+                tone="danger"
+            >
+                <p className="mt-4 text-sm text-ink-light">
+                    注文番号 <span className="font-mono font-medium text-ink">{order.order_code}</span> を却下します。
+                </p>
+            </ConfirmDialog>
         </>
     );
 });

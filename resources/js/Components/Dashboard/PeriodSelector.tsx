@@ -1,4 +1,5 @@
 import { SalesPeriod } from "@/types";
+import SegmentedControl from "@/Components/UI/SegmentedControl";
 
 interface PeriodSelectorProps {
     selected: SalesPeriod;
@@ -12,21 +13,5 @@ const periods: { value: SalesPeriod; label: string }[] = [
 ];
 
 export default function PeriodSelector({ selected, onChange }: PeriodSelectorProps) {
-    return (
-        <div className="geo-surface inline-flex gap-1 p-1">
-            {periods.map((period) => (
-                <button
-                    key={period.value}
-                    onClick={() => onChange(period.value)}
-                    className={`border px-3 py-1 text-sm transition ${
-                        selected === period.value
-                            ? "bg-sky-600 text-white border-sky-600 shadow-geo-sky"
-                            : "bg-white text-ink-light border-edge-strong hover:bg-surface hover:border-primary-light"
-                    }`}
-                >
-                    {period.label}
-                </button>
-            ))}
-        </div>
-    );
+    return <SegmentedControl options={periods} selected={selected} onChange={onChange} />;
 }
