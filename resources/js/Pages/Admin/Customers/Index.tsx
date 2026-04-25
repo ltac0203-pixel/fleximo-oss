@@ -1,12 +1,13 @@
 import AdminLayout from "@/Layouts/AdminLayout";
 import { Head, Link, router } from "@inertiajs/react";
 import { PageProps, PaginatedData, CustomerListItem, AccountStatus } from "@/types";
-import { decodeHtmlEntities } from "@/Utils/decodeHtmlEntities";
-import { getPaginationLinkBaseKey, withStableKeys } from "@/Utils/stableKeys";
 import HelpButton from "@/Components/Common/Help/HelpButton";
 import HelpPanel from "@/Components/Common/Help/HelpPanel";
 import { useHelpPanel } from "@/Hooks/useHelpPanel";
 import { adminHelpContent } from "@/data/adminHelpContent";
+import AdminPagination from "@/Components/UI/AdminPagination";
+import AdminSearchForm from "@/Components/UI/AdminSearchForm";
+import EmptyRow from "@/Components/UI/EmptyRow";
 import Badge from "@/Components/UI/Badge";
 import { toAccountStatusTone } from "@/constants/statusColors";
 
@@ -50,7 +51,6 @@ export default function Index({
     sortDir,
 }: CustomersIndexProps) {
     const { showHelp, openHelp, closeHelp } = useHelpPanel();
-    const paginationLinks = withStableKeys(customers.links, getPaginationLinkBaseKey);
 
     const handleSort = (column: SortableCustomerField) => {
         const newDir = sortBy === column ? (sortDir === "asc" ? "desc" : "asc") : "asc";
@@ -79,10 +79,7 @@ export default function Index({
         );
     };
 
-    const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        const formData = new FormData(e.currentTarget);
-        const search = formData.get("search") as string;
+    const handleSearch = (search: string) => {
         router.get(
             route("admin.customers.index"),
             {
@@ -135,21 +132,11 @@ export default function Index({
                         ))}
                     </div>
 
-                    <form onSubmit={handleSearch} className="flex gap-2">
-                        <input
-                            type="text"
-                            name="search"
-                            defaultValue={searchQuery || ""}
-                            placeholder="名前・メールで検索..."
-                            className="rounded-md border border-edge-strong px-3 py-2 text-sm focus:border-primary focus:outline-none"
-                        />
-                        <button
-                            type="submit"
-                            className="bg-slate-600 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700"
-                        >
-                            検索
-                        </button>
-                    </form>
+                    <AdminSearchForm
+                        defaultValue={searchQuery || ""}
+                        placeholder="名前・メールで検索..."
+                        onSubmit={handleSearch}
+                    />
                 </div>
 
                 {/* テーブル */}
@@ -218,11 +205,7 @@ export default function Index({
                         </thead>
                         <tbody className="divide-y divide-edge bg-white">
                             {customers.data.length === 0 ? (
-                                <tr>
-                                    <td colSpan={7} className="px-6 py-12 text-center text-muted">
-                                        顧客が見つかりません
-                                    </td>
-                                </tr>
+                                <EmptyRow colSpan={7}>顧客が見つかりません</EmptyRow>
                             ) : (
                                 customers.data.map((customer) => (
                                     <tr key={customer.id} className="hover:bg-surface">
@@ -270,30 +253,7 @@ export default function Index({
                 </div>
 
                 {/* ページネーション */}
-                {customers.last_page > 1 && (
-                    <div className="mt-6 flex items-center justify-between">
-                        <p className="text-sm text-ink-light">
-                            {customers.from} - {customers.to} / {customers.total} 件
-                        </p>
-                        <div className="flex gap-2">
-                            {paginationLinks.map(({ item: link, key }) => (
-                                <Link
-                                    key={key}
-                                    href={link.url || "#"}
-                                    className={`px-3 py-2 text-sm ${
-                                        link.active
-                                            ? "bg-slate-800 text-white"
-                                            : link.url
-                                              ? "bg-white text-ink-light hover:bg-surface border border-edge-strong"
-                                              : "bg-surface-dim text-muted-light cursor-not-allowed"
-                                    }`}
-                                >
-                                    {decodeHtmlEntities(link.label)}
-                                </Link>
-                            ))}
-                        </div>
-                    </div>
-                )}
+                <AdminPagination paginated={customers} />
             </div>
 
             <HelpPanel open={showHelp} onClose={closeHelp} content={adminHelpContent["admin-customers-index"]} />

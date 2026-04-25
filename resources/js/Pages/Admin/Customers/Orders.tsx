@@ -1,12 +1,12 @@
 import AdminLayout from "@/Layouts/AdminLayout";
 import { Head, Link, router } from "@inertiajs/react";
 import { PageProps, PaginatedData, CustomerDetail, CustomerOrderItem } from "@/types";
-import { decodeHtmlEntities } from "@/Utils/decodeHtmlEntities";
-import { getPaginationLinkBaseKey, withStableKeys } from "@/Utils/stableKeys";
 import HelpButton from "@/Components/Common/Help/HelpButton";
 import HelpPanel from "@/Components/Common/Help/HelpPanel";
 import { useHelpPanel } from "@/Hooks/useHelpPanel";
 import { adminHelpContent } from "@/data/adminHelpContent";
+import AdminPagination from "@/Components/UI/AdminPagination";
+import EmptyRow from "@/Components/UI/EmptyRow";
 
 interface CustomerOrdersProps extends PageProps {
     customer: CustomerDetail;
@@ -26,7 +26,6 @@ export default function Orders({
     statuses,
 }: CustomerOrdersProps) {
     const { showHelp, openHelp, closeHelp } = useHelpPanel();
-    const paginationLinks = withStableKeys(orders.links, getPaginationLinkBaseKey);
 
     const handleFilterChange = (newTenant?: string, newStatus?: string) => {
         router.get(
@@ -135,11 +134,7 @@ export default function Orders({
                         </thead>
                         <tbody className="divide-y divide-edge bg-white">
                             {orders.data.length === 0 ? (
-                                <tr>
-                                    <td colSpan={6} className="px-6 py-12 text-center text-muted">
-                                        注文が見つかりません
-                                    </td>
-                                </tr>
+                                <EmptyRow colSpan={6}>注文が見つかりません</EmptyRow>
                             ) : (
                                 orders.data.map((order) => (
                                     <tr key={order.id} className="hover:bg-surface">
@@ -169,30 +164,7 @@ export default function Orders({
                 </div>
 
                 {/* ページネーション */}
-                {orders.last_page > 1 && (
-                    <div className="mt-6 flex items-center justify-between">
-                        <p className="text-sm text-ink-light">
-                            {orders.from} - {orders.to} / {orders.total} 件
-                        </p>
-                        <div className="flex gap-2">
-                            {paginationLinks.map(({ item: link, key }) => (
-                                <Link
-                                    key={key}
-                                    href={link.url || "#"}
-                                    className={`px-3 py-2 text-sm ${
-                                        link.active
-                                            ? "bg-slate-800 text-white"
-                                            : link.url
-                                              ? "bg-white text-ink-light hover:bg-surface border border-edge-strong"
-                                              : "bg-surface-dim text-muted-light cursor-not-allowed"
-                                    }`}
-                                >
-                                    {decodeHtmlEntities(link.label)}
-                                </Link>
-                            ))}
-                        </div>
-                    </div>
-                )}
+                <AdminPagination paginated={orders} />
             </div>
 
             <HelpPanel open={showHelp} onClose={closeHelp} content={adminHelpContent["admin-customers-orders"]} />
