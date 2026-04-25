@@ -3,11 +3,11 @@ import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import type { TooltipContentProps, TooltipPayloadEntry } from "recharts";
 import { usePaymentMethodData } from "@/Hooks/usePaymentMethodData";
 import { PaymentMethodStatsItem } from "@/types";
-import { formatCurrency } from "@/Utils/formatPrice";
+import { formatCurrency, formatNumber } from "@/Utils/formatPrice";
 import GeoSurface from "@/Components/GeoSurface";
 import DateRangeSelector from "./DateRangeSelector";
 import DashboardChartErrorBoundary from "./DashboardChartErrorBoundary";
-import Spinner from "./Spinner";
+import Spinner from "@/Components/Loading/Spinner";
 import useKeyboardChartNavigation from "./useKeyboardChartNavigation";
 
 const METHOD_COLORS: Record<string, string> = {
@@ -18,11 +18,6 @@ const METHOD_PATTERNS: Record<string, string> = {
     card: "斜線",
     paypay: "ドット",
 };
-const numberFormatter = new Intl.NumberFormat("ja-JP");
-
-function formatNumber(value: number): string {
-    return numberFormatter.format(value);
-}
 
 function getPatternLabel(method: string): string {
     return METHOD_PATTERNS[method] ?? "パターン";
@@ -89,7 +84,7 @@ export default function PaymentMethodCard() {
 
             {loading ? (
                 <div className="h-64 flex items-center justify-center">
-                    <Spinner />
+                    <Spinner variant="muted" />
                 </div>
             ) : fetchError ? (
                 <div className="h-64 flex items-center justify-center text-red-500">データの取得に失敗しました</div>

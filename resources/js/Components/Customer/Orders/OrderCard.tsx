@@ -1,6 +1,7 @@
 import { Link } from "@inertiajs/react";
 import { useMemo } from "react";
 import { OrderListItem } from "@/types";
+import { formatCurrency } from "@/Utils/formatPrice";
 
 interface OrderCardProps {
     order: OrderListItem;
@@ -27,10 +28,6 @@ function formatDateTime(dateString: string, now: Date): string {
     });
 }
 
-function formatPrice(price: number): string {
-    return `¥${price.toLocaleString()}`;
-}
-
 export default function OrderCard({ order, onReorder, reorderLoadingOrderId = null }: OrderCardProps) {
     const now = useMemo(() => new Date(), []);
     const canReorder = order.status === "completed";
@@ -46,7 +43,7 @@ export default function OrderCard({ order, onReorder, reorderLoadingOrderId = nu
 
                 <div className="flex justify-between items-center text-sm">
                     <span className="text-muted">{formatDateTime(order.created_at, now)}</span>
-                    <span className="font-semibold text-ink">{formatPrice(order.total_amount)}</span>
+                    <span className="font-semibold text-ink">{formatCurrency(order.total_amount)}</span>
                 </div>
             </Link>
 
