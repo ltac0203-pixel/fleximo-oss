@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Dashboard;
 
 use App\Enums\SalesPeriod;
+use App\Enums\TopItemsPeriod;
 use Carbon\Carbon;
 
 // テナントダッシュボード用キャッシュキーのビルダー集約。
@@ -32,9 +33,9 @@ class DashboardCacheKeys
             .$startDate->format('Y-m-d').':'.$endDate->format('Y-m-d');
     }
 
-    public static function topItems(int $tenantId, string $period, int $limit): string
+    public static function topItems(int $tenantId, TopItemsPeriod $period, int $limit): string
     {
-        return self::PREFIX.":{$tenantId}:top_items:{$period}:{$limit}";
+        return self::PREFIX.":{$tenantId}:top_items:{$period->value}:{$limit}";
     }
 
     public static function hourly(int $tenantId, Carbon $date): string
