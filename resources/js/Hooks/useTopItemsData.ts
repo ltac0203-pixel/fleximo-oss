@@ -1,4 +1,4 @@
-import { api, ENDPOINTS } from "@/api";
+import { api, buildQuery, ENDPOINTS } from "@/api";
 import type { ApiDataResponse } from "@/api";
 import useDashboardDataFetcher from "@/Hooks/useDashboardDataFetcher";
 import { TopItem } from "@/types";
@@ -28,14 +28,12 @@ export function useTopItemsData(): UseTopItemsDataResult {
     const [period, setPeriod] = useState<TopItemsPeriod>("month");
 
     const fetchTopItems = useCallback(async (selectedPeriod: TopItemsPeriod): Promise<TopItem[]> => {
-        const params = new URLSearchParams({
+        const url = `${ENDPOINTS.tenant.dashboard.topItems}${buildQuery({
             period: selectedPeriod,
-            limit: String(DEFAULT_TOP_ITEMS_LIMIT),
-        });
+            limit: DEFAULT_TOP_ITEMS_LIMIT,
+        })}`;
 
-        const { data: result, error } = await api.cachedGet<ApiDataResponse<TopItem[]>>(
-            `${ENDPOINTS.tenant.dashboard.topItems}?${params.toString()}`,
-        );
+        const { data: result, error } = await api.cachedGet<ApiDataResponse<TopItem[]>>(url);
 
         if (error || !result) {
             throw error ?? "empty result";
