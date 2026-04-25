@@ -6,6 +6,7 @@ namespace App\Services;
 
 use App\Enums\PaymentMethod;
 use App\Enums\SalesPeriod;
+use App\Enums\TopItemsPeriod;
 use App\Services\Dashboard\DashboardCacheKeys;
 use App\Services\Dashboard\SalesDataFormatter;
 use App\Services\Dashboard\StatsCacheResolver;
@@ -105,13 +106,12 @@ class TenantDashboardService
         return $this->salesDataFormatter->format($period, $fetchStart, $endDate, $dailyStats);
     }
 
-    public function getTopItems(int $tenantId, string $period, int $limit = 10): array
+    public function getTopItems(int $tenantId, TopItemsPeriod $period, int $limit = 10): array
     {
         return $this->cacheResolver->rememberRealtime(
             DashboardCacheKeys::topItems($tenantId, $period, $limit),
             function () use ($tenantId, $period, $limit) {
-                $today = Carbon::today();
-                $startDate = $this->resolveTopItemsStartDate($period, $today);
+                $startDate = $period->startDate(Carbon::today());
                 $items = $this->statsRepository->getTopItems($tenantId, $startDate, $limit);
 
                 $result = [];
@@ -129,16 +129,6 @@ class TenantDashboardService
                 return $result;
             }
         );
-    }
-
-    private function resolveTopItemsStartDate(string $period, Carbon $today): Carbon
-    {
-        return match ($period) {
-            'week' => $today->copy()->subDays(7),
-            'month' => $today->copy()->subDays(30),
-            'year' => $today->copy()->subDays(365),
-            default => $today->copy()->subDays(30),
-        };
     }
 
     public function getHourlyDistribution(int $tenantId, Carbon $date): array

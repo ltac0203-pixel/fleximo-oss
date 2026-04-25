@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature\Dashboard;
 
 use App\Enums\SalesPeriod;
+use App\Enums\TopItemsPeriod;
 use App\Services\Dashboard\StatsCacheResolver;
 use App\Services\TenantDashboardService;
 use Carbon\Carbon;
@@ -82,7 +83,7 @@ class CacheKeyParityTest extends TestCase
 
     public function test_get_top_items_passes_expected_key_and_realtime_ttl(): void
     {
-        $this->service->getTopItems(3, 'week', 10);
+        $this->service->getTopItems(3, TopItemsPeriod::Week, 10);
 
         Cache::shouldHaveReceived('remember')
             ->with('tenant_dashboard:3:top_items:week:10', StatsCacheResolver::TTL_REALTIME, Mockery::type(Closure::class));
