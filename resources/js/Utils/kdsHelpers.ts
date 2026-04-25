@@ -1,30 +1,32 @@
 import { KdsOrderStatus, KdsStatusMeta } from "@/types";
 
-// ステータスごとのラベル・色・CSSクラスを一元管理。
+// ステータスごとの UI 文脈見出しと色・CSSクラスを一元管理。
+// `kdsHeading` は KDS 端末向けの文言で、意味側ラベル (`ORDER_STATUS_LABELS`) とは別管理する。
+// 例えば `paid` は意味としては「決済完了」だが、KDS では作業対象として「新規注文」と見せる。
 export const KDS_STATUS_META: Record<KdsOrderStatus, KdsStatusMeta> = {
     paid: {
-        label: "新規注文",
+        kdsHeading: "新規注文",
         dotClass: "bg-amber-500",
         cardBorderClass: "border-l-amber-400",
         badgeBgClass: "bg-amber-100",
         badgeTextClass: "text-amber-800",
     },
     accepted: {
-        label: "受付済み",
+        kdsHeading: "受付済み",
         dotClass: "bg-sky-500",
         cardBorderClass: "border-l-sky-400",
         badgeBgClass: "bg-sky-100",
         badgeTextClass: "text-sky-800",
     },
     in_progress: {
-        label: "調理中",
+        kdsHeading: "調理中",
         dotClass: "bg-cyan-500",
         cardBorderClass: "border-l-cyan-400",
         badgeBgClass: "bg-cyan-100",
         badgeTextClass: "text-cyan-800",
     },
     ready: {
-        label: "準備完了",
+        kdsHeading: "準備完了",
         dotClass: "bg-green-500",
         cardBorderClass: "border-l-green-400",
         badgeBgClass: "bg-green-100",
