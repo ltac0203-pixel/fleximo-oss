@@ -8,12 +8,16 @@ const apiDeleteMock = vi.hoisted(() => vi.fn());
 const loggerErrorMock = vi.hoisted(() => vi.fn());
 const loggerWarnMock = vi.hoisted(() => vi.fn());
 
-vi.mock("@/api", () => ({
-    api: {
-        post: apiPostMock,
-        delete: apiDeleteMock,
-    },
-}));
+vi.mock("@/api", async (importOriginal) => {
+    const actual = await importOriginal<typeof import("@/api")>();
+    return {
+        ...actual,
+        api: {
+            post: apiPostMock,
+            delete: apiDeleteMock,
+        },
+    };
+});
 
 vi.mock("@/Utils/logger", () => ({
     logger: {

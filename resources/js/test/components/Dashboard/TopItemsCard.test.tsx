@@ -4,7 +4,10 @@ const apiMock = vi.hoisted(() => ({
 const loggerMock = vi.hoisted(() => ({
     error: vi.fn(),
 }));
-vi.mock("@/api", () => ({ api: apiMock }));
+vi.mock("@/api", async (importOriginal) => {
+    const actual = await importOriginal<typeof import("@/api")>();
+    return { ...actual, api: apiMock };
+});
 vi.mock("@/Utils/logger", () => ({ logger: loggerMock }));
 
 import { render, screen, waitFor } from "@testing-library/react";

@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { api } from "@/api";
+import { api, ENDPOINTS } from "@/api";
 import { Cart, CartItem } from "@/types";
 
 // ---------------------------------------------------------------------------
@@ -285,7 +285,7 @@ export const useCartStore = create<CartState>()((set, get) => {
                 await Promise.all(
                     queuedUpdates.map(async ({ cartItemId, quantity, rollbackContext, resolvers }) => {
                         const { error: updateError } = await api.patch<CartItem>(
-                            `/api/customer/cart/items/${cartItemId}`,
+                            ENDPOINTS.customer.cartItem(cartItemId),
                             { quantity },
                         );
 
@@ -366,7 +366,7 @@ export const useCartStore = create<CartState>()((set, get) => {
         fetchCarts: async () => {
             set({ isLoading: true, error: null });
 
-            const { data, error: fetchError } = await api.get<Cart[]>("/api/customer/cart");
+            const { data, error: fetchError } = await api.get<Cart[]>(ENDPOINTS.customer.cart);
 
             if (fetchError) {
                 set({ error: fetchError, isLoading: false });
@@ -378,7 +378,7 @@ export const useCartStore = create<CartState>()((set, get) => {
         addToCart: async (tenantId, menuItemId, quantity, optionIds) => {
             set({ error: null });
 
-            const { data, error: addError } = await api.post<Cart>("/api/customer/cart/items", {
+            const { data, error: addError } = await api.post<Cart>(ENDPOINTS.customer.cartItems, {
                 tenant_id: tenantId,
                 menu_item_id: menuItemId,
                 quantity,
@@ -429,7 +429,7 @@ export const useCartStore = create<CartState>()((set, get) => {
 
             if (currentDebounceMs <= 0) {
                 return (async () => {
-                    const { error: updateError } = await api.patch<CartItem>(`/api/customer/cart/items/${cartItemId}`, {
+                    const { error: updateError } = await api.patch<CartItem>(ENDPOINTS.customer.cartItem(cartItemId), {
                         quantity,
                     });
 
@@ -492,7 +492,7 @@ export const useCartStore = create<CartState>()((set, get) => {
                 return { carts: result.nextCarts };
             });
 
-            const { error: removeError } = await api.delete(`/api/customer/cart/items/${cartItemId}`);
+            const { error: removeError } = await api.delete(ENDPOINTS.customer.cartItem(cartItemId));
 
             if (removeError) {
                 if (rollbackContext) {
@@ -518,7 +518,7 @@ export const useCartStore = create<CartState>()((set, get) => {
                 return { carts: result.nextCarts };
             });
 
-            const { error: clearError } = await api.delete(`/api/customer/cart/${cartId}`);
+            const { error: clearError } = await api.delete(ENDPOINTS.customer.cartById(cartId));
 
             if (clearError) {
                 if (rollbackContext) {

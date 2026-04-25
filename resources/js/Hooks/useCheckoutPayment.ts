@@ -1,4 +1,4 @@
-import { api } from "@/api";
+import { api, ENDPOINTS } from "@/api";
 import { CheckoutApiResponse, FinalizePaymentApiResponse, PaymentMethod } from "@/types";
 import { normalizeErrorMessage } from "@/Utils/errorHelpers";
 import { logger } from "@/Utils/logger";
@@ -83,7 +83,7 @@ export function useCheckoutPayment({
         const useSavedCard = currentSavedCardId !== null;
 
         const { data: checkoutResponse, error: checkoutError } = await api.post<CheckoutApiResponse>(
-            "/api/customer/checkout",
+            ENDPOINTS.customer.checkout,
             {
                 cart_id: cartId,
                 payment_method: "card",
@@ -101,7 +101,7 @@ export function useCheckoutPayment({
         if (!payment.requires_token) {
             try {
                 const { data: finalizeResponse, error: finalizeError } = await api.post<FinalizePaymentApiResponse>(
-                    "/api/customer/payments/finalize",
+                    ENDPOINTS.customer.payments.finalize,
                     { payment_id: payment.id },
                 );
 
@@ -135,7 +135,7 @@ export function useCheckoutPayment({
 
         try {
             const { data: finalizeResponse, error: finalizeError } = await api.post<FinalizePaymentApiResponse>(
-                "/api/customer/payments/finalize",
+                ENDPOINTS.customer.payments.finalize,
                 {
                     payment_id: payment.id,
                     token,
@@ -159,7 +159,7 @@ export function useCheckoutPayment({
 
     const handlePayPayCheckout = async () => {
         const { data: checkoutResponse, error: checkoutError } = await api.post<CheckoutApiResponse>(
-            "/api/customer/checkout",
+            ENDPOINTS.customer.checkout,
             {
                 cart_id: cartId,
                 payment_method: "paypay",

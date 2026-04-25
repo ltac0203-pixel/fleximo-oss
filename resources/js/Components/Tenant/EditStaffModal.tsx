@@ -1,4 +1,4 @@
-import { api } from "@/api";
+import { api, ENDPOINTS } from "@/api";
 import InputError from "@/Components/InputError";
 import Modal from "@/Components/Modal";
 import Button from "@/Components/UI/Button";
@@ -62,7 +62,7 @@ export default function EditStaffModal({ show, staff, onClose, onSuccess }: Edit
         }
 
         void submit(
-            () => api.patch<unknown, { errors?: FormErrors }>(`/api/tenant/staff/${staff.id}`, payload),
+            () => api.patch<unknown, { errors?: FormErrors }>(ENDPOINTS.tenant.staffMember(staff.id), payload),
             {
                 logMessage: "スタッフ更新に失敗",
                 onSuccess: () => {

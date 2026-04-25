@@ -1,4 +1,4 @@
-import { api } from "@/api";
+import { api, ENDPOINTS } from "@/api";
 import type { ApiDataResponse } from "@/api";
 import useDashboardDataFetcher from "@/Hooks/useDashboardDataFetcher";
 import { SalesData, SalesPeriod } from "@/types";
@@ -74,7 +74,7 @@ export function useSalesChartData(initialData: SalesData[]): UseSalesChartDataRe
         });
 
         const { data: result, error } = await api.cachedGet<ApiDataResponse<SalesData[]>>(
-            `/api/tenant/dashboard/sales?${params.toString()}`,
+            `${ENDPOINTS.tenant.dashboard.sales}?${params.toString()}`,
         );
 
         if (error || !result) {

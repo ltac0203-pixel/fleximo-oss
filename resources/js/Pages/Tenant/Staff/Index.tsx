@@ -1,3 +1,4 @@
+import { ENDPOINTS } from "@/api";
 import PageHeader from "@/Components/PageHeader";
 import Button from "@/Components/UI/Button";
 import CreateStaffModal from "@/Components/Tenant/CreateStaffModal";
@@ -79,7 +80,7 @@ export default function Index({ staff }: StaffIndexProps) {
                         show={showDeleteModal}
                         title="スタッフを削除"
                         targetName={selectedStaff?.name}
-                        apiEndpoint={`/api/tenant/staff/${selectedStaff?.id}`}
+                        apiEndpoint={ENDPOINTS.tenant.staffMember(selectedStaff?.id ?? 0)}
                         reloadOnly={["staff"]}
                         successMessage="スタッフを削除しました"
                         onClose={closeDelete}

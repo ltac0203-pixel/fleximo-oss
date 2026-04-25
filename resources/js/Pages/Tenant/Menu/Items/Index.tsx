@@ -1,3 +1,4 @@
+import { ENDPOINTS } from "@/api";
 import PageHeader from "@/Components/PageHeader";
 import Button from "@/Components/UI/Button";
 import ConfirmDeleteModal from "@/Components/ConfirmDeleteModal";
@@ -157,7 +158,7 @@ export default function Index({ items, categories }: MenuItemsIndexProps) {
                     show={showDeleteModal}
                     title="商品を削除"
                     targetName={selectedItem?.name}
-                    apiEndpoint={`/api/tenant/menu/items/${selectedItem?.id}`}
+                    apiEndpoint={ENDPOINTS.tenant.menu.item(selectedItem?.id ?? 0)}
                     reloadOnly={["items"]}
                     successMessage="商品を削除しました"
                     onClose={closeDeleteModal}

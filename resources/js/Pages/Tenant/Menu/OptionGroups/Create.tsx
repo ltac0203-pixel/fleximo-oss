@@ -4,7 +4,7 @@ import Button from "@/Components/UI/Button";
 import OptionGroupForm, { FormData, FormErrors } from "@/Components/Tenant/Menu/OptionGroupForm";
 import { useApiFormSubmission } from "@/Hooks/useApiFormSubmission";
 import { useHelpPanel } from "@/Hooks/useHelpPanel";
-import { api } from "@/api";
+import { api, ENDPOINTS } from "@/api";
 import TenantLayout from "@/Layouts/TenantLayout";
 import { OptionGroupCreateProps } from "@/types";
 import { Head, router } from "@inertiajs/react";
@@ -26,7 +26,7 @@ export default function Create(_props: OptionGroupCreateProps) {
 
     const submitOptionGroup = async () => {
         await submit(
-            () => api.post<{ data: { id: number } }, { errors?: FormErrors }>("/api/tenant/option-groups", formData),
+            () => api.post<{ data: { id: number } }, { errors?: FormErrors }>(ENDPOINTS.tenant.optionGroups, formData),
             {
                 logMessage: "Option group creation failed",
                 onSuccess: (response) => {
