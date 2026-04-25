@@ -24,6 +24,7 @@ class TenantResourceTest extends TestCase
             'email' => 'test@example.com',
             'phone' => '03-1234-5678',
         ]);
+        $tenant->load('businessHours');
 
         $request = Request::create('/api/tenants', 'GET');
         $resource = new TenantResource($tenant);
@@ -47,6 +48,7 @@ class TenantResourceTest extends TestCase
             'slug' => 'test-cafe',
             'address' => 'Tokyo Shibuya 1-1-1',
         ]);
+        $tenant->load('businessHours');
 
         $request = Request::create('/api/tenants', 'GET');
         $resource = new TenantResource($tenant);
@@ -61,6 +63,7 @@ class TenantResourceTest extends TestCase
     public function test_tenant_resource_handles_no_business_hours(): void
     {
         $tenant = Tenant::factory()->create();
+        $tenant->load('businessHours');
 
         $request = Request::create('/api/tenants', 'GET');
         $resource = new TenantResource($tenant);
@@ -68,6 +71,22 @@ class TenantResourceTest extends TestCase
 
         $this->assertIsArray($response['today_business_hours']);
         $this->assertEmpty($response['today_business_hours']);
+    }
+
+    public function test_tenant_resource_omits_business_hours_keys_when_relation_not_loaded(): void
+    {
+        // businessHours リレーションが未 load の場合、is_open / today_business_hours キーは
+        // 含まれないことを検証する（lazy loading を防ぎ、フロント側で undefined 判定可能にする）
+        $tenant = Tenant::factory()->create();
+
+        $request = Request::create('/api/tenants', 'GET');
+        $resource = new TenantResource($tenant);
+        $response = $resource->toArray($request);
+
+        $this->assertArrayHasKey('id', $response);
+        $this->assertArrayHasKey('name', $response);
+        $this->assertArrayNotHasKey('is_open', $response);
+        $this->assertArrayNotHasKey('today_business_hours', $response);
     }
 
     public function test_tenant_detail_resource_includes_contact_information(): void

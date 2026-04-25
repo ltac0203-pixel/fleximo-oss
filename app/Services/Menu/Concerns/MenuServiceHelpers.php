@@ -32,7 +32,7 @@ trait MenuServiceHelpers
      * @template T
      *
      * @param  callable(): T  $operation
-     * @param  (callable(T): ?array)|null  $auditContextResolver  操作後の状態から監査コンテキストを生成
+     * @param  (callable(T): (array<string, mixed>|null))|null  $auditContextResolver  操作後の状態から監査コンテキストを生成
      * @param  (callable(T): ?Model)|null  $auditModelResolver  監査対象モデルを明示的に指定（operation 戻り値が Model でない場合用）
      * @return T
      */
