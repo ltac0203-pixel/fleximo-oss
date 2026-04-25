@@ -72,40 +72,33 @@ class CustomerManagementService
             ->paginate($perPage);
     }
 
-    // 顧客を一時停止する
     public function suspendCustomer(User $customer, string $reason, User $admin): User
     {
-        return DB::transaction(function () use ($customer, $reason, $admin) {
-            $customer->applyAccountStatus(AccountStatus::Suspended, $reason, $admin->id, false);
-
-            $customer->tokens()->delete();
-
-            AuditLogger::log(
-                action: AuditAction::CustomerSuspended,
-                target: $customer,
-                changes: [
-                    'new' => ['account_status' => AccountStatus::Suspended->value],
-                    'metadata' => ['reason' => $reason],
-                ],
-            );
-
-            return $customer->refresh();
-        });
+        return $this->revokeAccess($customer, $admin, AccountStatus::Suspended, AuditAction::CustomerSuspended, $reason);
     }
 
-    // 顧客をBANする
     public function banCustomer(User $customer, string $reason, User $admin): User
     {
-        return DB::transaction(function () use ($customer, $reason, $admin) {
-            $customer->applyAccountStatus(AccountStatus::Banned, $reason, $admin->id, false);
+        return $this->revokeAccess($customer, $admin, AccountStatus::Banned, AuditAction::CustomerBanned, $reason);
+    }
+
+    private function revokeAccess(
+        User $customer,
+        User $admin,
+        AccountStatus $newStatus,
+        AuditAction $auditAction,
+        string $reason,
+    ): User {
+        return DB::transaction(function () use ($customer, $admin, $newStatus, $auditAction, $reason) {
+            $customer->applyAccountStatus($newStatus, $reason, $admin->id, false);
 
             $customer->tokens()->delete();
 
             AuditLogger::log(
-                action: AuditAction::CustomerBanned,
+                action: $auditAction,
                 target: $customer,
                 changes: [
-                    'new' => ['account_status' => AccountStatus::Banned->value],
+                    'new' => ['account_status' => $newStatus->value],
                     'metadata' => ['reason' => $reason],
                 ],
             );
