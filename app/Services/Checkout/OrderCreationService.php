@@ -19,6 +19,7 @@ use App\Services\OrderNumberGenerator;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\DB;
 
 class OrderCreationService
 {
@@ -36,29 +37,11 @@ class OrderCreationService
         // N+1を防ぎ、以降のアイテム走査で追加クエリが発生しないようにする
         $cart->load(['items.menuItem', 'items.options.option']);
 
-        // 価格改ざん防止: メニューアイテムの現在価格をロック付きで再取得し、販売可能性を検証する
-        $lockedMenuItems = $this->verifyItemsWithLock($cart);
-
-        // 価格改ざん防止: オプションの現在価格もロック付きで再取得し、TOCTOU攻撃を防止する
-        $lockedOptions = $this->lockOptionsFromCart($cart);
-
         // 営業日を基準に表示用注文番号を付与する
         $businessDate = $this->orderNumberGenerator->getBusinessDate();
 
         // ユニーク制約競合時は再採番して再試行し、注文の外枠を確実に確保する
-        $order = $this->createOrderWithRetry($cart, $businessDate);
-
-        // メニュー変更に影響されないよう、注文時点の商品名・価格をスナップショットとして保存する
-        // ロック取得した最新のメニューアイテム・オプション情報を使用し、TOCTOU攻撃を防止する
-        $this->createOrderItems($order, $cart, $lockedMenuItems, $lockedOptions);
-
-        // アイテム作成後に合計を算出することで、オプション価格を含む正確な金額を保証する
-        $totalAmount = $this->calculateTotalAmount($order);
-        $order->total_amount = $totalAmount;
-        $order->save();
-        $order->refresh();
-
-        return $order;
+        return $this->createOrderWithRetry($cart, $businessDate);
     }
 
     // 注文の合計金額を計算する
@@ -77,6 +60,10 @@ class OrderCreationService
     }
 
     // 注文番号の重複競合時に再採番して注文を作成する
+    // 各 attempt は単一トランザクションでロック取得→注文作成→アイテム作成→合計計算までを
+    // atomic に実行する。途中で例外が発生した場合はロールバックされ、Order が部分書き込みで残らない。
+    // また verifyItemsWithLock / lockOptionsFromCart の lockForUpdate がトランザクション内で
+    // 確実に効くよう、ロックもこのトランザクション内で取得する。
     private function createOrderWithRetry(Cart $cart, Carbon $businessDate): Order
     {
         $lastException = null;
@@ -85,7 +72,25 @@ class OrderCreationService
             $orderCode = $this->orderNumberGenerator->generate($cart->tenant_id, $businessDate);
 
             try {
-                return $this->createOrder($cart, $orderCode, $businessDate);
+                return DB::transaction(function () use ($cart, $orderCode, $businessDate) {
+                    // 価格改ざん防止: メニューアイテムの現在価格をロック付きで再取得し、販売可能性を検証する
+                    $lockedMenuItems = $this->verifyItemsWithLock($cart);
+
+                    // 価格改ざん防止: オプションの現在価格もロック付きで再取得し、TOCTOU攻撃を防止する
+                    $lockedOptions = $this->lockOptionsFromCart($cart);
+
+                    $order = $this->createOrder($cart, $orderCode, $businessDate);
+
+                    // メニュー変更に影響されないよう、注文時点の商品名・価格をスナップショットとして保存する
+                    $this->createOrderItems($order, $cart, $lockedMenuItems, $lockedOptions);
+
+                    // アイテム作成後に合計を算出することで、オプション価格を含む正確な金額を保証する
+                    $order->total_amount = $this->calculateTotalAmount($order);
+                    $order->save();
+                    $order->refresh();
+
+                    return $order;
+                });
             } catch (QueryException $e) {
                 if (! $this->isOrderCodeDuplicateError($e)) {
                     throw $e;

@@ -13,6 +13,7 @@ use App\Models\MenuItem;
 use App\Models\Option;
 use App\Models\OptionGroup;
 use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Services\Checkout\OrderCreationService;
@@ -411,5 +412,59 @@ class OrderCreationServiceTest extends TestCase
         $this->expectException(OrderNumberGenerationException::class);
 
         $this->service->createFromCart($cart);
+    }
+
+    public function test_create_from_cart_rolls_back_when_item_creation_fails(): void
+    {
+        // OrderItem 作成中に Exception が発生した場合、トランザクションがロールバックされ
+        // Order レコードが部分書き込みで残らないことを検証する。
+        $tenant = Tenant::factory()->create();
+        $user = User::factory()->customer()->create();
+        $menuItem = MenuItem::factory()->create([
+            'tenant_id' => $tenant->id,
+            'price' => 500,
+        ]);
+        $cart = Cart::factory()->create([
+            'user_id' => $user->id,
+            'tenant_id' => $tenant->id,
+        ]);
+        CartItem::factory()->create([
+            'cart_id' => $cart->id,
+            'tenant_id' => $tenant->id,
+            'menu_item_id' => $menuItem->id,
+            'quantity' => 1,
+        ]);
+
+        $businessDate = now()->startOfDay();
+        $this->mockOrderNumberGenerator
+            ->shouldReceive('getBusinessDate')
+            ->once()
+            ->andReturn($businessDate);
+        $this->mockOrderNumberGenerator
+            ->shouldReceive('generate')
+            ->once()
+            ->with($tenant->id, $businessDate)
+            ->andReturn('A001');
+
+        $orderCountBefore = Order::count();
+
+        // OrderItem の保存時に意図的に Exception を発生させる
+        OrderItem::saving(function () {
+            throw new \RuntimeException('Forced failure for rollback test');
+        });
+
+        $caught = null;
+        try {
+            $this->service->createFromCart($cart);
+        } catch (\RuntimeException $e) {
+            $caught = $e;
+        } finally {
+            OrderItem::flushEventListeners();
+        }
+
+        $this->assertNotNull($caught, 'Expected RuntimeException to be thrown');
+
+        // ロールバックにより Order レコードが残っていないこと
+        $this->assertSame($orderCountBefore, Order::count());
     }
 }
