@@ -47,7 +47,7 @@ export default function Index({ orders }: OrdersIndexPageProps) {
             <div className="relative min-h-screen bg-white">
                 <GradientBackground />
 
-                {/* Fixed Header を明示し、実装意図の誤読を防ぐ。 */}
+                {/* Fixed Header */}
                 <header className="fixed top-0 left-0 right-0 z-30 bg-white border-b border-slate-200">
                     <div className="h-14 px-4 flex items-center justify-between max-w-lg lg:max-w-5xl mx-auto">
                         <Link href={route("dashboard")} className="text-slate-500 hover:text-slate-700">
@@ -65,7 +65,7 @@ export default function Index({ orders }: OrdersIndexPageProps) {
                     </div>
                 </header>
 
-                {/* Main Content を明示し、実装意図の誤読を防ぐ。 */}
+                {/* Main Content */}
                 <main className="relative z-10 pt-14 pb-8 max-w-lg lg:max-w-5xl mx-auto px-4">
                     {orders.data.length === 0 ? (
                         <div className="text-center py-12">

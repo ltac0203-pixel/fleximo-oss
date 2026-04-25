@@ -113,7 +113,7 @@ const VirtualRowRenderer = memo(function VirtualRowRenderer({ row, columns, onIt
         );
     }
 
-    // 空状態をここで吸収し、カード描画側の分岐を増やさない。 を明示し、実装意図の誤読を防ぐ。
+    // 空状態をここで吸収し、カード描画側の分岐を増やさない。
     if (row.items.length === 0) {
         return (
             <div className="geo-surface border-dashed border-edge bg-white/70 px-3 py-4 text-center text-sm text-muted">

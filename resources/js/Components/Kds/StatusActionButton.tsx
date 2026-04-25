@@ -16,7 +16,7 @@ export default function StatusActionButton({
     const nextStatus = getNextStatus(currentStatus);
 
     const handleClick = useCallback(() => {
-        // キッチン現場の即時操作で押下感を返し、状態更新の確信を持たせる。 を明示し、実装意図の誤読を防ぐ。
+        // キッチン現場の即時操作で押下感を返し、状態更新の確信を持たせる。
         navigator.vibrate?.(50);
         if (nextStatus) {
             onStatusUpdate(nextStatus);

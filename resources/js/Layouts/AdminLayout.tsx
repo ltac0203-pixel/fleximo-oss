@@ -38,10 +38,10 @@ export default function AdminLayout({ header, children }: PropsWithChildren<{ he
     return (
         <div className="min-h-screen bg-slate-50">
             <SkipToContentLink />
-            {/* Header: 固定トップバー を明示し、実装意図の誤読を防ぐ。 */}
+            {/* Header: 固定トップバー */}
             <header className="fixed top-0 left-0 right-0 z-20 h-16 bg-slate-800 border-b border-slate-700">
                 <div className="h-full px-4 flex items-center justify-between">
-                    {/* ハンバーガーメニュー（モバイル） を明示し、実装意図の誤読を防ぐ。 */}
+                    {/* ハンバーガーメニュー（モバイル） */}
                     <button
                         onClick={() => setShowingSidebar(!showingSidebar)}
                         className="md:hidden p-2 text-slate-300 hover:text-white hover:bg-slate-700"
@@ -64,12 +64,12 @@ export default function AdminLayout({ header, children }: PropsWithChildren<{ he
                         </svg>
                     </button>
 
-                    {/* ロゴ を明示し、実装意図の誤読を防ぐ。 */}
+                    {/* ロゴ */}
                     <div className="flex items-center">
                         <h1 className="text-lg font-semibold text-white">Fleximo 管理</h1>
                     </div>
 
-                    {/* ユーザードロップダウン を明示し、実装意図の誤読を防ぐ。 */}
+                    {/* ユーザードロップダウン */}
                     <Dropdown>
                         <Dropdown.Trigger>
                             <button className="flex items-center text-sm font-medium text-slate-300 hover:text-white">
@@ -156,7 +156,7 @@ export default function AdminLayout({ header, children }: PropsWithChildren<{ he
                 </div>
             </header>
 
-            {/* Sidebar: 固定左サイドバー（デスクトップ） を明示し、実装意図の誤読を防ぐ。 */}
+            {/* Sidebar: 固定左サイドバー（デスクトップ） */}
             <aside className="hidden md:fixed md:left-0 md:top-16 md:h-[calc(100vh-4rem)] md:w-64 md:flex md:flex-col bg-slate-800">
                 <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
                     {navigation.map((item) => (
@@ -175,12 +175,12 @@ export default function AdminLayout({ header, children }: PropsWithChildren<{ he
                 </nav>
             </aside>
 
-            {/* モバイルサイドバー（オーバーレイ） を明示し、実装意図の誤読を防ぐ。 */}
+            {/* モバイルサイドバー（オーバーレイ） */}
             {showingSidebar && (
                 <div className="fixed inset-0 z-30 md:hidden">
-                    {/* オーバーレイ背景 を明示し、実装意図の誤読を防ぐ。 */}
+                    {/* オーバーレイ背景 */}
                     <div className="fixed inset-0 bg-slate-900/60" role="presentation" aria-hidden="true" onClick={() => setShowingSidebar(false)} />
-                    {/* サイドバー を明示し、実装意図の誤読を防ぐ。 */}
+                    {/* サイドバー */}
                     <aside className="fixed left-0 top-0 bottom-0 w-64 max-w-[85vw] bg-slate-800">
                         <div className="h-16 flex items-center px-4 border-b border-slate-700">
                             <h2 className="text-lg font-semibold text-white">Fleximo 管理</h2>
@@ -205,7 +205,7 @@ export default function AdminLayout({ header, children }: PropsWithChildren<{ he
                 </div>
             )}
 
-            {/* Main Content を明示し、実装意図の誤読を防ぐ。 */}
+            {/* Main Content */}
             <main id={MAIN_CONTENT_ID} tabIndex={-1} className="pt-16 md:ml-64">
                 {header && (
                     <div className="bg-white border-b border-slate-200">

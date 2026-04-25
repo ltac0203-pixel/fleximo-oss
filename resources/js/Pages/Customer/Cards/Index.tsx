@@ -39,7 +39,7 @@ export default function CardsIndex({ tenant, cards: initialCards, fincodePublicK
             <Head title={`カード管理 - ${tenant.name}`} />
 
             <div className="min-h-screen bg-slate-50">
-                {/* 戻る導線を固定し、モバイルでも迷わず前画面へ戻れるようにする。 を明示し、実装意図の誤読を防ぐ。 */}
+                {/* 戻る導線を固定し、モバイルでも迷わず前画面へ戻れるようにする。 */}
                 <header className="fixed top-0 left-0 right-0 z-30 bg-white border-b border-slate-200">
                     <div className="h-14 px-4 flex items-center justify-between max-w-lg lg:max-w-5xl mx-auto">
                         <Link
@@ -60,7 +60,7 @@ export default function CardsIndex({ tenant, cards: initialCards, fincodePublicK
                     </div>
                 </header>
 
-                {/* 固定ヘッダーと重ならないよう余白を取り、可読性を維持する。 を明示し、実装意図の誤読を防ぐ。 */}
+                {/* 固定ヘッダーと重ならないよう余白を取り、可読性を維持する。 */}
                 <main className="pt-14 pb-8 max-w-lg lg:max-w-5xl mx-auto px-4">
                     <div className="space-y-6 pt-4">
                         {/* 店舗単位管理であることを明示し、カード利用先の誤認を防ぐ。 */}
@@ -68,7 +68,7 @@ export default function CardsIndex({ tenant, cards: initialCards, fincodePublicK
                             <span className="text-sm text-slate-500">{tenant.name} のカード情報</span>
                         </div>
 
-                        {/* 非同期成功をその場で返し、操作完了を即時に伝える。 を明示し、実装意図の誤読を防ぐ。 */}
+                        {/* 非同期成功をその場で返し、操作完了を即時に伝える。 */}
                         {successMessage && (
                             <div className="p-4 bg-green-50 border border-green-200 ">
                                 <div className="flex items-center gap-2">
@@ -119,7 +119,7 @@ export default function CardsIndex({ tenant, cards: initialCards, fincodePublicK
                             deletingId={deletingId}
                         />
 
-                        {/* 一覧の直後に配置し、管理フローを一画面で完結させる。 を明示し、実装意図の誤読を防ぐ。 */}
+                        {/* 一覧の直後に配置し、管理フローを一画面で完結させる。 */}
                         <CardRegistrationForm
                             isReady={fincode.isReady}
                             isLoading={fincode.isLoading}

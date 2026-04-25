@@ -39,7 +39,7 @@ export default function Menu({ tenant, menu, seo, structuredData }: MenuPageProp
     const { activeCategoryId, scrollToCategoryId, onCategoryTabChange, onActiveCategoryChange, onScrollComplete } =
         useMenuCategorySync(categories);
 
-    // 成否通知を画面内で完結させ、モーダル閉鎖後も結果を伝えられるようにする。 を明示し、実装意図の誤読を防ぐ。
+    // 成否通知を画面内で完結させ、モーダル閉鎖後も結果を伝えられるようにする。
     const { toasts, showToast, hideToast } = useToast();
 
     // ゲスト閲覧を許可しつつ、件数表示は認証時のみ正確に出すため条件分岐する。
@@ -75,7 +75,7 @@ export default function Menu({ tenant, menu, seo, structuredData }: MenuPageProp
                 );
 
                 if (cart) {
-                    // 追加成功後は入力文脈を閉じ、重複追加を防ぎつつ結果を通知する。 を明示し、実装意図の誤読を防ぐ。
+                    // 追加成功後は入力文脈を閉じ、重複追加を防ぎつつ結果を通知する。
                     handleCloseModal();
                     showToast({
                         type: "success",
@@ -202,7 +202,7 @@ export default function Menu({ tenant, menu, seo, structuredData }: MenuPageProp
                 isLoading={isAddingToCart}
             />
 
-            {/* 非同期結果をページ遷移なしで返し、操作の連続性を維持する。 を明示し、実装意図の誤読を防ぐ。 */}
+            {/* 非同期結果をページ遷移なしで返し、操作の連続性を維持する。 */}
             <ToastContainer toasts={toasts} onClose={hideToast} />
         </>
     );

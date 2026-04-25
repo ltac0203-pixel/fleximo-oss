@@ -42,7 +42,7 @@ export function useVirtualizedMenu(categories: CustomerMenuCategory[], columns: 
                 itemCount: category.items.length,
             });
 
-            // 列数に合わせて分割し、レスポンシブ時も行単位の高さ推定を維持する。 を明示し、実装意図の誤読を防ぐ。
+            // 列数に合わせて分割し、レスポンシブ時も行単位の高さ推定を維持する。
             const items = category.items;
             for (let i = 0; i < items.length; i += columns) {
                 rows.push({
@@ -62,7 +62,7 @@ export function useVirtualizedMenu(categories: CustomerMenuCategory[], columns: 
             }
         });
 
-        // 行配列の正本を通すことで、外部が境界外インデックスを渡しても安全に処理する。 を明示し、実装意図の誤読を防ぐ。
+        // 行配列の正本を通すことで、外部が境界外インデックスを渡しても安全に処理する。
         const getRowCategoryId = (rowIndex: number): number | null => {
             if (rowIndex < 0 || rowIndex >= rows.length) return null;
             return rows[rowIndex].categoryId;

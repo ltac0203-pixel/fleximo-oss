@@ -61,16 +61,16 @@ export default function KdsLayout({
             <Head title="KDS - キッチンディスプレイ" />
             <SkipToContentLink />
 
-            {/* ヘッダー を明示し、実装意図の誤読を防ぐ。 */}
+            {/* ヘッダー */}
             <header className="flex-shrink-0 bg-white border-b border-slate-200 px-4 py-3">
                 <div className="flex items-center justify-between">
-                    {/* 左側: タイトルと営業日 を明示し、実装意図の誤読を防ぐ。 */}
+                    {/* 左側: タイトルと営業日 */}
                     <div className="flex items-center gap-6">
                         <h1 className="text-xl font-bold text-slate-900">KDS</h1>
                         <BusinessDate date={businessDate} />
                     </div>
 
-                    {/* 中央: 現在時刻 を明示し、実装意図の誤読を防ぐ。 */}
+                    {/* 中央: 現在時刻 */}
                     <CurrentTime />
 
                     {/* 右側: 注文停止・ステータス・全画面ボタン */}

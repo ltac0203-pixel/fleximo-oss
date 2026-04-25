@@ -48,7 +48,7 @@ export default function CardPaymentForm({ isReady, isLoading, error, onMount, on
                 </div>
             )}
 
-            {/* 失敗理由を表示して、再読み込みや決済手段変更の判断を促す。 を明示し、実装意図の誤読を防ぐ。 */}
+            {/* 失敗理由を表示して、再読み込みや決済手段変更の判断を促す。 */}
             {error && (
                 <div className="mb-3 border border-red-200 bg-red-50 p-3 sm:mb-4 sm:p-4">
                     <div className="flex items-center gap-2">

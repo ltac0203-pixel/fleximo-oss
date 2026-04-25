@@ -8,7 +8,7 @@ export default function Guest({ children }: PropsWithChildren) {
             <SkipToContentLink />
             <GradientBackground />
 
-            {/* コンテンツカード を明示し、実装意図の誤読を防ぐ。 */}
+            {/* コンテンツカード */}
             <main
                 id={MAIN_CONTENT_ID}
                 tabIndex={-1}

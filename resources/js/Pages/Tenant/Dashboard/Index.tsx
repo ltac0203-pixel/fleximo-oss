@@ -21,7 +21,7 @@ function isEmptyState(summary: DashboardSummary, recentSales: SalesData[]): bool
     // 欠損レスポンスでもクラッシュせず判定継続できるよう防御的に参照する。
     const hasNoMonthlyOrders = summary?.this_month?.orders === 0;
 
-    // 直近推移もゼロなら「まだ利用開始前」と判断し、分析UIを出さない。 を明示し、実装意図の誤読を防ぐ。
+    // 直近推移もゼロなら「まだ利用開始前」と判断し、分析UIを出さない。
     const hasNoRecentOrders = !recentSales?.length || recentSales.every((day) => day?.orders === 0);
 
     return hasNoMonthlyOrders && hasNoRecentOrders;
@@ -95,7 +95,7 @@ export default function Index({ summary, recentSales }: DashboardIndexProps) {
                             {/* 決済方法別の利用状況を表示する。 */}
                             <PaymentMethodCard />
 
-                            {/* 商品軸と時間軸を同列に置き、施策検討を一画面で完結させる。 を明示し、実装意図の誤読を防ぐ。 */}
+                            {/* 商品軸と時間軸を同列に置き、施策検討を一画面で完結させる。 */}
                             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                                 <TopItemsCard />
                                 <HourlyDistributionCard />

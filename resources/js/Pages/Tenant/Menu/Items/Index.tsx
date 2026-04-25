@@ -83,7 +83,7 @@ export default function Index({ items, categories }: MenuItemsIndexProps) {
                         }
                     />
 
-                    {/* カテゴリフィルター を明示し、実装意図の誤読を防ぐ。 */}
+                    {/* カテゴリフィルター */}
                     {safeCategories.length > 0 && (
                         <div className="mb-4">
                             <div className="flex flex-wrap gap-2">

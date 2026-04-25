@@ -16,18 +16,18 @@ export default function ErrorLayout({ errorCode, title, message, children }: Err
             <GradientBackground />
 
             <main id={MAIN_CONTENT_ID} tabIndex={-1} className="relative z-10 w-full max-w-2xl">
-                {/* エラーコード（大きな数字） を明示し、実装意図の誤読を防ぐ。 */}
+                {/* エラーコード（大きな数字） */}
                 <div className="text-center">
                     <div className="text-sky-500 text-8xl font-bold md:text-9xl">{errorCode}</div>
                 </div>
 
-                {/* エラーカード を明示し、実装意図の誤読を防ぐ。 */}
+                {/* エラーカード */}
                 <div className="mt-8 border border-edge bg-white/90 p-8">
-                    {/* エラーアイコン を明示し、実装意図の誤読を防ぐ。 */}
+                    {/* エラーアイコン */}
                     <div className="mb-6 flex justify-center">
                         <div className="relative">
                             <svg className="h-24 w-24 text-sky-500" viewBox="0 0 100 100">
-                                {/* 六角形 を明示し、実装意図の誤読を防ぐ。 */}
+                                {/* 六角形 */}
                                 <polygon
                                     points="50,5 95,27.5 95,72.5 50,95 5,72.5 5,27.5"
                                     fill="currentColor"
@@ -36,7 +36,7 @@ export default function ErrorLayout({ errorCode, title, message, children }: Err
                                     strokeWidth="2"
                                 />
                             </svg>
-                            {/* アラートシンボル を明示し、実装意図の誤読を防ぐ。 */}
+                            {/* アラートシンボル */}
                             <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
                                 <svg
                                     className="h-12 w-12 text-sky-600"
@@ -55,13 +55,13 @@ export default function ErrorLayout({ errorCode, title, message, children }: Err
                         </div>
                     </div>
 
-                    {/* タイトル を明示し、実装意図の誤読を防ぐ。 */}
+                    {/* タイトル */}
                     <h1 className="text-center text-3xl font-bold text-ink md:text-4xl">{title}</h1>
 
-                    {/* メッセージ を明示し、実装意図の誤読を防ぐ。 */}
+                    {/* メッセージ */}
                     <p className="mt-4 text-center text-base leading-relaxed text-ink-light md:text-lg">{message}</p>
 
-                    {/* アクションボタン を明示し、実装意図の誤読を防ぐ。 */}
+                    {/* アクションボタン */}
                     {children && <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">{children}</div>}
                 </div>
             </main>

@@ -22,7 +22,7 @@ export function useLongPress({ onLongPress, onClick, threshold = 500 }: UseLongP
         isLongPressRef.current = false;
         timerRef.current = setTimeout(() => {
             isLongPressRef.current = true;
-            // 長押し成立を指先へ返し、誤操作と成功操作の区別をつけやすくする。 を明示し、実装意図の誤読を防ぐ。
+            // 長押し成立を指先へ返し、誤操作と成功操作の区別をつけやすくする。
             if (navigator.vibrate) {
                 navigator.vibrate(100);
             }

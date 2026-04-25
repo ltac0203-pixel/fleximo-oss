@@ -77,7 +77,7 @@ export function useToast(autoHideMs: number = DEFAULT_AUTO_HIDE_MS): UseToastRet
                 return next;
             });
 
-            // 閉じ忘れで画面が埋まらないよう、表示時に自動解放を必ず予約する。 を明示し、実装意図の誤読を防ぐ。
+            // 閉じ忘れで画面が埋まらないよう、表示時に自動解放を必ず予約する。
             const timer = setTimeout(() => {
                 timersRef.current.delete(id);
                 setToasts((prev) => prev.filter((t) => t.id !== id));

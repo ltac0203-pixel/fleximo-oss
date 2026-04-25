@@ -32,14 +32,14 @@ export default function CartSummary({
     return (
         <div className="safe-bottom fixed bottom-0 left-0 right-0 z-30 border-t border-edge bg-white/95 p-4 backdrop-blur-sm">
             <div className="mx-auto max-w-lg lg:max-w-6xl">
-                {/* 合計情報 を明示し、実装意図の誤読を防ぐ。 */}
+                {/* 合計情報 */}
                 <div className="geo-surface border-edge bg-white/95 p-3">
                     <div className="mb-3 flex items-center justify-between text-sm">
                         <span className="text-ink-light">合計（{itemCount}点）</span>
                         <span className="font-semibold text-ink">{formatPrice(grandTotal)}</span>
                     </div>
 
-                    {/* チェックアウトボタン を明示し、実装意図の誤読を防ぐ。 */}
+                    {/* チェックアウトボタン */}
                     {checkoutUrl ? (
                         <Link href={checkoutUrl} className={buttonClassName} preserveScroll>
                             {buttonContent}
@@ -50,7 +50,7 @@ export default function CartSummary({
                         </button>
                     )}
 
-                    {/* 注意文言 を明示し、実装意図の誤読を防ぐ。 */}
+                    {/* 注意文言 */}
                     <p className="mt-2 text-center text-xs text-muted-light">税込価格で表示しています</p>
                 </div>
             </div>

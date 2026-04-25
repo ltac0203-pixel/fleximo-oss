@@ -7,7 +7,7 @@ interface CardIconProps {
 export default function CardIcon({ brand, className = "w-8 h-5" }: CardIconProps) {
     const brandUpper = brand?.toUpperCase() || "";
 
-    // 未知ブランドでも破綻しないよう、常にフォールバック表示を返す。 を明示し、実装意図の誤読を防ぐ。
+    // 未知ブランドでも破綻しないよう、常にフォールバック表示を返す。
     const getBrandStyle = (): { bg: string; text: string; label: string } => {
         switch (brandUpper) {
             case "VISA":
