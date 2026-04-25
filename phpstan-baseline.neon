@@ -3631,18 +3631,6 @@ parameters:
 			path: app/Services/Checkout/OrderCreationService.php
 
 		-
-			message: '#^Method App\\Services\\Checkout\\OrderCreationService\:\:createOrderItemOptions\(\) has parameter \$lockedOptions with generic class Illuminate\\Database\\Eloquent\\Collection but does not specify its types\: TKey, TModel$#'
-			identifier: missingType.generics
-			count: 1
-			path: app/Services/Checkout/OrderCreationService.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
-			path: app/Services/Checkout/OrderCreationService.php
-
-		-
 			message: '#^Parameter \#1 \$menuItem of class App\\Exceptions\\ItemNotAvailableException constructor expects App\\Models\\MenuItem, Illuminate\\Database\\Eloquent\\Model given\.$#'
 			identifier: argument.type
 			count: 1
