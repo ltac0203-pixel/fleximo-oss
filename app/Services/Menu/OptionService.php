@@ -11,7 +11,6 @@ use App\Models\Option;
 use App\Models\OptionGroup;
 use App\Services\Menu\Concerns\MenuServiceHelpers;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\DB;
 
 class OptionService
 {
@@ -26,60 +25,64 @@ class OptionService
     // オプション作成
     public function create(OptionGroup $optionGroup, CreateOptionData $data): Option
     {
-        return DB::transaction(function () use ($optionGroup, $data) {
-            $sortOrder = $this->resolveSortOrder(
-                $data->sort_order,
-                fn () => $optionGroup->options()->max('sort_order')
-            );
+        return $this->withMenuMutation(
+            AuditAction::OptionCreated,
+            $optionGroup->tenant_id,
+            function () use ($optionGroup, $data): Option {
+                $sortOrder = $this->resolveSortOrder(
+                    $data->sort_order,
+                    fn () => $optionGroup->options()->max('sort_order')
+                );
 
-            $option = Option::create([
-                'option_group_id' => $optionGroup->id,
-                'tenant_id' => $optionGroup->tenant_id,
-                'name' => $data->name,
-                'price' => $data->price ?? 0,
-                'sort_order' => $sortOrder,
-                'is_active' => $data->is_active ?? true,
-            ]);
-
-            $this->safeAuditLog(AuditAction::OptionCreated, $option, null, $optionGroup->tenant_id);
-            $this->invalidateMenuCache($optionGroup->tenant_id);
-
-            return $option;
-        });
+                return Option::create([
+                    'option_group_id' => $optionGroup->id,
+                    'tenant_id' => $optionGroup->tenant_id,
+                    'name' => $data->name,
+                    'price' => $data->price ?? 0,
+                    'sort_order' => $sortOrder,
+                    'is_active' => $data->is_active ?? true,
+                ]);
+            },
+        );
     }
 
     // オプション更新
     public function update(Option $option, UpdateOptionData $data): Option
     {
-        return DB::transaction(function () use ($option, $data) {
-            $oldAttributes = $option->getAttributes();
-            $tenantId = $option->optionGroup->tenant_id;
+        $oldAttributes = $option->getAttributes();
+        $tenantId = $option->optionGroup->tenant_id;
 
-            $updateData = array_filter($data->toArray(), fn ($v) => $v !== null);
-            $option->update($updateData);
+        return $this->withMenuMutation(
+            AuditAction::OptionUpdated,
+            $tenantId,
+            function () use ($option, $data): Option {
+                $updateData = array_filter($data->toArray(), fn ($v) => $v !== null);
+                $option->update($updateData);
 
-            $this->safeAuditLog(AuditAction::OptionUpdated, $option, [
+                return $option;
+            },
+            fn (Option $updated) => [
                 'old' => $oldAttributes,
-                'new' => $option->getAttributes(),
-            ], $tenantId);
-            $this->invalidateMenuCache($tenantId);
-
-            return $option;
-        });
+                'new' => $updated->getAttributes(),
+            ],
+        );
     }
 
     // オプション削除
     public function delete(Option $option): void
     {
-        DB::transaction(function () use ($option) {
-            $tenantId = $option->optionGroup->tenant_id;
+        $tenantId = $option->optionGroup->tenant_id;
+        $oldSnapshot = $option->toArray();
 
-            $this->safeAuditLog(AuditAction::OptionDeleted, $option, [
-                'old' => $option->toArray(),
-            ], $tenantId);
+        $this->withMenuMutation(
+            AuditAction::OptionDeleted,
+            $tenantId,
+            function () use ($option): Option {
+                $option->delete();
 
-            $option->delete();
-            $this->invalidateMenuCache($tenantId);
-        });
+                return $option;
+            },
+            fn () => ['old' => $oldSnapshot],
+        );
     }
 }

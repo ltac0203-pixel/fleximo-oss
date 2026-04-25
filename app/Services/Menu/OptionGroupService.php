@@ -10,7 +10,6 @@ use App\Enums\AuditAction;
 use App\Models\OptionGroup;
 use App\Services\Menu\Concerns\MenuServiceHelpers;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\DB;
 
 class OptionGroupService
 {
@@ -28,62 +27,67 @@ class OptionGroupService
     // オプショングループ作成
     public function create(int $tenantId, CreateOptionGroupData $data): OptionGroup
     {
-        return DB::transaction(function () use ($tenantId, $data) {
-            $sortOrder = $this->resolveSortOrder(
-                $data->sort_order,
-                fn () => OptionGroup::where('tenant_id', $tenantId)->max('sort_order')
-            );
+        return $this->withMenuMutation(
+            AuditAction::OptionGroupCreated,
+            $tenantId,
+            function () use ($tenantId, $data): OptionGroup {
+                $sortOrder = $this->resolveSortOrder(
+                    $data->sort_order,
+                    fn () => OptionGroup::where('tenant_id', $tenantId)->max('sort_order')
+                );
 
-            $optionGroup = OptionGroup::create([
-                'tenant_id' => $tenantId,
-                'name' => $data->name,
-                'required' => $data->required,
-                'min_select' => $data->min_select,
-                'max_select' => $data->max_select,
-                'sort_order' => $sortOrder,
-                'is_active' => $data->is_active,
-            ]);
+                $optionGroup = OptionGroup::create([
+                    'tenant_id' => $tenantId,
+                    'name' => $data->name,
+                    'required' => $data->required,
+                    'min_select' => $data->min_select,
+                    'max_select' => $data->max_select,
+                    'sort_order' => $sortOrder,
+                    'is_active' => $data->is_active,
+                ]);
 
-            $this->safeAuditLog(AuditAction::OptionGroupCreated, $optionGroup);
-            $this->invalidateMenuCache($tenantId);
-
-            return $optionGroup->load('options');
-        });
+                return $optionGroup->load('options');
+            },
+        );
     }
 
     // オプショングループ更新
     public function update(OptionGroup $optionGroup, UpdateOptionGroupData $data): OptionGroup
     {
-        return DB::transaction(function () use ($optionGroup, $data) {
-            $oldAttributes = $optionGroup->getAttributes();
+        $oldAttributes = $optionGroup->getAttributes();
 
-            $optionGroup->update($data->toArray());
+        return $this->withMenuMutation(
+            AuditAction::OptionGroupUpdated,
+            $optionGroup->tenant_id,
+            function () use ($optionGroup, $data): OptionGroup {
+                $optionGroup->update($data->toArray());
 
-            $this->safeAuditLog(AuditAction::OptionGroupUpdated, $optionGroup, [
+                return $optionGroup->fresh('options');
+            },
+            fn (OptionGroup $updated) => [
                 'old' => $oldAttributes,
-                'new' => $optionGroup->getAttributes(),
-            ]);
-            $this->invalidateMenuCache($optionGroup->tenant_id);
-
-            return $optionGroup->fresh('options');
-        });
+                'new' => $updated->getAttributes(),
+            ],
+        );
     }
 
     // オプショングループ削除
     public function delete(OptionGroup $optionGroup): void
     {
-        DB::transaction(function () use ($optionGroup) {
-            $tenantId = $optionGroup->tenant_id;
+        $tenantId = $optionGroup->tenant_id;
+        $oldSnapshot = $optionGroup->toArray();
 
-            $this->safeAuditLog(AuditAction::OptionGroupDeleted, $optionGroup, [
-                'old' => $optionGroup->toArray(),
-            ]);
+        $this->withMenuMutation(
+            AuditAction::OptionGroupDeleted,
+            $tenantId,
+            function () use ($optionGroup): OptionGroup {
+                $optionGroup->options()->delete();
+                $optionGroup->menuItems()->detach();
+                $optionGroup->delete();
 
-            $optionGroup->options()->delete();
-            $optionGroup->menuItems()->detach();
-            $optionGroup->delete();
-
-            $this->invalidateMenuCache($tenantId);
-        });
+                return $optionGroup;
+            },
+            fn () => ['old' => $oldSnapshot],
+        );
     }
 }
