@@ -62,7 +62,7 @@ class OrderService
     public function getRecentOrders(User $user, int $limit = 5): Collection
     {
         return Order::forCustomerAcrossTenants($user->id)
-            ->with('tenant')
+            ->with(['tenant', 'tenant.businessHours'])
             ->latest()
             ->take($limit)
             ->get();
