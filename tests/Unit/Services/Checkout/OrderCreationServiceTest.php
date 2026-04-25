@@ -352,6 +352,11 @@ class OrderCreationServiceTest extends TestCase
             'order_item_options への INSERT は 1 クエリにまとめる必要があります（option 数に依存させない）'
         );
 
+        // calculateTotalAmount で items.options は eager load されるが
+        // 直後の $order->refresh() が最上位 relation だけを再ロードする仕様で
+        // sub-relation は外れるため、検証のために明示的に再ロードする
+        $order->load('items.options');
+
         $this->assertEquals(3, $order->items->sum(fn ($item) => $item->options->count()));
         $this->assertEquals(500 + 100 + 200 + 800 + 100, $order->total_amount);
 
