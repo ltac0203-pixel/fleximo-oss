@@ -17,7 +17,7 @@ use App\Models\OrderItem;
 use App\Services\OrderNumberGenerator;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\QueryException;
+use Illuminate\Database\UniqueConstraintViolationException;
 
 class OrderCreationService
 {
@@ -64,15 +64,8 @@ class OrderCreationService
     public function calculateTotalAmount(Order $order): int
     {
         $order->load('items.options');
-        $total = 0;
 
-        foreach ($order->items as $item) {
-            $itemTotal = $item->price * $item->quantity;
-            $optionsTotal = $item->options->sum('price') * $item->quantity;
-            $total += $itemTotal + $optionsTotal;
-        }
-
-        return $total;
+        return (int) $order->items->sum('subtotal');
     }
 
     // 注文番号の重複競合時に再採番して注文を作成する
@@ -85,8 +78,8 @@ class OrderCreationService
 
             try {
                 return $this->createOrder($cart, $orderCode, $businessDate);
-            } catch (QueryException $e) {
-                if (! $this->isOrderCodeDuplicateError($e)) {
+            } catch (UniqueConstraintViolationException $e) {
+                if (! $this->isOrderCodeConstraint($e)) {
                     throw $e;
                 }
 
@@ -110,22 +103,10 @@ class OrderCreationService
         );
     }
 
-    // 注文番号のユニーク制約違反かどうかを判定する
-    private function isOrderCodeDuplicateError(QueryException $e): bool
+    // 衝突したユニーク制約が order_code 由来かどうかを制約名で判定する
+    private function isOrderCodeConstraint(UniqueConstraintViolationException $e): bool
     {
-        $code = (string) $e->getCode();
         $message = $e->getMessage();
-
-        $isUniqueViolation = $code === '23000'
-            || $code === '23505'
-            || str_contains($message, '1062')
-            || str_contains($message, 'Duplicate entry')
-            || str_contains($message, 'UNIQUE constraint failed')
-            || str_contains($message, 'duplicate key value violates unique constraint');
-
-        if (! $isUniqueViolation) {
-            return false;
-        }
 
         return str_contains($message, 'orders_tenant_business_code_unique')
             || str_contains($message, 'orders.tenant_id, orders.business_date, orders.order_code')
