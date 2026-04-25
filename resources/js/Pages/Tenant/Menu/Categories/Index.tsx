@@ -122,7 +122,7 @@ export default function Index({ categories }: MenuCategoriesIndexProps) {
                         show={showDeleteModal}
                         title="カテゴリを削除"
                         targetName={selectedCategory?.name}
-                        apiEndpoint={`/api/tenant/menu/categories/${selectedCategory?.id}`}
+                        apiEndpoint={ENDPOINTS.tenant.menu.category(selectedCategory?.id ?? 0)}
                         reloadOnly={["categories"]}
                         successMessage="カテゴリを削除しました"
                         onClose={closeDelete}

@@ -1,4 +1,4 @@
-import { api } from "@/api";
+import { api, ENDPOINTS } from "@/api";
 import type { ApiDataResponse } from "@/api";
 import useDashboardDataFetcher from "@/Hooks/useDashboardDataFetcher";
 import { HourlyData } from "@/types";
@@ -30,7 +30,7 @@ export function useHourlyDistributionData(): UseHourlyDistributionDataResult {
         const params = new URLSearchParams({ date });
 
         const { data: result, error } = await api.cachedGet<ApiDataResponse<HourlyData[]>>(
-            `/api/tenant/dashboard/hourly?${params.toString()}`,
+            `${ENDPOINTS.tenant.dashboard.hourly}?${params.toString()}`,
         );
 
         if (error || !result) {

@@ -3,6 +3,7 @@ import { logger } from "@/Utils/logger";
 import { normalizeErrorMessage, toError } from "@/Utils/errorHelpers";
 import { cachedGet } from "./cachedGet";
 import type { CachedGetOptions } from "./cachedGet";
+import { ENDPOINTS } from "./endpoints";
 
 export interface ApiResponse<T, E = unknown> {
     data: T | null;
@@ -29,10 +30,10 @@ const DEFAULT_HEADERS = {
     Accept: "application/json",
 };
 
-const IDEMPOTENT_POST_PATHS = new Set([
-    "/api/customer/checkout",
-    "/api/customer/payments/finalize",
-    "/api/customer/payments/3ds-callback",
+const IDEMPOTENT_POST_PATHS = new Set<string>([
+    ENDPOINTS.customer.checkout,
+    ENDPOINTS.customer.payments.finalize,
+    ENDPOINTS.customer.payments.threeDsCallback,
 ]);
 
 const isRecord = (value: unknown): value is Record<string, unknown> => typeof value === "object" && value !== null;

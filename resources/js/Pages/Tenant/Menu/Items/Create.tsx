@@ -6,7 +6,7 @@ import { FormData, FormErrors } from "@/Components/Tenant/Menu/ItemForm/types";
 import { useApiFormSubmission } from "@/Hooks/useApiFormSubmission";
 import { useActiveToggle } from "@/Hooks/useActiveToggle";
 import { useHelpPanel } from "@/Hooks/useHelpPanel";
-import { api } from "@/api";
+import { api, ENDPOINTS } from "@/api";
 import TenantLayout from "@/Layouts/TenantLayout";
 import { MenuItemCreateProps } from "@/types";
 import { Head, router } from "@inertiajs/react";
@@ -48,7 +48,7 @@ export default function Create({ tenant, categories, optionGroups }: MenuItemCre
     const submitItem = async () => {
         await submit(
             () =>
-                api.post<unknown, { errors?: FormErrors }>("/api/tenant/menu/items", {
+                api.post<unknown, { errors?: FormErrors }>(ENDPOINTS.tenant.menu.items, {
                     ...formData,
                     price: formData.price === "" ? null : formData.price,
                     allergen_note: formData.allergen_note || null,

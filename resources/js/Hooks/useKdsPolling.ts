@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { api } from "@/api";
+import { api, ENDPOINTS } from "@/api";
 import { KdsOrder, PollingState } from "@/types";
 import { normalizeErrorMessage } from "@/Utils/errorHelpers";
 import { logger } from "@/Utils/logger";
@@ -154,7 +154,7 @@ export function useKdsPolling({
             }
 
             const query = new URLSearchParams(params).toString();
-            const endpoint = query ? `/api/tenant/kds/orders?${query}` : "/api/tenant/kds/orders";
+            const endpoint = query ? `${ENDPOINTS.tenant.kds.orders}?${query}` : ENDPOINTS.tenant.kds.orders;
 
             const { data: response, error: fetchError } = await api.get<{
                 data: KdsApiOrder[];

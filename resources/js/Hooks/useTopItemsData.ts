@@ -1,4 +1,4 @@
-import { api } from "@/api";
+import { api, ENDPOINTS } from "@/api";
 import type { ApiDataResponse } from "@/api";
 import useDashboardDataFetcher from "@/Hooks/useDashboardDataFetcher";
 import { TopItem } from "@/types";
@@ -34,7 +34,7 @@ export function useTopItemsData(): UseTopItemsDataResult {
         });
 
         const { data: result, error } = await api.cachedGet<ApiDataResponse<TopItem[]>>(
-            `/api/tenant/dashboard/top-items?${params.toString()}`,
+            `${ENDPOINTS.tenant.dashboard.topItems}?${params.toString()}`,
         );
 
         if (error || !result) {

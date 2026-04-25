@@ -7,9 +7,13 @@ const apiMock = vi.hoisted(() => ({
     get: vi.fn(),
 }));
 
-vi.mock("@/api", () => ({
-    api: apiMock,
-}));
+vi.mock("@/api", async (importOriginal) => {
+    const actual = await importOriginal<typeof import("@/api")>();
+    return {
+        ...actual,
+        api: apiMock,
+    };
+});
 
 function createStatusResponse(
     id: number,
