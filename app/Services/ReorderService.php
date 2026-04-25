@@ -232,7 +232,13 @@ class ReorderService
         ];
     }
 
-    // カート情報をフォーマットする
+    // 再注文 API 用にカート情報を軽量フォーマットする
+    //
+    // CartResource とは意図的に異なる契約:
+    //   - menu_item は allergens / categories / option_groups などを含めず最小フィールドのみ返す
+    //   - tenant.today_business_hours / created_at / updated_at は省略する
+    // ただし item_count などのスカラは Cart モデルアクセサ（数量合計）と
+    // 意味を一致させ、フロント (cartStore / CartSection の "{item_count}点" 表示) と整合させる。
     private function formatCart(Cart $cart): array
     {
         return [
@@ -269,7 +275,7 @@ class ReorderService
             'total' => $cart->items->sum(function ($item) {
                 return ($item->menuItem->price + $item->options->sum(fn ($o) => $o->option->price)) * $item->quantity;
             }),
-            'item_count' => $cart->items->count(),
+            'item_count' => $cart->item_count,
             'is_empty' => $cart->items->isEmpty(),
         ];
     }

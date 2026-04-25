@@ -385,6 +385,43 @@ class ReorderControllerTest extends TestCase
         $this->assertEquals(2, $data['cart']['item_count']);
     }
 
+    // cart.item_count はカート行数ではなく数量合計を返す
+    // （Cart モデルアクセサ・フロント (cartStore / "{item_count}点" 表示) と意味を一致させる）
+    public function test_reorder_response_cart_item_count_returns_quantity_sum_not_row_count(): void
+    {
+        $menuItem = MenuItem::factory()->create([
+            'tenant_id' => $this->tenant->id,
+            'price' => 500,
+            'is_active' => true,
+            'is_sold_out' => false,
+            'available_days' => 127,
+        ]);
+
+        $order = Order::factory()->completed()->create([
+            'user_id' => $this->customer->id,
+            'tenant_id' => $this->tenant->id,
+        ]);
+
+        // 1 行 × quantity 3。行数=1、数量合計=3 と分離可能なシナリオ。
+        OrderItem::factory()->create([
+            'order_id' => $order->id,
+            'tenant_id' => $this->tenant->id,
+            'menu_item_id' => $menuItem->id,
+            'name' => $menuItem->name,
+            'price' => $menuItem->price,
+            'quantity' => 3,
+        ]);
+
+        $response = $this->actingAs($this->customer, 'sanctum')
+            ->postJson("/api/customer/orders/{$order->id}/reorder");
+
+        $response->assertOk();
+
+        $data = $response->json('data');
+        $this->assertCount(1, $data['cart']['items'], 'カート行は 1 行のはず');
+        $this->assertEquals(3, $data['cart']['item_count'], 'item_count は数量合計を返す必要がある');
+    }
+
     // テスト用: 完了済み注文を利用可能なアイテム付きで作成する
     private function createCompletedOrderWithItems(array $orderAttributes = []): Order
     {
