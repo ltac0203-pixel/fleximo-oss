@@ -1,3 +1,5 @@
+import SegmentedControl from "@/Components/UI/SegmentedControl";
+
 export type DateRange = "today" | "week" | "month";
 
 interface DateRangeSelectorProps {
@@ -35,21 +37,5 @@ export function getDateRangeParams(range: DateRange): {
 }
 
 export default function DateRangeSelector({ selected, onChange }: DateRangeSelectorProps) {
-    return (
-        <div className="geo-surface inline-flex gap-1 p-1">
-            {ranges.map((r) => (
-                <button
-                    key={r.value}
-                    onClick={() => onChange(r.value)}
-                    className={`border px-3 py-1 text-sm transition ${
-                        selected === r.value
-                            ? "bg-sky-600 text-white border-sky-600 shadow-geo-sky"
-                            : "bg-white text-ink-light border-edge-strong hover:bg-surface hover:border-primary-light"
-                    }`}
-                >
-                    {r.label}
-                </button>
-            ))}
-        </div>
-    );
+    return <SegmentedControl options={ranges} selected={selected} onChange={onChange} />;
 }
