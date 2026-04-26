@@ -100,5 +100,27 @@ class E2ETestSeeder extends Seeder
                 'quantity' => 1,
             ]
         );
+
+        // KDSのフルライフサイクルE2EテストでPaid→Acceptedの「受付」操作を検証するため、
+        // Accepted注文（E2E-001）とは別に、Paid状態の注文（E2E-002）を投入する。
+        $paidOrder = Order::updateOrCreate(
+            ['order_code' => 'E2E-002', 'tenant_id' => $tenant->id],
+            [
+                'user_id' => $customer->id,
+                'status' => OrderStatus::Paid,
+                'business_date' => now()->toDateString(),
+                'total_amount' => 700,
+                'paid_at' => now(),
+            ]
+        );
+
+        OrderItem::updateOrCreate(
+            ['order_id' => $paidOrder->id, 'tenant_id' => $tenant->id, 'name' => 'コーヒー'],
+            [
+                'menu_item_id' => $menuItem->id,
+                'price' => 350,
+                'quantity' => 2,
+            ]
+        );
     }
 }
