@@ -98,6 +98,7 @@ export default function BusinessLogin({ status }: { status?: string }) {
                 <div className="mt-4 flex items-center justify-end">
                     <Button
                         variant="primary"
+                        type="submit"
                         disabled={processing}
                         isBusy={processing}
                     >
