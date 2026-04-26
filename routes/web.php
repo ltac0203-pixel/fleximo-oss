@@ -25,11 +25,13 @@ use Illuminate\Support\Facades\Route;
 Route::redirect('/', '/dashboard')->name('home');
 
 // 事業者向けログイン（ゲストのみアクセス可能）
-Route::middleware('guest')->group(function () {
+// E2E では throttle を実質的に外して、CI の連続ログインで 429 を踏まないようにする。
+$businessLoginThrottle = env('E2E_DISABLE_THROTTLE') ? 'throttle:1000,1' : 'throttle:5,1';
+Route::middleware('guest')->group(function () use ($businessLoginThrottle): void {
     Route::get('/for-business/login', [BusinessLoginController::class, 'create'])
         ->name('for-business.login');
     Route::post('/for-business/login', [BusinessLoginController::class, 'store'])
-        ->middleware('throttle:5,1')
+        ->middleware($businessLoginThrottle)
         ->name('for-business.login.store');
 });
 
