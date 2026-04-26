@@ -48,19 +48,10 @@ class UpdateCartItemRequest extends FormRequest
 
                     $invalidIds = array_diff($optionIds, $validOptionIds);
                     if (! empty($invalidIds)) {
-                        $validator->errors()->add('option_ids', 'この商品に紐付いていないオプションが選択されています。');
+                        $validator->errors()->add('option_ids', __('validation.custom.option_not_in_menu_item'));
                     }
                 }
             }
         });
-    }
-
-    public function attributes(): array
-    {
-        return [
-            'quantity' => '数量',
-            'option_ids' => 'オプション',
-            'option_ids.*' => 'オプションID',
-        ];
     }
 }

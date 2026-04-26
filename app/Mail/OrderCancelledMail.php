@@ -35,7 +35,7 @@ class OrderCancelledMail extends Mailable implements ShouldQueue
                 config('mail.from.address'),
                 config('mail.from.name'),
             ),
-            subject: '[Fleximo] ご注文がキャンセルされました',
+            subject: __('mail.order_cancelled.subject'),
         );
     }
 

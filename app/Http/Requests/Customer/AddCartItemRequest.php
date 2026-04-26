@@ -45,7 +45,7 @@ class AddCartItemRequest extends FormRequest
             // テナントがアクティブか確認
             $tenant = Tenant::find($tenantId);
             if (! $tenant || ! $tenant->is_active) {
-                $validator->errors()->add('tenant_id', '指定されたテナントは現在利用できません。');
+                $validator->errors()->add('tenant_id', __('validation.custom.tenant_unavailable'));
 
                 return;
             }
@@ -56,7 +56,7 @@ class AddCartItemRequest extends FormRequest
                 ->first();
 
             if (! $menuItem) {
-                $validator->errors()->add('menu_item_id', '指定された商品はこのテナントに存在しません。');
+                $validator->errors()->add('menu_item_id', __('validation.custom.menu_item_not_in_tenant'));
 
                 return;
             }
@@ -71,20 +71,9 @@ class AddCartItemRequest extends FormRequest
 
                 $invalidIds = array_diff($optionIds, $validOptionIds);
                 if (! empty($invalidIds)) {
-                    $validator->errors()->add('option_ids', 'この商品に紐付いていないオプションが選択されています。');
+                    $validator->errors()->add('option_ids', __('validation.custom.option_not_in_menu_item'));
                 }
             }
         });
-    }
-
-    public function attributes(): array
-    {
-        return [
-            'tenant_id' => 'テナントID',
-            'menu_item_id' => '商品ID',
-            'quantity' => '数量',
-            'option_ids' => 'オプション',
-            'option_ids.*' => 'オプションID',
-        ];
     }
 }

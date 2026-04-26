@@ -1,0 +1,44 @@
+{
+    "app": {
+        "name": "Fleximo"
+    },
+    "actions": {
+        "submit": "送信",
+        "cancel": "キャンセル",
+        "back": "戻る",
+        "close": "閉じる",
+        "save": "保存",
+        "delete": "削除",
+        "confirm": "確認",
+        "retry": "再試行",
+        "reload": "ページを再読み込み",
+        "next": "次へ",
+        "previous": "前へ",
+        "loading": "読み込み中..."
+    },
+    "status": {
+        "loading": "読み込み中",
+        "empty": "データがありません",
+        "no_results": "該当する結果がありません"
+    },
+    "errors": {
+        "generic_title": "予期しないエラー",
+        "generic_message": "アプリケーションでエラーが発生しました。ページを再読み込みしてください。",
+        "network": "通信エラーが発生しました。時間をおいてから再度お試しください。"
+    },
+    "header": {
+        "menu": "メニュー",
+        "cart": "カート",
+        "orders": "注文履歴",
+        "login": "ログイン",
+        "logout": "ログアウト",
+        "register": "新規登録",
+        "profile": "プロフィール"
+    },
+    "footer": {
+        "terms": "利用規約",
+        "privacy": "プライバシーポリシー",
+        "transactions": "特定商取引法に基づく表記",
+        "contact": "お問い合わせ"
+    }
+}

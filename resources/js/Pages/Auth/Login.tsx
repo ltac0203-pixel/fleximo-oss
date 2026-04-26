@@ -7,8 +7,10 @@ import GuestLayout from "@/Layouts/GuestLayout";
 import { PageProps } from "@/types";
 import { Head, Link, useForm, usePage } from "@inertiajs/react";
 import { FormEventHandler } from "react";
+import { Trans, useTranslation } from "react-i18next";
 
 export default function Login({ status }: { status?: string }) {
+    const { t } = useTranslation("auth");
     const { businessLoginUrl } = usePage<
         PageProps & {
             businessLoginUrl?: string;
@@ -30,13 +32,13 @@ export default function Login({ status }: { status?: string }) {
 
     return (
         <GuestLayout>
-            <Head title="ログイン" />
+            <Head title={t("login.title")} />
 
             <AuthHeader
-                eyebrow="ログイン"
-                title="ログイン"
+                eyebrow={t("login.eyebrow")}
+                title={t("login.title")}
                 backHref={route("home")}
-                backLabel="認証ページトップに戻る"
+                backLabel={t("login.back_top")}
             />
 
             {status && (
@@ -48,17 +50,19 @@ export default function Login({ status }: { status?: string }) {
             {businessLoginUrl && (
                 <div className="mb-4 border border-sky-200 bg-sky-50 p-3">
                     <p className="text-sm text-sky-700">
-                        事業者の方は
-                        <Link href={businessLoginUrl} className="font-medium underline hover:text-sky-900">
-                            事業者向けログインページ
-                        </Link>
-                        をご利用ください。
+                        <Trans
+                            t={t}
+                            i18nKey="login.business_hint"
+                            components={{
+                                1: <Link href={businessLoginUrl} className="font-medium underline hover:text-sky-900" />,
+                            }}
+                        />
                     </p>
                 </div>
             )}
 
             <form onSubmit={submit}>
-                <FormField label="メールアドレス" htmlFor="email" error={errors.email}>
+                <FormField label={t("login.email_label")} htmlFor="email" error={errors.email}>
                     <TextInput
                         id="email"
                         type="email"
@@ -73,7 +77,7 @@ export default function Login({ status }: { status?: string }) {
                     />
                 </FormField>
 
-                <FormField label="パスワード" htmlFor="password" error={errors.password} className="mt-4">
+                <FormField label={t("login.password_label")} htmlFor="password" error={errors.password} className="mt-4">
                     <TextInput
                         id="password"
                         type="password"
@@ -94,7 +98,7 @@ export default function Login({ status }: { status?: string }) {
                             checked={data.remember}
                             onChange={(e) => setData("remember", (e.target.checked || false) as false)}
                         />
-                        <span className="ms-2 text-sm text-ink-light">ログイン状態を保持する</span>
+                        <span className="ms-2 text-sm text-ink-light">{t("login.remember_me")}</span>
                     </label>
                 </div>
 
@@ -105,17 +109,17 @@ export default function Login({ status }: { status?: string }) {
                         disabled={processing}
                         isBusy={processing}
                     >
-                        ログイン
+                        {t("login.submit")}
                     </Button>
                 </div>
 
                 <div className="mt-6 text-center">
-                    <span className="text-sm text-ink-light">アカウントをお持ちでないですか？ </span>
+                    <span className="text-sm text-ink-light">{t("login.no_account")} </span>
                     <Link
                         href={route("register")}
                         className="rounded-md text-sm text-sky-600 underline hover:text-sky-800 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
                     >
-                        新規登録
+                        {t("login.register_link")}
                     </Link>
                 </div>
             </form>

@@ -1,0 +1,76 @@
+{
+    "home": {
+        "hero_title": "Mobile order from restaurants nearby",
+        "hero_lead": "Scan a QR code to order at your table or for takeaway.",
+        "search_placeholder": "Search restaurants",
+        "section_recent": "Recently visited",
+        "section_favorites": "Favorites",
+        "no_favorites": "You have no favorite restaurants yet.",
+        "no_recent": "You have not visited any restaurants yet."
+    },
+    "tenant_menu": {
+        "loading": "Loading menu...",
+        "section_categories": "Categories",
+        "out_of_stock": "Sold out",
+        "add_to_cart": "Add to cart",
+        "view_cart": "View cart",
+        "favorite_added": "Added to favorites",
+        "favorite_removed": "Removed from favorites",
+        "currency_symbol": "￥"
+    },
+    "cart": {
+        "title": "Cart",
+        "empty_title": "Your cart is empty",
+        "empty_lead": "Please add items from the menu.",
+        "back_to_menu": "Back to menu",
+        "subtotal": "Subtotal",
+        "total": "Total",
+        "checkout": "Proceed to checkout",
+        "remove_item": "Remove",
+        "quantity_label": "Quantity",
+        "options_label": "Options",
+        "currency_symbol": "￥"
+    },
+    "checkout": {
+        "title": "Review your order",
+        "payment_method": "Payment method",
+        "payment_method_card": "Credit card",
+        "payment_method_paypay": "PayPay",
+        "saved_cards": "Saved cards",
+        "use_new_card": "Use a new card",
+        "save_card": "Save this card for next time",
+        "save_as_default": "Set as default card",
+        "submit": "Continue to payment",
+        "complete_title": "Thank you for your order",
+        "complete_lead": "Your order has been received. We'll notify you when it's ready.",
+        "complete_view_orders": "View orders",
+        "failed_title": "Payment failed",
+        "failed_lead": "We're sorry. The payment did not go through. Please try again.",
+        "failed_back": "Back to cart",
+        "currency_symbol": "￥"
+    },
+    "orders": {
+        "title": "Order history",
+        "empty_title": "No orders yet",
+        "empty_lead": "Your orders will appear here.",
+        "filter_status_all": "All",
+        "view_detail": "View details",
+        "ordered_at": "Ordered at",
+        "tenant_name": "Restaurant",
+        "order_number": "Order number",
+        "status": "Status",
+        "total": "Total",
+        "back_to_list": "Back to list",
+        "currency_symbol": "￥"
+    },
+    "cards": {
+        "title": "Saved cards",
+        "empty_title": "No saved cards",
+        "empty_lead": "Save a card so you can use it for future payments.",
+        "add_new": "Add a new card",
+        "set_default": "Set as default",
+        "delete_confirm": "Delete this card?",
+        "delete_success": "Card deleted",
+        "expires_label": "Expires"
+    }
+}

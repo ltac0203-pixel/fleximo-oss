@@ -23,6 +23,7 @@ use App\Policies\OrderPolicy;
 use App\Policies\PaymentPolicy;
 use App\Policies\StaffPolicy;
 use App\Services\Webhook\WebhookSignatureVerifier;
+use Carbon\Carbon;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
@@ -60,6 +61,10 @@ class AppServiceProvider extends ServiceProvider
         // 開発・テスト時にN+1問題を早期発見するため、lazy loadを例外で検知する（本番では性能影響を避け無効）
         Model::preventLazyLoading(app()->environment('local', 'testing'));
 
+        // Carbon の diffForHumans() などをアプリの locale に合わせる。
+        // 'ja' 以外は 'en' にフォールバック（OSS 多言語追加時はマップを拡張）。
+        Carbon::setLocale(app()->getLocale() === 'ja' ? 'ja' : 'en');
+
         JsonResource::withoutWrapping();
 
         Vite::prefetch(concurrency: 3);
@@ -68,17 +73,17 @@ class AppServiceProvider extends ServiceProvider
             $fromAddress = config('mail.from_addresses.no_reply.address', config('mail.from.address'));
             $fromName = config('mail.from_addresses.no_reply.name', config('mail.from.name'));
 
-            $expireMinutes = config('auth.verification.expire', 60);
+            $expireMinutes = (int) config('auth.verification.expire', 60);
 
             return (new MailMessage)
-                ->subject('メールアドレスの確認')
+                ->subject(__('mail.verify_email.subject'))
                 ->from($fromAddress, $fromName)
-                ->greeting('いつもご利用ありがとうございます。')
-                ->line('以下のボタンをクリックして、メールアドレスの認証を完了してください。')
-                ->action('メールアドレスを認証する', $url)
-                ->line("このリンクは{$expireMinutes}分間有効です。有効期限が切れた場合は、再度認証メールを送信してください。")
-                ->line('このメールに心当たりがない場合は、対応は不要です。')
-                ->salutation('— Fleximo');
+                ->greeting(__('mail.verify_email.greeting'))
+                ->line(__('mail.verify_email.line_intro'))
+                ->action(__('mail.verify_email.action'), $url)
+                ->line(__('mail.verify_email.line_expire', ['minutes' => $expireMinutes]))
+                ->line(__('mail.verify_email.line_disclaimer'))
+                ->salutation(__('mail.verify_email.salutation'));
         });
 
         // パスワードポリシー強化: 大文字小文字混在・数字必須・漏洩パスワード拒否（本番のみ）

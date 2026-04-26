@@ -8,7 +8,7 @@
         $siteName = config('app.name', 'Fleximo');
         $baseUrl = rtrim((string) config('seo.site.base_url', config('app.url', 'https://example.com')), '/');
         $defaultImage = $baseUrl . '/og-image.svg';
-        $defaultDescription = '日本の飲食店向けオープンソース・マルチテナント モバイルオーダー。QRコード注文、PayPay・クレジットカード決済、KDSで受注から受け取りまでを効率化します。';
+        $defaultDescription = (string) __('common.seo.default_description');
         $titleText = $hasSeo && filled($pageSeo['title'] ?? null)
             ? (str_contains((string) $pageSeo['title'], $siteName) ? (string) $pageSeo['title'] : (string) $pageSeo['title'] . ' | ' . $siteName)
             : $siteName;
@@ -58,7 +58,7 @@
         <meta property="og:image:alt" content="{{ $ogImageAlt }}">
         <meta property="og:url" content="{{ $canonical }}">
         <meta property="og:site_name" content="Fleximo">
-        <meta property="og:locale" content="ja_JP">
+        <meta property="og:locale" content="{{ app()->getLocale() === 'ja' ? 'ja_JP' : 'en_US' }}">
         <meta name="twitter:card" content="{{ $twitterCard }}">
         <meta name="twitter:title" content="{{ $titleText }}">
         <meta name="twitter:description" content="{{ $description }}">
@@ -79,6 +79,9 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600|inter:300,400,500,600,700&display=swap" rel="stylesheet" />
     <meta name="csp-nonce" content="{{ \Illuminate\Support\Facades\Vite::cspNonce() }}">
+
+    {{-- i18n 初期化前のエラー表示などで参照する同期 locale チャネル --}}
+    <script nonce="{{ \Illuminate\Support\Facades\Vite::cspNonce() }}">window.__APP_LOCALE__ = @json(app()->getLocale());</script>
 
     <!-- Scripts -->
     @routes(nonce: \Illuminate\Support\Facades\Vite::cspNonce())

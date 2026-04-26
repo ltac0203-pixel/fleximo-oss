@@ -38,14 +38,14 @@ class CheckoutRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'cart_id.required' => 'カートIDは必須です。',
-            'cart_id.integer' => 'カートIDは数値で指定してください。',
-            'cart_id.exists' => '指定されたカートは存在しません。',
-            'payment_method.required' => '決済方法は必須です。',
-            'payment_method.string' => '決済方法は文字列で指定してください。',
-            'payment_method.enum' => '無効な決済方法です。',
-            'card_id.integer' => 'カードIDは数値で指定してください。',
-            'card_id.exists' => '指定されたカードは存在しません。',
+            'cart_id.required' => __('validation.custom.cart_id_required'),
+            'cart_id.integer' => __('validation.custom.cart_id_integer'),
+            'cart_id.exists' => __('validation.custom.cart_id_exists'),
+            'payment_method.required' => __('validation.custom.payment_method_required'),
+            'payment_method.string' => __('validation.custom.payment_method_required'),
+            'payment_method.enum' => __('validation.custom.payment_method_in'),
+            'card_id.integer' => __('validation.custom.card_id_integer'),
+            'card_id.exists' => __('validation.custom.card_id_required'),
         ];
     }
 

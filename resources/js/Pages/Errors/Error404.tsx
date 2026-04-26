@@ -1,10 +1,13 @@
 import { Head } from "@inertiajs/react";
 import { router } from "@inertiajs/react";
+import { useTranslation } from "react-i18next";
 import ErrorLayout from "@/Components/Error/ErrorLayout";
 import Button from "@/Components/UI/Button";
 import { ErrorPageProps } from "@/types";
 
 export default function Error404({ auth }: ErrorPageProps) {
+    const { t } = useTranslation("errors");
+
     const handleGoHome = () => {
         router.visit("/");
     };
@@ -15,19 +18,15 @@ export default function Error404({ auth }: ErrorPageProps) {
 
     return (
         <>
-            <Head title="ページが見つかりません" />
+            <Head title={t("404.title")} />
 
-            <ErrorLayout
-                errorCode={404}
-                title="ページが見つかりません"
-                message="お探しのページは存在しないか、移動した可能性があります。"
-            >
+            <ErrorLayout errorCode={404} title={t("404.title")} message={t("404.message")}>
                 <Button variant="primary" onClick={handleGoHome}>
-                    ホームに戻る
+                    {t("actions.back_home")}
                 </Button>
                 {auth?.user && (
                     <Button variant="secondary" type="button" onClick={handleGoDashboard}>
-                        ダッシュボードへ
+                        {t("actions.to_dashboard")}
                     </Button>
                 )}
             </ErrorLayout>

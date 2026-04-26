@@ -13,12 +13,7 @@ enum PaymentStatus: string
 
     public function label(): string
     {
-        return match ($this) {
-            self::Pending => '決済待ち',
-            self::Processing => '処理中',
-            self::Completed => '完了',
-            self::Failed => '失敗',
-        };
+        return __('enums.payment_status.'.$this->value);
     }
 
     public function canTransitionTo(self $status): bool

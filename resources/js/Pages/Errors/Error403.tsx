@@ -1,4 +1,5 @@
 import { Head, router } from "@inertiajs/react";
+import { useTranslation } from "react-i18next";
 import ErrorLayout from "@/Components/Error/ErrorLayout";
 import Button from "@/Components/UI/Button";
 import { ErrorPageProps } from "@/types";
@@ -8,6 +9,7 @@ function isTenantRole(role?: string): boolean {
 }
 
 export default function Error403(props: ErrorPageProps) {
+    const { t } = useTranslation("errors");
     const role = props.auth?.user?.role;
     const isAuthenticated = !!props.auth?.user;
 
@@ -25,38 +27,34 @@ export default function Error403(props: ErrorPageProps) {
 
     return (
         <>
-            <Head title="アクセス権限がありません" />
+            <Head title={t("403.title")} />
 
-            <ErrorLayout
-                errorCode={403}
-                title="アクセス権限がありません"
-                message="このページにアクセスする権限がありません。ログイン状態やアカウントの権限をご確認ください。"
-            >
+            <ErrorLayout errorCode={403} title={t("403.title")} message={t("403.message")}>
                 {isTenantRole(role) ? (
                     <>
                         <Button variant="primary" onClick={handleLogout}>
-                            ログアウトする
+                            {t("actions.logout")}
                         </Button>
                         <Button variant="secondary" type="button" onClick={handleGoBack}>
-                            前のページへ
+                            {t("actions.back_previous")}
                         </Button>
                     </>
                 ) : isAuthenticated ? (
                     <>
                         <Button variant="primary" onClick={handleGoHome}>
-                            ホームに戻る
+                            {t("actions.back_home")}
                         </Button>
                         <Button variant="secondary" type="button" onClick={handleLogout}>
-                            ログアウト
+                            {t("actions.logout")}
                         </Button>
                     </>
                 ) : (
                     <>
                         <Button variant="primary" onClick={handleGoHome}>
-                            ホームに戻る
+                            {t("actions.back_home")}
                         </Button>
                         <Button variant="secondary" type="button" onClick={handleGoBack}>
-                            前のページへ
+                            {t("actions.back_previous")}
                         </Button>
                     </>
                 )}

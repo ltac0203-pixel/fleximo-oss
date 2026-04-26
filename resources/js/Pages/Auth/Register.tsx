@@ -5,8 +5,10 @@ import TextInput from "@/Components/TextInput";
 import GuestLayout from "@/Layouts/GuestLayout";
 import { Head, Link, useForm } from "@inertiajs/react";
 import { FormEventHandler } from "react";
+import { useTranslation } from "react-i18next";
 
 export default function Register() {
+    const { t } = useTranslation("auth");
     const { data, setData, post, processing, errors, reset } = useForm({
         name: "",
         email: "",
@@ -24,17 +26,17 @@ export default function Register() {
 
     return (
         <GuestLayout>
-            <Head title="新規登録" />
+            <Head title={t("register.title")} />
 
-            <AuthHeader eyebrow="新規登録" title="新規登録" />
+            <AuthHeader eyebrow={t("register.eyebrow")} title={t("register.title")} />
 
             <form onSubmit={submit}>
-                <FormField label="お名前" htmlFor="name" error={errors.name}>
+                <FormField label={t("register.name_label")} htmlFor="name" error={errors.name}>
                     <TextInput
                         id="name"
                         name="name"
                         value={data.name}
-                        placeholder="例：山田 太郎"
+                        placeholder={t("register.name_placeholder")}
                         aria-invalid={!!errors.name}
                         aria-describedby={errors.name ? "name-error" : undefined}
                         className="mt-1 block w-full"
@@ -45,13 +47,13 @@ export default function Register() {
                     />
                 </FormField>
 
-                <FormField label="メールアドレス" htmlFor="email" error={errors.email} className="mt-4">
+                <FormField label={t("register.email_label")} htmlFor="email" error={errors.email} className="mt-4">
                     <TextInput
                         id="email"
                         type="email"
                         name="email"
                         value={data.email}
-                        placeholder="例：taro@example.com"
+                        placeholder={t("register.email_placeholder")}
                         aria-invalid={!!errors.email}
                         aria-describedby={errors.email ? "email-error" : undefined}
                         className="mt-1 block w-full"
@@ -61,13 +63,13 @@ export default function Register() {
                     />
                 </FormField>
 
-                <FormField label="パスワード" htmlFor="password" error={errors.password} className="mt-4">
+                <FormField label={t("register.password_label")} htmlFor="password" error={errors.password} className="mt-4">
                     <TextInput
                         id="password"
                         type="password"
                         name="password"
                         value={data.password}
-                        placeholder="8文字以上で入力"
+                        placeholder={t("register.password_placeholder")}
                         aria-invalid={!!errors.password}
                         aria-describedby={errors.password ? "password-error" : undefined}
                         className="mt-1 block w-full"
@@ -78,7 +80,7 @@ export default function Register() {
                 </FormField>
 
                 <FormField
-                    label="パスワード（確認）"
+                    label={t("register.password_confirmation_label")}
                     htmlFor="password_confirmation"
                     error={errors.password_confirmation}
                     className="mt-4"
@@ -88,7 +90,7 @@ export default function Register() {
                         type="password"
                         name="password_confirmation"
                         value={data.password_confirmation}
-                        placeholder="確認のため再入力"
+                        placeholder={t("register.password_confirmation_placeholder")}
                         aria-invalid={!!errors.password_confirmation}
                         aria-describedby={errors.password_confirmation ? "password_confirmation-error" : undefined}
                         className="mt-1 block w-full"
@@ -103,7 +105,7 @@ export default function Register() {
                         href={route("login")}
                         className="rounded-md text-sm text-ink-light underline hover:text-ink focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                     >
-                        すでに登録済みですか？
+                        {t("register.have_account")}
                     </Link>
 
                     <Button
@@ -112,7 +114,7 @@ export default function Register() {
                         disabled={processing}
                         isBusy={processing}
                     >
-                        登録する
+                        {t("register.submit")}
                     </Button>
                 </div>
             </form>
