@@ -1,0 +1,51 @@
+name: ❓ 質問 / Question
+description: 使い方・設計・セットアップに関する質問 / Ask a question about usage, setup, or design
+title: "[Question]: "
+labels: ["question", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        質問ありがとうございます。よりオープンな相談・アイデアの議論は [Discussions](https://github.com/ltac0203-pixel/fleximo-oss/discussions) もご活用ください。
+
+        > ⚠️ **セキュリティに関する質問・脆弱性の疑い**は公開 Issue では扱えません。SECURITY.md の手順をご確認ください。
+
+  - type: checkboxes
+    id: preflight
+    attributes:
+      label: 事前確認 / Preflight checklist
+      options:
+        - label: README / `docs/` 配下のドキュメントを確認した
+          required: true
+        - label: 既存の Issue / Discussions を検索したが該当が見つからなかった
+          required: true
+        - label: これはバグ報告ではない（バグの場合は Bug report テンプレートを使用）
+          required: true
+
+  - type: textarea
+    id: question
+    attributes:
+      label: 質問内容 / Question
+      description: 何を知りたいか、何が分からないかを具体的に
+    validations:
+      required: true
+
+  - type: textarea
+    id: tried
+    attributes:
+      label: 試したこと / What you've tried
+      description: 参照したドキュメント、実行したコマンド、得られた結果など
+    validations:
+      required: false
+
+  - type: textarea
+    id: context
+    attributes:
+      label: 背景・環境 / Context
+      description: バージョン、利用シーン、想定するロール（customer / tenant_staff / tenant_admin）など
+      value: |
+        - Fleximo バージョン:
+        - 利用シーン:
+        - 関連ロール:
+    validations:
+      required: false
