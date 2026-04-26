@@ -37,9 +37,11 @@ test.describe.serial('テナント管理者によるメニュー商品CRUDフロ
     await page.goto('/tenant/menu/items/create')
     await page.waitForLoadState('networkidle')
 
-    // 必須項目（商品名・価格）のみを入力する。カテゴリは任意なので最小フォームで検証する。
+    // 商品名・価格・カテゴリ（必須・1件以上）を入力する。
     await page.fill('#name', TEST_ITEM_NAME)
     await page.fill('#price', String(TEST_ITEM_PRICE))
+    // 既存シードのカテゴリ「ドリンク」をひとつ選択（StoreMenuItemRequest が category_ids min:1 を要求）。
+    await page.getByRole('checkbox', { name: 'ドリンク' }).check()
 
     await page.click('button[type="submit"]:has-text("作成")')
 
