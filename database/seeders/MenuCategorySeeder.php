@@ -16,12 +16,15 @@ class MenuCategorySeeder extends Seeder
     {
         $tenants = Tenant::all();
 
+        // slugは MenuCategory モデルの booted() で Str::slug($name) ?: 'category' が走るが、
+        // Str::slug は日本語名で空文字になりフォールバックの 'category' が全件で衝突する。
+        // そのため種データ側で英字のslugを明示し、(tenant_id, slug) UNIQUE制約を満たす。
         $categories = [
-            ['name' => 'ドリンク', 'sort_order' => 10],
-            ['name' => 'フード', 'sort_order' => 20],
-            ['name' => 'デザート', 'sort_order' => 30],
-            ['name' => 'サイドメニュー', 'sort_order' => 40],
-            ['name' => 'アルコール', 'sort_order' => 50],
+            ['name' => 'ドリンク', 'slug' => 'drinks', 'sort_order' => 10],
+            ['name' => 'フード', 'slug' => 'food', 'sort_order' => 20],
+            ['name' => 'デザート', 'slug' => 'desserts', 'sort_order' => 30],
+            ['name' => 'サイドメニュー', 'slug' => 'sides', 'sort_order' => 40],
+            ['name' => 'アルコール', 'slug' => 'alcohol', 'sort_order' => 50],
         ];
 
         foreach ($tenants as $tenant) {
@@ -34,6 +37,7 @@ class MenuCategorySeeder extends Seeder
                         'name' => $category['name'],
                     ],
                     [
+                        'slug' => $category['slug'],
                         'sort_order' => $category['sort_order'],
                         'is_active' => true,
                     ]

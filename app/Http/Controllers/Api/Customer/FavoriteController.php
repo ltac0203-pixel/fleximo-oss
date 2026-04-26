@@ -24,7 +24,6 @@ class FavoriteController extends Controller
         return response()->json(['data' => $ids]);
     }
 
-    // お気に入りをトグルする（追加/解除）
     public function toggle(ToggleFavoriteRequest $request, Tenant $tenant): JsonResponse
     {
         $isFavorited = $this->favoriteService->toggleFavorite($request->user(), $tenant);

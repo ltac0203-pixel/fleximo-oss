@@ -16,20 +16,18 @@ use Inertia\Response;
 
 class RegisteredUserController extends Controller
 {
-    // 登録画面を表示する
     public function create(): Response
     {
         return Inertia::render('Auth/Register');
     }
 
-    // ユーザー登録リクエストを処理する
     public function store(RegisterRequest $request): RedirectResponse
     {
-        // roleはDBデフォルト値(customer)で設定される
+        // 登録経路を一本化し、顧客以外の権限はアプリ層から注入できないよう DB デフォルトに委ねる。
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => $request->password,  // Userモデルのcastsで自動ハッシュ化される
+            'password' => $request->password,  // ハッシュ責務をモデルに寄せ、保存経路ごとの差異を防ぐ。
         ]);
 
         Auth::login($user);
@@ -44,7 +42,7 @@ class RegisteredUserController extends Controller
             ]);
         }
 
-        // 新規登録ユーザーはcustomerなので顧客ホームへリダイレクト
+        // 初回体験を途切れさせないため、登録直後は必ず顧客ホームへ送る。
         return to_route('customer.home');
     }
 }

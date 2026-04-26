@@ -37,13 +37,12 @@ class CheckoutController extends Controller
         ], 201);
     }
 
-    // 決済を確定する（3DS決済実行→acs_urlリダイレクト、またはPayPay確認）
     public function finalize(FinalizePaymentRequest $request): JsonResponse
     {
         $payment = $request->getPayment();
         $token = $request->getToken();
 
-        // トークンなし＋非保存カード＝PayPay決済なので、外部決済完了後の確認フローに進む
+        // 非カード系フローは即時確定できないため、外部決済結果を再確認する経路に分ける。
         if ($token === null && ! $payment->usesSavedCard()) {
             $order = $this->checkoutOrchestrator->finalizePayment($payment);
 
@@ -59,7 +58,7 @@ class CheckoutController extends Controller
             return $this->orderSuccessResponse($order);
         }
 
-        // カード決済（新規/保存済み共通）: 決済実行→acs_url取得→フロントにリダイレクト指示
+        // 新規カードと保存済みカードで 3DS の戻り先を揃え、フロント分岐を増やさない。
         $acsUrl = $this->checkoutOrchestrator->executePaymentFor3ds(
             $payment,
             $token,
@@ -76,7 +75,6 @@ class CheckoutController extends Controller
         ]);
     }
 
-    // 3DSコールバックを処理する（3DS Method完了後 or チャレンジ完了後）
     public function process3dsCallback(ThreeDsCallbackRequest $request): JsonResponse
     {
         $payment = $request->getPayment();
@@ -88,10 +86,9 @@ class CheckoutController extends Controller
         return $this->handle3dsResult($result, $payment);
     }
 
-    // 3DS認証結果に応じてリダイレクト・成功・失敗のレスポンスを返す
     private function handle3dsResult(ThreeDsAuthResult $result, Payment $payment): JsonResponse
     {
-        // カード発行会社が追加認証を要求した場合、ユーザーを発行会社の認証画面へ誘導する
+        // 認証を途中で打ち切ると決済状態と画面状態がずれるため、追加認証が必要なら issuer へ戻す。
         if ($result->requiresRedirect()) {
             return response()->json([
                 'data' => [
@@ -102,12 +99,12 @@ class CheckoutController extends Controller
             ]);
         }
 
-        // フリクションレス認証が成功し決済確定済みのため、注文情報を返却
+        // フリクションレス成功時は注文確定まで完了しているので、そのまま成功画面へ進める。
         if ($result->isAuthenticated()) {
             return $this->orderSuccessResponse($payment->order);
         }
 
-        // 3DS認証失敗時はカード利用を拒否し、別手段への切り替えを促す
+        // 認証失敗を曖昧に扱うと再試行条件が見えなくなるため、カード変更を促して明示的に止める。
         return response()->json([
             'error' => [
                 'message' => '3DS認証に失敗しました。別のカードをお試しください。',
@@ -115,7 +112,6 @@ class CheckoutController extends Controller
         ], 400);
     }
 
-    // 注文成功レスポンスを生成する
     private function orderSuccessResponse(Order $order): JsonResponse
     {
         return response()->json([

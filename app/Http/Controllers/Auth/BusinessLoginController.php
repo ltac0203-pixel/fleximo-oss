@@ -26,14 +26,13 @@ class BusinessLoginController extends Controller
         ]);
     }
 
-    // 事業者向け認証リクエストを処理
     public function store(LoginRequest $request): RedirectResponse
     {
         $request->authenticate();
 
         $user = $request->user();
 
-        // 顧客ロールの場合は拒否
+        // 事業者用の導線に顧客が入ると権限エラーではなくログイン失敗として見せた方が情報漏えいを防げる。
         if ($user->role === UserRole::Customer) {
             Auth::guard('web')->logout();
             $request->session()->invalidate();
@@ -44,7 +43,7 @@ class BusinessLoginController extends Controller
             ]);
         }
 
-        // テナントロールでテナント未割り当ての場合は拒否
+        // 所属テナントがない事業者を通すと後続画面が成立しないため、ここで早めに止める。
         if ($user->role->isTenantRole() && ! $user->getTenant()) {
             Auth::guard('web')->logout();
             $request->session()->invalidate();
@@ -57,13 +56,13 @@ class BusinessLoginController extends Controller
 
         $request->session()->regenerate();
 
-        // 事業者はシングルセッション強制（他セッション即時削除）
+        // 共用端末運用を想定し、事業者側は多重ログインより取り違え防止を優先する。
         $this->sessionService->deleteOtherSessions($user->id, $request->session()->getId());
 
-        // ログイン後にテナントコンテキスト設定
+        // 事業者画面はテナント文脈前提のため、遷移前に確定させておく。
         $user->setTenantContext();
 
-        // ロール別リダイレクト
+        // 権限ごとに最初の作業画面を分け、不要な回遊を避ける。
         $redirectRoute = match ($user->role) {
             UserRole::Admin => route('admin.dashboard', absolute: false),
             UserRole::TenantAdmin => route('tenant.dashboard', absolute: false),

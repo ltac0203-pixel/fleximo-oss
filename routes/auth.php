@@ -9,18 +9,23 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['guest', 'throttle:5,1'])->group(function () {
+// E2E では同一IPから多数のログインを繰り返すため、ENVで明示的に許可された場合に限り
+// throttle を実質的に無効化する。本番では従来通り 5/分・3/分の制限を維持する。
+$guestThrottle = env('E2E_DISABLE_THROTTLE') ? 'throttle:1000,1' : 'throttle:5,1';
+$authPostThrottle = env('E2E_DISABLE_THROTTLE') ? 'throttle:1000,1' : 'throttle:3,1';
+
+Route::middleware(['guest', $guestThrottle])->group(function () use ($authPostThrottle): void {
     Route::get('register', [RegisteredUserController::class, 'create'])
         ->name('register');
 
     Route::post('register', [RegisteredUserController::class, 'store'])
-        ->middleware('throttle:3,1');
+        ->middleware($authPostThrottle);
 
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
         ->name('login');
 
     Route::post('login', [AuthenticatedSessionController::class, 'store'])
-        ->middleware('throttle:3,1');
+        ->middleware($authPostThrottle);
 });
 
 // メール認証リンク検証（未ログインでも署名付きURLで検証可能）

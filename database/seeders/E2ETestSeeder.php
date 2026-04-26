@@ -29,7 +29,10 @@ class E2ETestSeeder extends Seeder
         ]);
 
         // E2Eテストで固定的に使うテナントを特定する。slugは他Seederと合わせた既知値。
+        // 承認待ちのままだと tenant.user-approved ミドルウェアが KDS / メニュー管理画面への
+        // 遷移をブロックしてしまうので、E2E では承認済みにしておく。
         $tenant = Tenant::where('slug', 'cafe-bluesky')->firstOrFail();
+        $tenant->forceFill(['is_approved' => true])->save();
 
         // 注文フロー・カート操作のE2Eテストに使う顧客アカウント。updateOrCreateで冪等性を担保。
         $customer = User::updateOrCreate(
@@ -39,6 +42,8 @@ class E2ETestSeeder extends Seeder
                 'role' => UserRole::Customer,
                 'email_verified_at' => now(),
                 'password' => 'password',
+                // 全画面遷移時のオンボーディングモーダルを抑止し、E2E のクリックを邪魔しない。
+                'onboarding_completed_at' => now(),
             ]
         );
 
@@ -50,6 +55,8 @@ class E2ETestSeeder extends Seeder
                 'role' => UserRole::TenantStaff,
                 'email_verified_at' => now(),
                 'password' => 'password',
+                // 全画面遷移時のオンボーディングモーダルを抑止し、E2E のクリックを邪魔しない。
+                'onboarding_completed_at' => now(),
             ]
         );
 
@@ -61,6 +68,8 @@ class E2ETestSeeder extends Seeder
                 'role' => UserRole::TenantAdmin,
                 'email_verified_at' => now(),
                 'password' => 'password',
+                // 全画面遷移時のオンボーディングモーダルを抑止し、E2E のクリックを邪魔しない。
+                'onboarding_completed_at' => now(),
             ]
         );
 
@@ -81,8 +90,9 @@ class E2ETestSeeder extends Seeder
             ->where('name', 'コーヒー')
             ->firstOrFail();
 
+        // order_code は char(4) なので 4 文字に収まる固定値を使う（A123 等の本番形式と同じ桁数）。
         $order = Order::updateOrCreate(
-            ['order_code' => 'E2E-001', 'tenant_id' => $tenant->id],
+            ['order_code' => 'E001', 'tenant_id' => $tenant->id],
             [
                 'user_id' => $customer->id,
                 'status' => OrderStatus::Accepted,
@@ -98,6 +108,28 @@ class E2ETestSeeder extends Seeder
                 'menu_item_id' => $menuItem->id,
                 'price' => 350,
                 'quantity' => 1,
+            ]
+        );
+
+        // KDSのフルライフサイクルE2EテストでPaid→Acceptedの「受付」操作を検証するため、
+        // Accepted注文（E2E-001）とは別に、Paid状態の注文（E2E-002）を投入する。
+        $paidOrder = Order::updateOrCreate(
+            ['order_code' => 'E002', 'tenant_id' => $tenant->id],
+            [
+                'user_id' => $customer->id,
+                'status' => OrderStatus::Paid,
+                'business_date' => now()->toDateString(),
+                'total_amount' => 700,
+                'paid_at' => now(),
+            ]
+        );
+
+        OrderItem::updateOrCreate(
+            ['order_id' => $paidOrder->id, 'tenant_id' => $tenant->id, 'name' => 'コーヒー'],
+            [
+                'menu_item_id' => $menuItem->id,
+                'price' => 350,
+                'quantity' => 2,
             ]
         );
     }

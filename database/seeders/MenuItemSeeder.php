@@ -85,11 +85,11 @@ class MenuItemSeeder extends Seeder
                     ]
                 );
 
-                // カテゴリを紐付け
+                // カテゴリを紐付け（pivot 列は menu_category_id）
                 if (isset($categories[$categoryName])) {
                     MenuItemCategory::updateOrCreate([
                         'menu_item_id' => $item->id,
-                        'category_id' => $categories[$categoryName]->id,
+                        'menu_category_id' => $categories[$categoryName]->id,
                     ]);
                 }
             }

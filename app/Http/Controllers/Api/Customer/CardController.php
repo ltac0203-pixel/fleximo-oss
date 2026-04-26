@@ -30,7 +30,6 @@ class CardController extends Controller
         return CardResource::collection($cards);
     }
 
-    // カードを登録する
     public function store(RegisterCardRequest $request, Tenant $tenant): JsonResponse
     {
         Gate::authorize('card.create');
@@ -50,7 +49,6 @@ class CardController extends Controller
         ], 201);
     }
 
-    // カードを削除する
     public function destroy(Request $request, Tenant $tenant, int $card): JsonResponse
     {
         Gate::authorize('card.delete');

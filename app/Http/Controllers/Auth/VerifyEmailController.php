@@ -11,7 +11,6 @@ use Illuminate\Http\RedirectResponse;
 
 class VerifyEmailController extends Controller
 {
-    // メールアドレスを確認済みにする（未ログインでも署名付きURLで検証可能）
     public function __invoke(EmailVerificationRequest $request): RedirectResponse
     {
         $user = $request->userToVerify();
@@ -21,12 +20,12 @@ class VerifyEmailController extends Controller
             event(new Verified($user));
         }
 
-        // ログイン済みならダッシュボードへ
+        // 既存セッションがある場合は再ログインを挟まず、そのまま元の利用導線へ戻す。
         if ($request->user()) {
             return redirect()->intended(route('dashboard', absolute: false).'?verified=1');
         }
 
-        // 未ログインの場合、ロールに応じたログインページへリダイレクト
+        // 未ログイン時は次に踏むべき入口を role ごとに分け、案内の迷子を防ぐ。
         if ($user->hasTenantRole() || $user->isAdmin()) {
             return redirect()->route('for-business.login')
                 ->with('status', 'メールアドレスの認証が完了しました。ログインしてください。');

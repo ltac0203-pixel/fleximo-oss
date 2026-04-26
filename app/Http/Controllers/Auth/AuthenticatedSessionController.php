@@ -15,7 +15,6 @@ use Inertia\Response;
 
 class AuthenticatedSessionController extends Controller
 {
-    // ログイン画面を表示する
     public function create(): Response
     {
         return Inertia::render('Auth/Login', [
@@ -23,14 +22,13 @@ class AuthenticatedSessionController extends Controller
         ]);
     }
 
-    // 認証リクエストを処理する
     public function store(LoginRequest $request): RedirectResponse
     {
         $request->authenticate();
 
         $user = $request->user();
 
-        // テナントユーザー・管理者ロールの場合は拒否
+        // 顧客ログイン口から事業者権限へ入れると導線と権限境界が崩れるため、ここで閉じる。
         if ($user->role->isTenantRole() || $user->role === UserRole::Admin) {
             Auth::guard('web')->logout();
             $request->session()->invalidate();
@@ -43,10 +41,10 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        // ログイン後にテナントコンテキスト設定
+        // 顧客でもテナント横断の共通処理があるため、直後に文脈を揃えておく。
         $user->setTenantContext();
 
-        // ロール別リダイレクト（顧客のみ）
+        // 将来 role が増えても意図しない画面へ送らないよう、遷移先を明示しておく。
         $redirectRoute = match ($user->role) {
             UserRole::Customer => route('customer.home', absolute: false),
             default => route('home', absolute: false),
@@ -55,7 +53,6 @@ class AuthenticatedSessionController extends Controller
         return redirect()->intended($redirectRoute);
     }
 
-    // 認証済みセッションを破棄する
     public function destroy(Request $request): RedirectResponse
     {
         $user = $request->user();

@@ -42,17 +42,24 @@ void createInertiaApp({
     setup({ el, App, props }) {
         const root = createRoot(el);
 
+        // GlobalOnboardingTour などは usePage() を使うため、Inertia の <App> が提供する
+        // PageContext のスコープ内で描画する必要がある。children render-prop を渡し、
+        // ページ本体・遷移・グローバル UI をすべて context 配下に配置する。
         root.render(
-            <>
-                <ErrorBoundary fallback={RootErrorFallback}>
-                    <PageTransition>
-                        <App {...props} />
-                    </PageTransition>
-                </ErrorBoundary>
-                <NavigationProgressBar />
-                <GlobalLoadingOverlay />
-                <GlobalOnboardingTour />
-            </>,
+            <ErrorBoundary fallback={RootErrorFallback}>
+                <App {...props}>
+                    {({ Component, props: pageProps, key }) => (
+                        <>
+                            <PageTransition>
+                                <Component key={key} {...pageProps} />
+                            </PageTransition>
+                            <NavigationProgressBar />
+                            <GlobalLoadingOverlay />
+                            <GlobalOnboardingTour />
+                        </>
+                    )}
+                </App>
+            </ErrorBoundary>,
         );
     },
     progress: false,
