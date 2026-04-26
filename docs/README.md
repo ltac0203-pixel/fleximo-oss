@@ -21,6 +21,10 @@
 - [fincode 決済を設定する](./how-to/configure-fincode.md)
 - [新しいテナント（飲食店）を追加する](./how-to/add-a-tenant.md)
 - [本番環境にデプロイする](./how-to/deploy-production.md)
+- [バックアップとリストア](./how-to/backup-and-restore.md)
+- [アップグレードする](./how-to/upgrade.md)
+- [シークレットをローテーションする](./how-to/rotate-secrets.md)
+- [リリースを作成する](./how-to/release.md)
 - [コミットメッセージ規約](./how-to/commit-guidelines.md)
 
 ### Reference（参照）
