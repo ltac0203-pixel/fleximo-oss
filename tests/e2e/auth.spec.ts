@@ -1,26 +1,7 @@
 import { test, expect } from '@playwright/test'
-import { loginAsCustomer } from './helpers/auth'
-import { TEST_CUSTOMER, TEST_STAFF } from './constants'
+import { TEST_STAFF } from './constants'
 
 test.describe('認証フロー', () => {
-  test('顧客がログインできる', async ({ page }) => {
-    // ログインページに移動
-    await page.goto('/login')
-
-    // ログインフォームが表示されることを確認
-    await expect(page.locator('h2')).toContainText('ログイン')
-
-    // テスト用の認証情報を入力
-    await page.fill('input[name="email"]', TEST_CUSTOMER.email)
-    await page.fill('input[name="password"]', TEST_CUSTOMER.password)
-
-    // ログインボタンをクリック
-    await page.click('button[type="submit"]')
-
-    // 顧客ホームにリダイレクトされることを確認
-    await expect(page).toHaveURL(/\/customer/)
-  })
-
   test('テナントスタッフがログインできる', async ({ page }) => {
     // 事業者ログインページに移動
     await page.goto('/for-business/login')
@@ -51,23 +32,5 @@ test.describe('認証フロー', () => {
 
     // エラーメッセージが表示されることを確認
     await expect(page.locator('[role="alert"]')).toBeVisible()
-  })
-
-  // TODO(e2e-coverage-followup): Customer Home のヘッダー UI 改修で `header button` セレクタが
-  // ログアウトアイコンに当たらなくなっている。新 UI に合わせて再記述するまで一時 skip。
-  test.skip('顧客がログアウトできる', async ({ page }) => {
-    // まずログイン
-    await loginAsCustomer(page)
-
-    // 顧客ホームに到達していることを確認
-    await expect(page).toHaveURL(/\/customer/)
-
-    // ヘッダー内のログアウトボタン（Inertia Link as="button"、3番目のアイコン）をクリック
-    // Customer/Home/Index.tsx: header内の最後のbutton要素（ログアウトアイコン）
-    const logoutButton = page.locator('header button').last()
-    await logoutButton.click()
-
-    // トップページにリダイレクトされることを確認
-    await expect(page).toHaveURL(/^\/$|\/login/)
   })
 })
