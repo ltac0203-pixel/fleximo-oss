@@ -1,0 +1,18 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 🔒 セキュリティ脆弱性の報告 / Report a security vulnerability
+    url: https://github.com/ltac0203-pixel/fleximo-oss/security/advisories/new
+    about: |
+      脆弱性は公開 Issue で報告しないでください。SECURITY.md の手順に従い、
+      GitHub Security Advisory または matsui@ltac.co.jp 宛にメールで報告してください。
+      Please do NOT open a public issue for security vulnerabilities. See SECURITY.md.
+  - name: 💬 質問・相談 / Ask a question (Discussions)
+    url: https://github.com/ltac0203-pixel/fleximo-oss/discussions
+    about: |
+      使い方・設計相談・アイデアの壁打ちは GitHub Discussions をご利用ください。
+      For usage questions, design discussions, and brainstorming, please use Discussions.
+  - name: 📖 ドキュメント / Documentation
+    url: https://github.com/ltac0203-pixel/fleximo-oss/tree/main/docs
+    about: |
+      Issue を立てる前に docs/ 配下のドキュメントもご確認ください。
+      Please check the docs/ directory before opening an issue.
