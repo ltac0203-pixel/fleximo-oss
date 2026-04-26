@@ -22,8 +22,10 @@ async function scrollToItem(page: Page, itemName: string): Promise<Locator> {
 }
 
 function cardOf(page: Page, itemName: string): Locator {
+  // ItemCard のルート div をクラスで特定し、その中の h4 でフィルタする。
+  // 単に `div` を起点にすると親コンテナまで巻き込んで a/button が複数解決してしまう。
   return page
-    .locator('div')
+    .locator('div.bg-white.border')
     .filter({ has: page.locator(`h4:has-text("${itemName}")`) })
     .first()
 }
