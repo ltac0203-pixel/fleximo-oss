@@ -1,13 +1,5 @@
 import { Page, expect } from '@playwright/test';
-import { TEST_CUSTOMER, TEST_STAFF, TEST_ADMIN } from '../constants';
-
-export async function loginAsCustomer(page: Page) {
-  await page.goto('/login');
-  await page.fill('input[name="email"]', TEST_CUSTOMER.email);
-  await page.fill('input[name="password"]', TEST_CUSTOMER.password);
-  await page.click('button[type="submit"]');
-  await expect(page).toHaveURL(/\/customer/);
-}
+import { TEST_STAFF, TEST_ADMIN } from '../constants';
 
 export async function loginAsStaff(page: Page) {
   await page.goto('/for-business/login');
