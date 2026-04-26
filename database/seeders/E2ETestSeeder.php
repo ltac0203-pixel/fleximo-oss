@@ -81,8 +81,9 @@ class E2ETestSeeder extends Seeder
             ->where('name', 'コーヒー')
             ->firstOrFail();
 
+        // order_code は char(4) なので 4 文字に収まる固定値を使う（A123 等の本番形式と同じ桁数）。
         $order = Order::updateOrCreate(
-            ['order_code' => 'E2E-001', 'tenant_id' => $tenant->id],
+            ['order_code' => 'E001', 'tenant_id' => $tenant->id],
             [
                 'user_id' => $customer->id,
                 'status' => OrderStatus::Accepted,
@@ -104,7 +105,7 @@ class E2ETestSeeder extends Seeder
         // KDSのフルライフサイクルE2EテストでPaid→Acceptedの「受付」操作を検証するため、
         // Accepted注文（E2E-001）とは別に、Paid状態の注文（E2E-002）を投入する。
         $paidOrder = Order::updateOrCreate(
-            ['order_code' => 'E2E-002', 'tenant_id' => $tenant->id],
+            ['order_code' => 'E002', 'tenant_id' => $tenant->id],
             [
                 'user_id' => $customer->id,
                 'status' => OrderStatus::Paid,

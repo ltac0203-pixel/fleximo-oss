@@ -2,10 +2,11 @@ import { test, expect, type Locator, type Page } from '@playwright/test'
 import { loginAsStaff } from './helpers/auth'
 
 // E2ETestSeederがPaid状態で投入する注文コード。
-// Acceptedで投入される既存テスト用注文（E2E-001）とは別注文として作成されているため、
+// Acceptedで投入される既存テスト用注文（E001）とは別注文として作成されているため、
 // 本specのカード操作はすべて order_code でスコープし、staff-order-management.spec.ts と
 // 並列実行されても干渉しないようにする。
-const ORDER_CODE = 'E2E-002'
+// orders.order_code は char(4) なので 4 文字に収める。
+const ORDER_CODE = 'E002'
 
 function orderCard(page: Page): Locator {
   return page.locator('div.border-l-4').filter({ hasText: ORDER_CODE })
