@@ -13,7 +13,7 @@ class MenuItemCategory extends Pivot
 
     protected $fillable = [
         'menu_item_id',
-        'category_id',
+        'menu_category_id',
     ];
 
     // updated_at は使用しない
