@@ -29,7 +29,10 @@ class E2ETestSeeder extends Seeder
         ]);
 
         // E2Eテストで固定的に使うテナントを特定する。slugは他Seederと合わせた既知値。
+        // 承認待ちのままだと tenant.user-approved ミドルウェアが KDS / メニュー管理画面への
+        // 遷移をブロックしてしまうので、E2E では承認済みにしておく。
         $tenant = Tenant::where('slug', 'cafe-bluesky')->firstOrFail();
+        $tenant->forceFill(['is_approved' => true])->save();
 
         // 注文フロー・カート操作のE2Eテストに使う顧客アカウント。updateOrCreateで冪等性を担保。
         $customer = User::updateOrCreate(
@@ -39,6 +42,8 @@ class E2ETestSeeder extends Seeder
                 'role' => UserRole::Customer,
                 'email_verified_at' => now(),
                 'password' => 'password',
+                // 全画面遷移時のオンボーディングモーダルを抑止し、E2E のクリックを邪魔しない。
+                'onboarding_completed_at' => now(),
             ]
         );
 
@@ -50,6 +55,8 @@ class E2ETestSeeder extends Seeder
                 'role' => UserRole::TenantStaff,
                 'email_verified_at' => now(),
                 'password' => 'password',
+                // 全画面遷移時のオンボーディングモーダルを抑止し、E2E のクリックを邪魔しない。
+                'onboarding_completed_at' => now(),
             ]
         );
 
@@ -61,6 +68,8 @@ class E2ETestSeeder extends Seeder
                 'role' => UserRole::TenantAdmin,
                 'email_verified_at' => now(),
                 'password' => 'password',
+                // 全画面遷移時のオンボーディングモーダルを抑止し、E2E のクリックを邪魔しない。
+                'onboarding_completed_at' => now(),
             ]
         );
 
