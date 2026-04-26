@@ -22,7 +22,6 @@ class CartController extends Controller
         private CartService $cartService
     ) {}
 
-    // カート一覧を取得（全テナント）
     public function index(Request $request): AnonymousResourceCollection
     {
         $carts = $this->cartService->getUserCarts($request->user());
@@ -30,19 +29,18 @@ class CartController extends Controller
         return CartResource::collection($carts);
     }
 
-    // 商品をカートに追加
     public function addItem(AddCartItemRequest $request): JsonResponse
     {
         $user = $request->user();
         $tenantId = $request->validated('tenant_id');
 
-        // 既存カートがあれば認可チェック
+        // 既存カートに他テナントの商品を混在させないため、再利用時だけ所有権を確認する。
         $existingCart = $this->cartService->findUserCartForTenant($user, $tenantId);
 
         if ($existingCart) {
             $this->authorize('addItem', $existingCart);
         }
-        // 新規カート作成の場合: AddCartItemRequest でテナント・商品の検証済み
+        // 新規作成側の整合性確認は FormRequest に寄せ、Controller は分岐判断だけに留める。
 
         $cartItem = $this->cartService->addItem(
             user: $user,

@@ -18,7 +18,6 @@ class OrderController extends Controller
         private OrderService $orderService
     ) {}
 
-    // 注文一覧を取得（全テナント横断）
     public function index(ListOrdersRequest $request): JsonResponse
     {
         $this->authorize('viewAny', Order::class);
@@ -40,7 +39,6 @@ class OrderController extends Controller
         ]);
     }
 
-    // 注文詳細を取得
     public function show(Order $order): OrderDetailResource
     {
         $this->authorize('view', $order);
@@ -50,7 +48,6 @@ class OrderController extends Controller
         return new OrderDetailResource($order);
     }
 
-    // 注文ステータスのみ返す軽量エンドポイント（ポーリング用）
     public function status(Order $order): JsonResponse
     {
         $this->authorize('view', $order);
