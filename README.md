@@ -91,7 +91,6 @@ See [`docs/reference/architecture.md`](./docs/reference/architecture.md) and [`d
 | Styling          | Tailwind CSS 3                                 |
 | Build            | Vite 7                                         |
 | UI libraries     | @headlessui/react, recharts, @dnd-kit          |
-| Error monitoring | Sentry                                         |
 
 ---
 

@@ -25,7 +25,6 @@ use Illuminate\Session\TokenMismatchException;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
-use Sentry\Laravel\Integration;
 use Symfony\Component\HttpFoundation\Response;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -62,8 +61,6 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        Integration::handles($exceptions);
-
         // ログアウト時は CSRF トークン検証が不要なため、419 例外をリダイレクトで握りつぶす
         $exceptions->render(function (TokenMismatchException $e, Request $request) {
             if ($request->is('logout')) {

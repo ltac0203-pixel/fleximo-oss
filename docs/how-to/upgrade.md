@@ -144,7 +144,6 @@ php artisan up
 - 顧客側で注文 → 決済 → KDS に流れる
 - テナント管理画面でメニューが表示される
 - `storage/logs/laravel.log` にスタックトレースが出ていない
-- Sentry に新規エラーが出ていない（DSN 設定済みの場合）
 
 ## ロールバック
 
