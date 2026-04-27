@@ -9,7 +9,6 @@ use App\Models\AuditLog;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class LoginAnomalyDetector
@@ -17,7 +16,7 @@ class LoginAnomalyDetector
     /**
      * 3種類の異常ログインパターンをまとめて検知する。
      *
-     * @return array<int, array{type: AuditAction, should_notify: bool, metadata: array<string, mixed>}>
+     * @return array<int, array{type: AuditAction, metadata: array<string, mixed>}>
      */
     public function detect(User $user, Request $request): array
     {
@@ -51,7 +50,7 @@ class LoginAnomalyDetector
      * IP変化を検知する。
      * 直前のログインとIPが異なる場合に検知。
      *
-     * @return array{type: AuditAction, should_notify: bool, metadata: array<string, mixed>}|null
+     * @return array{type: AuditAction, metadata: array<string, mixed>}|null
      */
     protected function detectIpChange(User $user, Request $request): ?array
     {
@@ -77,11 +76,8 @@ class LoginAnomalyDetector
             return null;
         }
 
-        $type = AuditAction::SuspiciousLoginIpChange;
-
         return [
-            'type' => $type,
-            'should_notify' => $this->shouldNotify($user->id, $type->value),
+            'type' => AuditAction::SuspiciousLoginIpChange,
             'metadata' => [
                 'previous_ip' => $previousIp,
                 'current_ip' => $currentIp,
@@ -93,7 +89,7 @@ class LoginAnomalyDetector
      * 高頻度ログインを検知する。
      * 過去N分以内のログイン回数が閾値以上の場合に検知。
      *
-     * @return array{type: AuditAction, should_notify: bool, metadata: array<string, mixed>}|null
+     * @return array{type: AuditAction, metadata: array<string, mixed>}|null
      */
     protected function detectFrequency(User $user, Request $request): ?array
     {
@@ -112,11 +108,8 @@ class LoginAnomalyDetector
             return null;
         }
 
-        $type = AuditAction::SuspiciousLoginFrequency;
-
         return [
-            'type' => $type,
-            'should_notify' => $this->shouldNotify($user->id, $type->value),
+            'type' => AuditAction::SuspiciousLoginFrequency,
             'metadata' => [
                 'count' => $totalCount,
                 'window_minutes' => $window,
@@ -129,7 +122,7 @@ class LoginAnomalyDetector
      * 新規デバイスを検知する。
      * 過去のログインに存在しないUser-Agentの場合に検知。
      *
-     * @return array{type: AuditAction, should_notify: bool, metadata: array<string, mixed>}|null
+     * @return array{type: AuditAction, metadata: array<string, mixed>}|null
      */
     protected function detectNewDevice(User $user, Request $request): ?array
     {
@@ -144,11 +137,8 @@ class LoginAnomalyDetector
             return null;
         }
 
-        $type = AuditAction::SuspiciousLoginNewDevice;
-
         return [
-            'type' => $type,
-            'should_notify' => $this->shouldNotify($user->id, $type->value),
+            'type' => AuditAction::SuspiciousLoginNewDevice,
             'metadata' => [
                 'current_device' => $currentUa,
                 'known_devices' => $previousUas->all(),
@@ -181,39 +171,6 @@ class LoginAnomalyDetector
             ->map(fn (string $ua) => $this->normalizeUserAgent($ua))
             ->unique()
             ->values();
-    }
-
-    /**
-     * 通知クールダウンをチェックする。
-     */
-    public function shouldNotify(int $userId, string $type): bool
-    {
-        return ! Cache::has("login_anomaly_notification:{$userId}:{$type}");
-    }
-
-    /**
-     * 複数の異常について通知済みとしてマークする。
-     *
-     * @param  array<int, array{type: AuditAction, metadata: array<string, mixed>}>  $anomalies
-     */
-    public function markNotifiedAll(int $userId, array $anomalies): void
-    {
-        foreach ($anomalies as $anomaly) {
-            $this->markNotified($userId, $anomaly['type']->value);
-        }
-    }
-
-    /**
-     * 通知済みとしてマークする。
-     */
-    public function markNotified(int $userId, string $type): void
-    {
-        $cooldown = (int) config('login_anomaly.notification_cooldown_minutes');
-        Cache::put(
-            "login_anomaly_notification:{$userId}:{$type}",
-            true,
-            now()->addMinutes($cooldown)
-        );
     }
 
     /**

@@ -68,7 +68,7 @@ resources/js/i18n/
         └── （同じ構成）
 ```
 
-サーバー側は `__('mail.order_completed.subject')` のドット記法で参照します。フロントは `useTranslation('errors')` のように namespace を取り、`t('404.title')` で参照します。
+サーバー側は `__('mail.verify_email.subject')` のドット記法で参照します。フロントは `useTranslation('errors')` のように namespace を取り、`t('404.title')` で参照します。
 
 ---
 
