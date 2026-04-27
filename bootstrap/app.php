@@ -10,7 +10,6 @@ use App\Http\Middleware\EnsureUserIsActive;
 use App\Http\Middleware\EnsureUserRole;
 use App\Http\Middleware\EnsureUserTenantAssignment;
 use App\Http\Middleware\HandleInertiaRequests;
-use App\Http\Middleware\RestrictByIpWhitelist;
 use App\Http\Middleware\SetTenantContext;
 use App\Http\Middleware\ValidateThreeDsCallbackSignature;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -57,7 +56,6 @@ return Application::configure(basePath: dirname(__DIR__))
             'idempotent' => EnsureIdempotencyKey::class,
             'signed.3ds' => ValidateThreeDsCallbackSignature::class,
             'verified' => EnsureEmailIsVerified::class,
-            'ip.whitelist' => RestrictByIpWhitelist::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

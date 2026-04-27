@@ -64,7 +64,7 @@ paths:
     get:
       tags: [public]
       summary: ヘルスチェック
-      description: IP ホワイトリストで保護。認証不要。
+      description: 認証不要。
       operationId: health.check
       security: []
       responses:

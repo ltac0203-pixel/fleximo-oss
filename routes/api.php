@@ -32,7 +32,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 // ヘルスチェック（認証不要、ロードバランサー・監視ツール向け）
-Route::middleware('ip.whitelist')->get('/health', HealthCheckController::class)->name('health');
+Route::get('/health', HealthCheckController::class)->name('health');
 
 // テナント管理者・スタッフ向けAPI
 Route::middleware(['auth:sanctum', 'verified', 'active', 'role:tenant_admin,tenant_staff', 'tenant.user-assigned', 'tenant.user-approved', 'throttle:60,1'])
