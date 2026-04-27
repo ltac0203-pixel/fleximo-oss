@@ -1903,36 +1903,6 @@ parameters:
 			path: app/Jobs/ProcessPaymentWebhookJob.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$email\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Listeners/SendOrderNotificationEmail.php
-
-		-
-			message: '#^Method App\\Mail\\OrderCancelledMail\:\:attachments\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Mail/OrderCancelledMail.php
-
-		-
-			message: '#^Property App\\Mail\\OrderCancelledMail\:\:\$backoff type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Mail/OrderCancelledMail.php
-
-		-
-			message: '#^Method App\\Mail\\OrderCompletedMail\:\:attachments\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Mail/OrderCompletedMail.php
-
-		-
-			message: '#^Property App\\Mail\\OrderCompletedMail\:\:\$backoff type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Mail/OrderCompletedMail.php
-
-		-
 			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder\:\:forPlatform\(\)\.$#'
 			identifier: method.notFound
 			count: 1

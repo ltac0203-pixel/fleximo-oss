@@ -10,7 +10,6 @@ use App\Models\User;
 use App\Services\LoginAnomalyDetector;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Tests\TestCase;
 
@@ -428,46 +427,4 @@ class LoginAnomalyDetectorTest extends TestCase
         $this->assertCount(3, $result);
     }
 
-    // ========================================
-    // 通知クールダウン
-    // ========================================
-
-    public function test_should_notify_returns_true_when_no_cooldown(): void
-    {
-        $this->assertTrue($this->detector->shouldNotify(1, 'auth.suspicious_login.ip_change'));
-    }
-
-    public function test_should_notify_returns_false_during_cooldown(): void
-    {
-        $this->detector->markNotified(1, 'auth.suspicious_login.ip_change');
-
-        $this->assertFalse($this->detector->shouldNotify(1, 'auth.suspicious_login.ip_change'));
-    }
-
-    public function test_cooldown_uses_configured_duration(): void
-    {
-        Config::set('login_anomaly.notification_cooldown_minutes', 30);
-
-        $this->detector->markNotified(1, 'auth.suspicious_login.ip_change');
-
-        $this->assertTrue(
-            Cache::has('login_anomaly_notification:1:auth.suspicious_login.ip_change')
-        );
-    }
-
-    public function test_detection_result_includes_should_notify_flag(): void
-    {
-        $user = User::factory()->create();
-        $this->createLoginLog($user, ['ip_address' => '203.0.113.1']);
-
-        // クールダウン設定
-        $this->detector->markNotified($user->id, AuditAction::SuspiciousLoginIpChange->value);
-
-        $request = $this->createRequest('198.51.100.1');
-        $result = $this->detector->detect($user, $request);
-
-        $ipAnomaly = collect($result)->firstWhere('type', AuditAction::SuspiciousLoginIpChange);
-        $this->assertNotNull($ipAnomaly);
-        $this->assertFalse($ipAnomaly['should_notify']);
-    }
 }

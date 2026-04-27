@@ -20,6 +20,4 @@ return [
         'enabled' => env('LOGIN_ANOMALY_NEW_DEVICE_ENABLED', true),
         'max_known_user_agents' => (int) env('LOGIN_ANOMALY_NEW_DEVICE_MAX_KNOWN_USER_AGENTS', 200),
     ],
-
-    'notification_cooldown_minutes' => (int) env('LOGIN_ANOMALY_NOTIFICATION_COOLDOWN', 60),
 ];
