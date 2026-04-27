@@ -12,6 +12,8 @@
 **Fleximo** is an open-source, multi-tenant **mobile ordering platform for Japanese restaurants and school cafeterias (学食)**.
 It lets restaurant owners accept takeout orders and payments on the web with no register queue, while end-users enjoy a single account across every restaurant on the platform.
 
+> **Platform-type software** — Fleximo is designed for a single operator to host many restaurant tenants on one deployment, not for per-store self-hosting. This shapes the architecture (multi-tenant DB, platform-level admin, platform-type fincode merchant contract) end-to-end. See [`docs/explanation/multi-tenancy.md`](./docs/explanation/multi-tenancy.md).
+
 ![Fleximo — mobile ordering for Japanese restaurants and campus dining](./docs/assets/hero.png)
 
 > Live reference deployment: **https://fleximo.jp**
