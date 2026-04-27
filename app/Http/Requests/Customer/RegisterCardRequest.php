@@ -26,8 +26,8 @@ class RegisterCardRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'token.required' => 'カードトークンは必須です。',
-            'token.string' => 'カードトークンの形式が正しくありません。',
+            'token.required' => __('validation.custom.token_required'),
+            'token.string' => __('validation.custom.token_string'),
         ];
     }
 }

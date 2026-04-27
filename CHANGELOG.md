@@ -15,12 +15,16 @@
 
 ### Added
 
--
+- 多言語化（i18n）基盤を導入。`APP_LOCALE` で `ja` / `en` を切り替え可能に。バリデーションメッセージ・認証メッセージ・注文完了/キャンセルメール・メール認証・Enum ラベル（OrderStatus / PaymentStatus / PaymentMethod）・フロント共通レイアウト・認証画面・エラーページ（403/404/419/429/500/503）を `lang/{ja,en}/` および `resources/js/i18n/locales/{ja,en}/` で多言語化。`HandleInertiaRequests` が `locale` / `fallbackLocale` を共有し、`<html lang>` と `<meta og:locale>` も locale に追従。詳細は [`docs/how-to/i18n-setup.md`](./docs/how-to/i18n-setup.md)
+- `APP_TIMEZONE` 環境変数を追加（`config/app.php` の `timezone` を env 化）。`OrderNumberGenerator` の `Asia/Tokyo` ハードコードも `config('app.timezone')` 参照に変更
+- `lang/` ディレクトリ（`php artisan lang:publish` で生成された英語版を起点に日本語版を整備）
+- `resources/js/i18n/` ディレクトリ（`react-i18next` + `i18next-resources-to-backend` による Vite 動的 import 対応）
 
 ### Changed
 
 - `TenantStatsRepository` を `app/Services/Stats/Queries/` 配下の 8 つの Query Object に分解するファサードに縮小（398 行 → 105 行）。`TenantDashboardService::getCustomerInsights` の生 Eloquent クエリも `CustomerInsightsQuery` に抽出。public シグネチャは完全維持
 - `TenantDashboardService` のキャッシュキー組み立てを `DashboardCacheKeys` に、TTL 判定を `StatsCacheResolver` に分離。`Cache::remember` 直接呼び出しをゼロ化し、キー 7 本とTTL は完全保持（ハードコード比較テストで検証）
+- 顧客導線（メニュー閲覧・カート・チェックアウト・注文履歴）/ テナントスタッフ画面 / 管理画面 / KDS / onboarding は **次 PR 以降で段階的に翻訳化**。本 PR では基盤と共通レイアウト・Auth・Errors のみが ja/en 切替に対応する（`resources/js/i18n/locales/{ja,en}/customer.json` は次 PR で消費する scaffolding として同梱）
 
 ### Fixed
 

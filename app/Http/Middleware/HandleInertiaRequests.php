@@ -62,6 +62,8 @@ class HandleInertiaRequests extends Middleware
                 'businessHours' => (string) config('legal.business_hours'),
                 'websiteUrl' => (string) config('legal.website_url'),
             ],
+            'locale' => app()->getLocale(),
+            'fallbackLocale' => (string) config('app.fallback_locale'),
         ];
 
         // テナント画面のナビや営業時間表示が tenant を前提にするため、毎リクエスト共有する。

@@ -13,8 +13,6 @@ use Illuminate\Validation\Validator;
 
 class ThreeDsCallbackRequest extends FormRequest
 {
-    private const INVALID_PAYMENT_MESSAGE = '指定された決済は無効です。';
-
     private ?Payment $payment = null;
 
     public function authorize(): bool
@@ -34,10 +32,10 @@ class ThreeDsCallbackRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'payment_id.required' => '決済IDは必須です。',
-            'payment_id.integer' => '決済IDは数値で指定してください。',
-            'param.required' => '認証パラメータは必須です。',
-            'param.string' => '認証パラメータは文字列で指定してください。',
+            'payment_id.required' => __('validation.custom.payment_id_required'),
+            'payment_id.integer' => __('validation.custom.payment_id_integer'),
+            'param.required' => __('validation.custom.param_required'),
+            'param.string' => __('validation.custom.param_string'),
         ];
     }
 
@@ -51,7 +49,7 @@ class ThreeDsCallbackRequest extends FormRequest
             $payment = $this->ownedPaymentQuery()->find($this->input('payment_id'));
 
             if (! $payment) {
-                $validator->errors()->add('payment_id', self::INVALID_PAYMENT_MESSAGE);
+                $validator->errors()->add('payment_id', __('validation.custom.payment_id_invalid'));
 
                 return;
             }
@@ -69,7 +67,7 @@ class ThreeDsCallbackRequest extends FormRequest
 
         if ($this->payment === null) {
             throw ValidationException::withMessages([
-                'payment_id' => self::INVALID_PAYMENT_MESSAGE,
+                'payment_id' => __('validation.custom.payment_id_invalid'),
             ]);
         }
 

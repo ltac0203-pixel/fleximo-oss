@@ -18,17 +18,7 @@ enum OrderStatus: string
 
     public function label(): string
     {
-        return match ($this) {
-            self::PendingPayment => '決済待ち',
-            self::Paid => '決済完了',
-            self::Accepted => '受付済み',
-            self::InProgress => '調理中',
-            self::Ready => '準備完了',
-            self::Completed => '完了',
-            self::Cancelled => 'キャンセル',
-            self::PaymentFailed => '決済失敗',
-            self::Refunded => '返金済み',
-        };
+        return __('enums.order_status.'.$this->value);
     }
 
     public function canTransitionTo(self $status): bool

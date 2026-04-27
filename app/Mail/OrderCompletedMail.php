@@ -35,7 +35,7 @@ class OrderCompletedMail extends Mailable implements ShouldQueue
                 config('mail.from.address'),
                 config('mail.from.name'),
             ),
-            subject: '[Fleximo] ご注文が完了しました',
+            subject: __('mail.order_completed.subject'),
         );
     }
 

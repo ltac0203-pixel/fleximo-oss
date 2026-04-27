@@ -1,5 +1,7 @@
 # Fleximo
 
+[日本語版 README](./README.ja.md)
+
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
 [![Status: MVP](https://img.shields.io/badge/status-MVP-orange)](#)
 [![PHP](https://img.shields.io/badge/PHP-%5E8.3-777BB4?logo=php&logoColor=white)](https://www.php.net/)

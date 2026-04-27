@@ -4,13 +4,16 @@
 
 ## アプリケーション
 
-| 変数名         | デフォルト                | 説明                                 |
-| -------------- | ------------------------- | ------------------------------------ |
-| `APP_NAME`     | `Fleximo`                 | アプリ表示名                         |
-| `APP_ENV`      | `local`                   | `local` / `staging` / `production`   |
-| `APP_DEBUG`    | `false`                   | 本番では必ず `false`                 |
-| `APP_URL`      | `http://localhost:8000`   | 外部からアクセスする URL             |
-| `APP_TIMEZONE` | `Asia/Tokyo`              | タイムゾーン                         |
+| 変数名                  | デフォルト                | 説明                                                                       |
+| ----------------------- | ------------------------- | -------------------------------------------------------------------------- |
+| `APP_NAME`              | `Fleximo`                 | アプリ表示名                                                               |
+| `APP_ENV`               | `local`                   | `local` / `staging` / `production`                                         |
+| `APP_DEBUG`             | `false`                   | 本番では必ず `false`                                                       |
+| `APP_URL`               | `http://localhost:8000`   | 外部からアクセスする URL                                                   |
+| `APP_TIMEZONE`          | `Asia/Tokyo`              | タイムゾーン（注文番号生成・日付表示で利用）                               |
+| `APP_LOCALE`            | `ja`                      | 表示言語。`ja` / `en` をサポート（[i18n 設定](../how-to/i18n-setup.md)）   |
+| `APP_FALLBACK_LOCALE`   | `en`                      | 翻訳が見つからなかった場合のフォールバック言語                             |
+| `APP_FAKER_LOCALE`      | `en_US`                   | テストデータ生成（Faker）のロケール                                        |
 
 ## データベース
 

@@ -18,10 +18,10 @@ class OrderNumberGenerator
         return $this->generateRandomOrderCode();
     }
 
-    // JST 基準で、深夜0〜5時は前日の営業日を返す。
+    // アプリのタイムゾーン基準で、深夜0〜5時は前日の営業日を返す。
     public function getBusinessDate(): Carbon
     {
-        $now = Carbon::now('Asia/Tokyo');
+        $now = Carbon::now(config('app.timezone'));
 
         // 飲食店は深夜営業が多いため、5時までは前日の営業日として扱う
         if ($now->hour < 5) {

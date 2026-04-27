@@ -11,10 +11,7 @@ enum PaymentMethod: string
 
     public function label(): string
     {
-        return match ($this) {
-            self::Card => 'クレジットカード',
-            self::PayPay => 'PayPay',
-        };
+        return __('enums.payment_method.'.$this->value);
     }
 
     public static function values(): array

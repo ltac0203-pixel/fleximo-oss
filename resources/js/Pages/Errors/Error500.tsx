@@ -1,9 +1,12 @@
 import { Head, router } from "@inertiajs/react";
+import { useTranslation } from "react-i18next";
 import ErrorLayout from "@/Components/Error/ErrorLayout";
 import Button from "@/Components/UI/Button";
 import { ErrorPageProps } from "@/types";
 
 export default function Error500({ status }: ErrorPageProps) {
+    const { t } = useTranslation("errors");
+
     const handleReload = () => {
         window.location.reload();
     };
@@ -14,18 +17,14 @@ export default function Error500({ status }: ErrorPageProps) {
 
     return (
         <>
-            <Head title="サーバーエラー" />
+            <Head title={t("500.title")} />
 
-            <ErrorLayout
-                errorCode={status}
-                title="サーバーエラーが発生しました"
-                message="一時的な問題が発生しています。しばらくしてから再度お試しください。"
-            >
+            <ErrorLayout errorCode={status} title={t("500.title")} message={t("500.message")}>
                 <Button variant="primary" onClick={handleGoHome}>
-                    ホームに戻る
+                    {t("actions.back_home")}
                 </Button>
                 <Button variant="secondary" type="button" onClick={handleReload}>
-                    再読み込み
+                    {t("actions.reload")}
                 </Button>
             </ErrorLayout>
         </>

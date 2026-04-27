@@ -46,7 +46,7 @@ describe("Error403", () => {
         (role) => {
             render(<Error403 {...createProps(role)} />);
 
-            const logoutButton = screen.getByRole("button", { name: "ログアウトする" });
+            const logoutButton = screen.getByRole("button", { name: "ログアウト" });
             fireEvent.click(logoutButton);
 
             expect(routerPostMock).toHaveBeenCalledWith("/logout");

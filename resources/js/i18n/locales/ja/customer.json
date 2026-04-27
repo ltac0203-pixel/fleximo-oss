@@ -1,0 +1,76 @@
+{
+    "home": {
+        "hero_title": "近くのお店からモバイルオーダー",
+        "hero_lead": "QR コードを読み取って、お席や持ち帰りで注文できます。",
+        "search_placeholder": "お店を探す",
+        "section_recent": "最近利用したお店",
+        "section_favorites": "お気に入りのお店",
+        "no_favorites": "お気に入りのお店はまだありません。",
+        "no_recent": "最近利用したお店はまだありません。"
+    },
+    "tenant_menu": {
+        "loading": "メニューを読み込み中...",
+        "section_categories": "カテゴリ",
+        "out_of_stock": "売り切れ",
+        "add_to_cart": "カートに追加",
+        "view_cart": "カートを見る",
+        "favorite_added": "お気に入りに追加しました",
+        "favorite_removed": "お気に入りを解除しました",
+        "currency_symbol": "￥"
+    },
+    "cart": {
+        "title": "カート",
+        "empty_title": "カートは空です",
+        "empty_lead": "メニューから商品を追加してください。",
+        "back_to_menu": "メニューへ戻る",
+        "subtotal": "小計",
+        "total": "合計",
+        "checkout": "注文手続きへ",
+        "remove_item": "削除",
+        "quantity_label": "数量",
+        "options_label": "オプション",
+        "currency_symbol": "￥"
+    },
+    "checkout": {
+        "title": "注文内容の確認",
+        "payment_method": "決済方法",
+        "payment_method_card": "クレジットカード",
+        "payment_method_paypay": "PayPay",
+        "saved_cards": "登録済みのカード",
+        "use_new_card": "新しいカードを使用",
+        "save_card": "このカードを次回以降のために保存する",
+        "save_as_default": "通常使うカードに設定する",
+        "submit": "決済へ進む",
+        "complete_title": "ご注文ありがとうございました",
+        "complete_lead": "ご注文を承りました。準備が整いましたら店舗からお呼び出しします。",
+        "complete_view_orders": "注文履歴を見る",
+        "failed_title": "決済が失敗しました",
+        "failed_lead": "申し訳ありません。決済処理に失敗しました。再度お試しください。",
+        "failed_back": "カートへ戻る",
+        "currency_symbol": "￥"
+    },
+    "orders": {
+        "title": "注文履歴",
+        "empty_title": "注文履歴はまだありません",
+        "empty_lead": "注文すると、ここに表示されます。",
+        "filter_status_all": "すべて",
+        "view_detail": "詳細を見る",
+        "ordered_at": "注文日時",
+        "tenant_name": "店舗名",
+        "order_number": "注文番号",
+        "status": "ステータス",
+        "total": "合計金額",
+        "back_to_list": "一覧へ戻る",
+        "currency_symbol": "￥"
+    },
+    "cards": {
+        "title": "登録済みカード",
+        "empty_title": "登録済みのカードはありません",
+        "empty_lead": "カードを登録すると、次回以降の決済で利用できます。",
+        "add_new": "新しいカードを登録",
+        "set_default": "通常使うカードに設定",
+        "delete_confirm": "このカードを削除しますか？",
+        "delete_success": "カードを削除しました",
+        "expires_label": "有効期限"
+    }
+}

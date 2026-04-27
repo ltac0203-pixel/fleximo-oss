@@ -6,7 +6,7 @@ namespace Tests\Unit\Exceptions;
 
 use App\Enums\OrderStatus;
 use App\Exceptions\InvalidStatusTransitionException;
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
 
 class InvalidStatusTransitionExceptionTest extends TestCase
 {

@@ -26,13 +26,4 @@ class ListOrdersRequest extends FormRequest
             'per_page' => ['nullable', 'integer', 'min:1', 'max:50'],
         ];
     }
-
-    public function attributes(): array
-    {
-        return [
-            'status' => 'ステータス',
-            'page' => 'ページ',
-            'per_page' => 'ページあたり件数',
-        ];
-    }
 }

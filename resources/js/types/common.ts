@@ -31,6 +31,8 @@ export interface LegalConfig {
     websiteUrl: string;
 }
 
+export type LocaleCode = "ja" | "en";
+
 export type PageProps<T extends Record<string, unknown> = Record<string, unknown>> = T & {
     auth: {
         user?: User;
@@ -41,6 +43,8 @@ export type PageProps<T extends Record<string, unknown> = Record<string, unknown
     };
     siteConfig: SiteConfig;
     legal: LegalConfig;
+    locale: LocaleCode;
+    fallbackLocale: LocaleCode;
 };
 
 export interface PaginationLink {
