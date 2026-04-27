@@ -426,5 +426,4 @@ class LoginAnomalyDetectorTest extends TestCase
         $this->assertContains(AuditAction::SuspiciousLoginNewDevice, $types);
         $this->assertCount(3, $result);
     }
-
 }
