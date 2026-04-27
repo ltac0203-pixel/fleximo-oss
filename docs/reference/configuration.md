@@ -61,13 +61,11 @@
 | `COMPANY_ADDRESS`        | 所在地                         |
 | `COMPANY_CONTACT_EMAIL`  | 問い合わせ先メール             |
 
-## エラー監視 / ログ
+## ログ
 
-| 変数名                   | 説明                              |
-| ------------------------ | --------------------------------- |
-| `SENTRY_LARAVEL_DSN`     | Sentry（サーバー側）の DSN         |
-| `VITE_SENTRY_DSN`        | Sentry（フロント側）の DSN         |
-| `LOG_CHANNEL`            | `stack` / `daily` / `stderr` など |
+| 変数名        | 説明                              |
+| ------------- | --------------------------------- |
+| `LOG_CHANNEL` | `stack` / `daily` / `stderr` など |
 
 ## メール
 

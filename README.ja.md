@@ -88,7 +88,6 @@ PENDING_PAYMENT → PAID → ACCEPTED → IN_PROGRESS → READY → COMPLETED
 | スタイリング       | Tailwind CSS 3                                 |
 | ビルド             | Vite 7                                         |
 | UIライブラリ       | @headlessui/react, recharts, @dnd-kit          |
-| エラー監視         | Sentry                                         |
 
 ---
 

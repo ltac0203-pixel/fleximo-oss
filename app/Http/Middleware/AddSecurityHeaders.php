@@ -59,7 +59,6 @@ class AddSecurityHeaders
             "'self'",
             'https://api.fincode.jp',
             'https://api.test.fincode.jp',
-            'https://*.ingest.sentry.io',
         ];
 
         if (app()->environment('local', 'testing')) {
